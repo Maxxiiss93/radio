@@ -193,6 +193,9 @@
   .artist { font-size:16px; color:var(--txt2); font-weight:500 }
   .playing-now { margin-top:12px; font-size:11px; font-weight:800; letter-spacing:.18em; color:var(--txt3); display:flex; align-items:center; gap:8px }
   .playing-now i { display:inline-flex; gap:2px; align-items:flex-end; height:12px } .playing-now i s { width:3px; height:4px; background:var(--txt3); text-decoration:none; border-radius:1px; transition:background .3s } body.playing .playing-now i s { background:var(--acc); animation:eq .8s ease-in-out infinite } .playing-now i s:nth-child(2){animation-delay:.2s} .playing-now i s:nth-child(3){animation-delay:.4s}
+  .ytslot { width:100%; aspect-ratio:16/9; border-radius:14px; background:#000; margin:0 0 14px; border:1px solid var(--edge) }
+  .ytmini { width:64px; aspect-ratio:16/9; border-radius:8px; background:#000; flex:none }
+  .ythost { position:fixed; left:-9999px; top:0; width:320px; height:180px; z-index:11; border-radius:14px; overflow:hidden; pointer-events:none; opacity:0; transition:opacity .25s } .ythost.on { opacity:1; pointer-events:auto } .ythost iframe { width:100%; height:100%; display:block; border:0 }
   .prog { width:100% } .prog .bar { height:5px; border-radius:3px; background:rgba(255,255,255,.12); overflow:hidden }
   .prog .bar > div { height:100%; width:0; border-radius:3px; background:linear-gradient(90deg,var(--ivory),var(--acc)); box-shadow:0 0 14px rgba(255,255,255,.35); transition:width .95s linear }
   .times { display:flex; justify-content:space-between; font-size:12px; color:var(--txt3); margin-top:6px; font-variant-numeric:tabular-nums; font-weight:600 }
@@ -390,6 +393,7 @@
             <div class="playing-now" id="playingNow"><i><s></s><s></s><s></s></i>SONANDO AHORA</div>
           </div>
         </div>
+        <div class="ytslot" id="ytSlot" hidden></div>
         <div class="prog"><div class="bar"><div id="prog"></div></div><div class="times"><span id="elapsed">0:00</span><span id="remain">-0:00</span></div></div>
         <div class="controls">
           <button class="icbtn ghost" id="favBtn" title="Guardar en favoritos" aria-label="Guardar en favoritos" aria-pressed="false"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></button>
@@ -438,7 +442,7 @@
     <button role="tab" data-nav="you" aria-label="Vos"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>Vos</span></button>
   </div>
 </nav>
-<div class="mini glass" id="mini"><button class="open" id="miniOpen" title="Abrir canal" aria-label="Abrir el canal que está sonando"><svg class="logo mmark" viewBox="0 0 256 256" width="40" height="40" aria-hidden="true"><path class="frame" d="M66 250H50A44 44 0 0 1 6 206V50A44 44 0 0 1 50 6H206A44 44 0 0 1 250 50V206A44 44 0 0 1 206 250H190" fill="none" stroke="var(--acc)" stroke-width="6" stroke-linecap="round"/><g class="bars"><rect class="bar" x="75.5" y="231" width="9" height="19" rx="3" fill="var(--acc)"/><rect class="bar" x="91.5" y="216" width="9" height="34" rx="3" fill="var(--acc)"/><rect class="bar" x="107.5" y="226" width="9" height="24" rx="3" fill="var(--acc)"/><rect class="bar" x="123.5" y="219" width="9" height="31" rx="3" fill="var(--acc)"/><rect class="bar" x="139.5" y="233" width="9" height="17" rx="3" fill="var(--acc)"/><rect class="bar" x="155.5" y="223" width="9" height="27" rx="3" fill="var(--acc)"/><rect class="bar" x="171.5" y="228" width="9" height="22" rx="3" fill="var(--acc)"/></g><g transform="translate(28.159999999999997,28.159999999999997) scale(.78)"><g transform="translate(24,24)"><path d="M15 13H85V29H31V42H85V87H15V71H69V58H15Z" fill="currentColor" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/></g><g transform="translate(132,24)"><path d="M11 13H33L50 31L67 13H89L58 58V87H42V58Z" fill="currentColor" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/><rect x="39" y="68" width="22" height="22" rx="3" fill="var(--acc)"/></g><g transform="translate(24,132)"><path d="M15 87V13H33L67 50V13H85V87H67L33 50V87Z" fill="currentColor" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/></g><g transform="translate(132,132)"><path d="M85 13V29H31V71H85V87H15V13Z" fill="currentColor" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/></g></g></svg><div class="d" id="miniCov"></div><div class="t"><b id="miniTitle">—</b><span id="miniArtist"></span></div></button><button id="miniBtn" aria-label="Parar" title="Parar"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></button><div class="p"><i id="miniProg"></i></div></div>
+<div class="mini glass" id="mini"><button class="open" id="miniOpen" title="Abrir canal" aria-label="Abrir el canal que está sonando"><svg class="logo mmark" viewBox="0 0 256 256" width="40" height="40" aria-hidden="true"><path class="frame" d="M66 250H50A44 44 0 0 1 6 206V50A44 44 0 0 1 50 6H206A44 44 0 0 1 250 50V206A44 44 0 0 1 206 250H190" fill="none" stroke="var(--acc)" stroke-width="6" stroke-linecap="round"/><g class="bars"><rect class="bar" x="75.5" y="231" width="9" height="19" rx="3" fill="var(--acc)"/><rect class="bar" x="91.5" y="216" width="9" height="34" rx="3" fill="var(--acc)"/><rect class="bar" x="107.5" y="226" width="9" height="24" rx="3" fill="var(--acc)"/><rect class="bar" x="123.5" y="219" width="9" height="31" rx="3" fill="var(--acc)"/><rect class="bar" x="139.5" y="233" width="9" height="17" rx="3" fill="var(--acc)"/><rect class="bar" x="155.5" y="223" width="9" height="27" rx="3" fill="var(--acc)"/><rect class="bar" x="171.5" y="228" width="9" height="22" rx="3" fill="var(--acc)"/></g><g transform="translate(28.159999999999997,28.159999999999997) scale(.78)"><g transform="translate(24,24)"><path d="M15 13H85V29H31V42H85V87H15V71H69V58H15Z" fill="currentColor" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/></g><g transform="translate(132,24)"><path d="M11 13H33L50 31L67 13H89L58 58V87H42V58Z" fill="currentColor" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/><rect x="39" y="68" width="22" height="22" rx="3" fill="var(--acc)"/></g><g transform="translate(24,132)"><path d="M15 87V13H33L67 50V13H85V87H67L33 50V87Z" fill="currentColor" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/></g><g transform="translate(132,132)"><path d="M85 13V29H31V71H85V87H15V13Z" fill="currentColor" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/></g></g></svg><div class="d" id="miniCov"></div><div class="ytmini" id="ytMiniSlot" hidden></div><div class="t"><b id="miniTitle">—</b><span id="miniArtist"></span></div></button><button id="miniBtn" aria-label="Parar" title="Parar"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></button><div class="p"><i id="miniProg"></i></div></div>
 
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
   <div class="sheet glass auth">
@@ -460,6 +464,7 @@
     <button type="button" class="close" id="authClose" aria-label="Cerrar">✕</button>
   </div>
 </div>
+<div class="ythost" id="ytHost" aria-hidden="true"><div id="ytFrame"></div></div>
 <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
 
 <script>
@@ -918,9 +923,27 @@ async function loadState(){
   if(track.portada){ $('art').style.backgroundImage=`url(${track.portada})`; $('artEmoji').textContent=''; } else { $('art').style.backgroundImage=''; $('artEmoji').textContent=initials(track.artista); }
   $('favBtn').dataset.favTrack=track.id; renderHearts(); renderTuneBtn(); loadRound();
 }
+// ---------- Motor YouTube (para temas cargados por link de YouTube: se reproduce con el player oficial embebido, sincronizado) ----------
+const ytId=u=>{ const m=String(u||'').match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/))([A-Za-z0-9_-]{11})/); return m?m[1]:null; };
+const yt={ api:null, p:null, ready:false, want:null, vol:1, slot:null };
+function ytLoadApi(){ if(yt.api) return yt.api; yt.api=new Promise(res=>{ if(window.YT?.Player) return res(window.YT); const prev=window.onYouTubeIframeAPIReady; window.onYouTubeIframeAPIReady=()=>{ prev?.(); res(window.YT); }; const s=document.createElement('script'); s.src='https://www.youtube.com/iframe_api'; document.head.appendChild(s); }); return yt.api; }
+async function ytEnsure(){ if(yt.p) return yt.p; const YT=await ytLoadApi(); await new Promise(res=>{ yt.p=new YT.Player('ytFrame',{width:'100%',height:'100%',playerVars:{autoplay:0,controls:0,disablekb:1,playsinline:1,rel:0,modestbranding:1,iv_load_policy:3,origin:location.origin},events:{onReady:()=>{ yt.ready=true; yt.p.setVolume(Math.round(yt.vol*100)); res(); },onStateChange:e=>{ if(e.data===0&&play.channel&&play.engine==='yt') sb.rpc('radio_tick',{ch:play.channel.id}); if(e.data===1) ytPlace(); }}}); }); return yt.p; }
+async function ytPlay(url,start){ await ytEnsure(); const id=ytId(url); if(yt.cur!==id){ yt.cur=id; yt.p.loadVideoById({videoId:id,startSeconds:Math.max(0,start||0)}); } else { yt.p.seekTo(Math.max(0,start||0),true); yt.p.playVideo(); } $('ytHost').classList.add('on'); ytPlace(); }
+function ytStop(){ if(yt.p&&yt.ready){ try{ yt.p.pauseVideo(); }catch(e){} } yt.cur=null; $('ytHost').classList.remove('on'); $('ytSlot').hidden=true; $('ytMiniSlot').hidden=true; ytPlace(); }
+const ytTime=()=>(yt.p&&yt.ready&&yt.p.getCurrentTime)?yt.p.getCurrentTime():0;
+function ytPlace(){ const host=$('ytHost'); if(!host.classList.contains('on')){ host.style.left='-9999px'; return; }
+  const hereYT = channel && play.channel?.id===channel.id && !$('viewChannel').classList.contains('hidden');
+  const miniOn = $('mini').classList.contains('show') && !document.body.classList.contains('here');
+  const slot = hereYT ? $('ytSlot') : (miniOn ? $('ytMiniSlot') : null);
+  $('ytSlot').hidden=!hereYT; $('ytMiniSlot').hidden=!miniOn;
+  if(!slot){ host.style.left='-9999px'; return; }
+  const r=slot.getBoundingClientRect(); host.style.left=r.left+'px'; host.style.top=r.top+'px'; host.style.width=r.width+'px'; host.style.height=r.height+'px'; host.style.borderRadius=getComputedStyle(slot).borderRadius; }
+addEventListener('resize',ytPlace); addEventListener('scroll',ytPlace,{passive:true}); setInterval(()=>{ if($('ytHost').classList.contains('on')) ytPlace(); },250);
 const offsetOf=s=>(serverNow()-new Date(s.inicio_at).getTime())/1000;
 const offset=()=>offsetOf(state);
-function resync(force){ if(!play.track||!play.state||player.src===SILENT) return; const o=offsetOf(play.state); if(o<0||o>play.track.duracion_seg) return; if(force||Math.abs(player.currentTime-o)>1.5) player.currentTime=o; }
+function resync(force){ if(!play.track||!play.state||player.src===SILENT) return; const o=offsetOf(play.state); if(o<0||o>play.track.duracion_seg) return;
+  if(play.engine==='yt'){ if(yt.ready&&(force||Math.abs(ytTime()-o)>2)) yt.p.seekTo(o,true); return; }
+  if(force||Math.abs(player.currentTime-o)>1.5) player.currentTime=o; }
 
 async function loadPlayState(){
   if(!play.channel) return;
@@ -930,6 +953,9 @@ async function loadPlayState(){
   play.state=data; play.track=data.tracks;
   $('miniTitle').textContent=play.track.titulo; $('miniArtist').textContent=`${play.track.artista} · ${play.channel.nombre}`;
   $('miniCov').style.backgroundImage=play.track.portada?`url(${play.track.portada})`:''; $('miniCov').textContent=play.track.portada?'':initials(play.track.artista);
+  play.engine = ytId(play.track.url) ? 'yt' : 'audio';
+  if(play.engine==='yt'){ if(player.src){ player.pause(); player.removeAttribute('src'); player.load(); } if(play.on){ await ytPlay(play.track.url, offsetOf(play.state)); if(changed) toast(`Ahora suena: ${play.track.titulo}`); } return; }
+  ytStop();
   if(!player.src){ player.src=SILENT; player.loop=true; }
   if(play.on){ player.play().then(()=>resync(true)).catch(()=>{}); if(changed) toast(`Ahora suena: ${play.track.titulo}`); }
 }
@@ -939,7 +965,7 @@ async function tuneChannel(ch){
   play.channel=ch; play.state=null; play.track=null; play.on=true;
   await loadPlayState();
   if(!play.track){ play.on=false; return toast('Este canal todavía no tiene nada sonando'); }
-  try{ await player.play(); }catch(e){ play.on=false; renderTuneBtn(); return toast('El navegador bloqueó el audio. Tocá Sintonizar otra vez.','err'); }
+  if(play.engine!=='yt'){ try{ await player.play(); }catch(e){ play.on=false; renderTuneBtn(); return toast('El navegador bloqueó el audio. Tocá Sintonizar otra vez.','err'); } }
   resync(true); document.body.classList.add('playing'); $('mini').classList.add('show'); syncNav();
   play.sub=sb.channel('play-'+ch.id).on('postgres_changes',{event:'*',schema:'public',table:'radio_state',filter:`channel_id=eq.${ch.id}`},loadPlayState).subscribe();
   renderTuneBtn(); renderIndexState(); toast(`Sintonizando ${ch.nombre}`);
@@ -947,7 +973,7 @@ async function tuneChannel(ch){
   sb.rpc('log_play',{ch:ch.id});
 }
 function stopPlay(){
-  player.pause(); play.on=false; document.body.classList.remove('playing'); $('mini').classList.remove('show'); syncNav();
+  player.pause(); ytStop(); play.on=false; document.body.classList.remove('playing'); $('mini').classList.remove('show'); syncNav();
   if(play.sub){ sb.removeChannel(play.sub); play.sub=null; } play.channel=null; play.track=null; play.state=null;
   renderTuneBtn(); renderIndexState();
   if(presence) presence.track({apodo:profile?.apodo??'anónimo', avatar:profile?.avatar||null, menor:!!profile?.es_menor, canal:null, viendo:channel?.id??null});
@@ -956,14 +982,14 @@ function renderTuneBtn(){
   const here = channel && play.channel?.id===channel.id && play.on; document.body.classList.toggle('here', !!here);
   $('tune').innerHTML = here ? '<svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1.5"/><rect x="14" y="5" width="4" height="14" rx="1.5"/></svg>' : '<svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
   $('tune').classList.toggle('live', !!here); $('tune').setAttribute('aria-label', here?'Parar':'Sintonizar'); $('kicker').textContent = here?'AL AIRE':'EN VIVO';
-  $('stopBtn').hidden = true; $('volwrap').hidden = !play.on;
+  $('stopBtn').hidden = true; $('volwrap').hidden = !play.on; ytPlace();
 }
 function renderIndexState(){ document.querySelectorAll('.item').forEach(g=>{ const on=play.on&&play.channel?.id===+g.dataset.id; g.classList.toggle('on',on); const b=g.querySelector('.tplay'); if(b){ b.innerHTML=on?ICON_LIVE:ICON_PLAY; b.title=on?'Parar':'Escuchar'; } }); }
 $('tune').onclick=()=>{ if(!channel) return; if(play.on&&play.channel?.id===channel.id) stopPlay(); else tuneChannel(channel); };
 $('stopBtn').onclick=stopPlay;
 $('miniBtn').onclick=stopPlay;
 $('miniOpen').onclick=()=>{ if(play.channel) location.hash='#/c/'+play.channel.slug; };
-$('vol').oninput=e=>player.volume=+e.target.value;
+$('vol').oninput=e=>{ player.volume=+e.target.value; yt.vol=+e.target.value; if(yt.ready) yt.p.setVolume(Math.round(yt.vol*100)); };
 player.addEventListener('ended',()=>{ if(play.channel) sb.rpc('radio_tick',{ch:play.channel.id}); });
 player.addEventListener('error',()=>{ if(play.on&&player.src) toast('No se pudo cargar el audio. Probá sintonizar de nuevo.','err'); });
 setInterval(()=>{
@@ -1072,7 +1098,7 @@ async function renderLoad(){
   if(!user||profile?.rol!=='moderador'){ box.innerHTML='<div class="empty">Esta pantalla es solo para moderadores.</div>'; return; }
   const opts=hojas().map(c=>`<option value="${c.id}">${esc(c.padre)} › ${esc(c.nombre)}</option>`).join('');
   box.innerHTML=`<form class="sup-card load-form" id="loadForm" novalidate>
-      <label class="wide">Link del audio (MP3 / M4A / OGG)<input id="lUrl" type="url" placeholder="https://…/tema.mp3" required inputmode="url" autocomplete="off"><span class="st" id="lSt"></span></label>
+      <label class="wide">Link del audio (MP3 / M4A / OGG) o de YouTube<input id="lUrl" type="url" placeholder="https://…/tema.mp3 o https://youtube.com/watch?v=…" required inputmode="url" autocomplete="off"><span class="st" id="lSt"></span></label>
       <label>Título<input id="lTit" maxlength="120" required></label>
       <label>Artista<input id="lArt" maxlength="120" required></label>
       <label>Subgénero<select id="lCh" required><option value="">Elegí…</option>${opts}</select></label>
@@ -1084,11 +1110,20 @@ async function renderLoad(){
     <div class="sup-card"><h3>Temas cargados <span id="lCount" style="color:var(--txt3);font-weight:400"></span></h3><div class="newlist"><input id="lFilter" placeholder="Filtrar por título, artista o canal…"></div><div class="tlist" id="lList"><div class="empty small">Cargando…</div></div></div>`;
   const probe=document.createElement('audio'); probe.preload='metadata';
   let detectado=null;
-  const detectar=()=>{ const u=$('lUrl').value.trim(); const st=$('lSt'); if(!/^https?:\/\//.test(u)){ st.textContent=''; return; } st.className='st'; st.textContent='Leyendo el audio…'; detectado=null; probe.src=u;
+  const detectar=async()=>{ const u=$('lUrl').value.trim(); const st=$('lSt'); if(!/^https?:\/\//.test(u)){ st.textContent=''; return; } st.className='st'; detectado=null;
+    const vid=ytId(u);
+    if(vid){ st.textContent='Leyendo YouTube…'; probe.removeAttribute('src');
+      try{ const r=await fetch('https://noembed.com/embed?url='+encodeURIComponent('https://www.youtube.com/watch?v='+vid)); const j=await r.json(); if(j.title){ const m=j.title.match(/^(.+?)\s[-–|]\s(.+)$/); if(!$('lTit').value) $('lTit').value=m?m[2].replace(/\s*\(.*?(video|audio|lyric).*?\)\s*/i,'').trim():j.title; if(!$('lArt').value) $('lArt').value=m?m[1].trim():(j.author_name||''); if(!$('lCov').value&&j.thumbnail_url) $('lCov').value=j.thumbnail_url.replace('hqdefault','maxresdefault'); } }catch(e){}
+      try{ const YT=await ytLoadApi(); if(!window.__ytProbe){ const d=document.createElement('div'); d.id='ytProbe'; d.style.cssText='position:fixed;left:-9999px;width:200px;height:200px'; document.body.appendChild(d); await new Promise(res=>{ window.__ytProbe=new YT.Player('ytProbe',{width:200,height:200,playerVars:{controls:0,origin:location.origin},events:{onReady:res}}); }); }
+        const pr=window.__ytProbe; await new Promise((res,rej)=>{ const t=setTimeout(()=>rej(new Error('timeout')),8000); const h=e=>{ if(e.data===5||e.data===1||e.data===2){ clearTimeout(t); pr.removeEventListener('onStateChange',h); res(); } }; pr.addEventListener('onStateChange',h); pr.cueVideoById(vid); });
+        const d=Math.round(pr.getDuration()||0); if(d>10){ detectado=d; $('lDur').value=d; st.className='st ok'; st.textContent=`YouTube OK · ${fmt(d)} · se reproduce con el player de YouTube embebido`; } else { st.className='st err'; st.textContent='No pude leer la duración del video. Cargala a mano.'; }
+      }catch(e){ st.className='st err'; st.textContent='No pude leer la duración del video (¿es público y permite insertarlo?). Cargala a mano.'; }
+      return; }
+    st.textContent='Leyendo el audio…'; probe.src=u;
     probe.onloadedmetadata=()=>{ if(isFinite(probe.duration)&&probe.duration>10){ detectado=Math.round(probe.duration); $('lDur').value=detectado; st.className='st ok'; st.textContent=`Audio OK · ${fmt(detectado)}`; } else { st.className='st err'; st.textContent='No pude leer la duración. Cargala a mano.'; } };
     probe.onerror=()=>{ st.className='st err'; st.textContent='No se puede reproducir ese link desde el navegador (¿es un link directo al archivo? ¿permite acceso desde otros sitios?).'; }; };
   $('lUrl').addEventListener('change',detectar); $('lUrl').addEventListener('blur',detectar);
-  $('lTest').onclick=()=>{ const u=$('lUrl').value.trim(); if(!u) return toast('Pegá un link primero','err'); if(probe.paused||probe.src!==u){ if(probe.src!==u) probe.src=u; probe.currentTime=0; probe.play().then(()=>{ $('lTest').textContent='Parar prueba'; }).catch(()=>toast('No se pudo reproducir','err')); } else { probe.pause(); $('lTest').textContent='Probar audio'; } };
+  $('lTest').onclick=()=>{ const u=$('lUrl').value.trim(); if(!u) return toast('Pegá un link primero','err'); if(ytId(u)){ window.open('https://www.youtube.com/watch?v='+ytId(u),'_blank','noopener'); return; } if(probe.paused||probe.src!==u){ if(probe.src!==u) probe.src=u; probe.currentTime=0; probe.play().then(()=>{ $('lTest').textContent='Parar prueba'; }).catch(()=>toast('No se pudo reproducir','err')); } else { probe.pause(); $('lTest').textContent='Probar audio'; } };
   $('loadForm').onsubmit=async e=>{ e.preventDefault(); const url=$('lUrl').value.trim(), titulo=$('lTit').value.trim(), artista=$('lArt').value.trim(), channel_id=+$('lCh').value, duracion_seg=+$('lDur').value, portada=$('lCov').value.trim()||null, video=$('lVid').value.trim()||null;
     if(!/^https?:\/\//.test(url)) return toast('El link del audio tiene que empezar con http(s)://','err'); if(!titulo||!artista) return toast('Faltan título o artista','err'); if(!channel_id) return toast('Elegí un subgénero','err'); if(!(duracion_seg>10)) return toast('La duración tiene que ser mayor a 10 segundos','err');
     $('lBtn').disabled=true; const {error}=await sb.from('tracks').insert({titulo,artista,url,duracion_seg,portada,video,channel_id,agregado_por:user.id}); $('lBtn').disabled=false;
@@ -1241,7 +1276,7 @@ window.addEventListener('hashchange',syncNav);
   }
   const t0=performance.now(); (function tick(now){ if(!document.body.contains(sp)) return; render((now-t0)/1000); requestAnimationFrame(tick); })(t0);
 })();
-(async()=>{ await syncClock(); renderAuth(); joinPresence(); await route(); syncNav(); setTimeout(()=>$('splash')?.classList.add('off'),2700); setTimeout(()=>$('splash')?.remove(),3300); })();
+(async()=>{ ytLoadApi(); await syncClock(); renderAuth(); joinPresence(); await route(); syncNav(); setTimeout(()=>$('splash')?.classList.add('off'),2700); setTimeout(()=>$('splash')?.remove(),3300); })();
 </script>
 </body>
 </html>

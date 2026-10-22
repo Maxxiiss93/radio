@@ -5,7 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1a0e1f">
 <meta name="color-scheme" content="dark">
-<title>Radio Comunitaria</title>
+<title>SYNC · la radio que arma la gente</title>
+<meta name="description" content="SYNC: radio online por géneros donde la audiencia vota el próximo tema. Todos escuchan lo mismo, al mismo tiempo.">
+
+
+
+<meta property="og:title" content="SYNC · la radio que arma la gente">
+<meta property="og:description" content="Elegí un género, votá el próximo tema y escuchá en vivo con todos.">
+<meta property="og:image" content="/brand/og.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -39,7 +48,19 @@
   .glass { background:var(--glass); backdrop-filter:blur(24px) saturate(140%); -webkit-backdrop-filter:blur(24px) saturate(140%); border:1px solid var(--edge); border-radius:var(--r); box-shadow:0 24px 60px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.14) }
   header { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:18px 0 10px; position:sticky; top:0; z-index:5; background:linear-gradient(var(--bg0) 60%, transparent); margin:0 -20px; padding-left:20px; padding-right:20px }
   .brand { display:flex; align-items:center; gap:12px; min-width:0 }
-  .logo { flex:none; animation:spin 12s linear infinite; filter:drop-shadow(0 0 14px rgba(255,255,255,.3)) }
+  .logo { flex:none; color:var(--ivory); overflow:visible }
+  .logo .pulse { fill:none; stroke:var(--acc); stroke-width:3; opacity:0 }
+  body.playing .logo .pulse { animation:logoPulse 2s ease-out infinite } body.playing .logo .pulse:nth-child(2) { animation-delay:1s }
+  @keyframes logoPulse { 0% { r:10; opacity:.9 } 100% { r:46; opacity:0 } }
+  .wordmark { display:flex; align-items:center; color:var(--ivory); margin:0 } .wordmark svg { display:block; overflow:visible }
+  @media (max-width:640px) { .wordmark svg { height:14px } }
+  .splash { position:fixed; inset:0; z-index:100; background:var(--bg0); display:grid; place-items:center; transition:opacity .5s ease, visibility .5s } .splash.off { opacity:0; visibility:hidden }
+  .splash svg { width:min(38vw,160px); overflow:visible }
+  .splash path { stroke:var(--ivory); stroke-width:14; stroke-linecap:round; fill:none; stroke-dasharray:60; stroke-dashoffset:60; animation:drawIn .55s cubic-bezier(.2,.8,.2,1) forwards }
+  .splash path:nth-child(2) { animation-delay:.08s } .splash path:nth-child(3) { animation-delay:.42s }
+  .splash circle { fill:var(--acc); r:0; animation:dotPop .4s .38s cubic-bezier(.2,.8,.2,1) forwards }
+  @keyframes drawIn { to { stroke-dashoffset:0 } } @keyframes dotPop { 60% { r:13 } 100% { r:10 } }
+  @media (prefers-reduced-motion:reduce) { .splash { display:none } .logo .pulse { animation:none !important } }
   @keyframes spin { to { transform:rotate(360deg) } }
   .brand h1 { font-size:17px; font-weight:800; margin:0; letter-spacing:-.02em; white-space:nowrap }
   @media (max-width:640px) { .brand h1 { font-size:15px } .brand small { font-size:11px } #mineLink > span, #auth .btn > span:not(.av) { display:none } #mineLink, #auth .btn.sm { padding:8px 10px } #auth .av { width:30px; height:30px; font-size:11px } .brand .logo { width:34px; height:34px } }
@@ -309,11 +330,12 @@
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="goo"><feGaussianBlur in="SourceGraphic" stdDeviation="6"/><feColorMatrix values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -9"/></filter></svg>
+<div class="splash" id="splash" aria-hidden="true"><svg viewBox="0 0 100 100"><path d="M14 10L50 52"/><path d="M86 10L50 52"/><path d="M50 52V90"/><circle cx="50" cy="52" r="0"/></svg></div>
 <div class="bg"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
 
 <div class="app">
   <header>
-    <a class="brand" href="#/"><svg class="logo" viewBox="0 0 40 40" width="40" height="40" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="#F5F1E8"/><circle cx="20" cy="20" r="11" fill="none" stroke="#542C5F" stroke-width="2"/><circle cx="20" cy="20" r="5" fill="none" stroke="#542C5F" stroke-width="2"/><circle cx="20" cy="20" r="2.4" fill="#542C5F"/><path d="M20 3v6M20 31v6" stroke="#542C5F" stroke-width="2" stroke-linecap="round"/></svg><div><h1>Radio Comunitaria</h1><small><i></i><span id="online">0</span> escuchando ahora</small></div></a>
+    <a class="brand" href="#/" aria-label="SYNC, inicio"><svg class="logo" viewBox="0 0 100 100" width="40" height="40" aria-hidden="true"><circle class="pulse" cx="50" cy="52" r="10"/><circle class="pulse" cx="50" cy="52" r="10"/><path d="M14 10L50 52M86 10L50 52M50 52V90" fill="none" stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/><circle cx="50" cy="52" r="10" fill="var(--acc)"/></svg><div><h1 class="wordmark"><svg viewBox="-8 0 434 100" height="16" aria-label="SYNC" role="img"><g fill="none" stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"><path d="M70 30A20 20 0 1 0 50 50A20 20 0 1 1 30 70"/><path transform="translate(106,0)" d="M14 10L50 52M86 10L50 52M50 52V90"/><path transform="translate(212,0)" d="M14 90V10L86 90V10"/><path transform="translate(318,0)" d="M72 16A40 40 0 1 0 72 84"/></g><circle cx="156" cy="52" r="10" fill="var(--acc)"/></svg></h1><small><i></i><span id="online">0</span> escuchando ahora</small></div></a>
     <div style="display:flex;gap:8px;align-items:center"><a class="btn glass sm" id="mineLink" href="#/mi" hidden aria-label="Mi música"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg> <span>Mi música</span></a><div id="auth"></div></div>
   </header>
 
@@ -344,7 +366,7 @@
     <div class="subnav" id="subnav"></div>
     <div class="grid">
       <div class="glass hero player" id="hero">
-        <div class="ph"><span class="brand-tag">RADIO</span><i class="sep"></i><span class="pill-tag" id="kicker">EN VIVO</span><span class="ph-right" id="nextMini"></span></div>
+        <div class="ph"><span class="brand-tag">SYNC</span><i class="sep"></i><span class="pill-tag" id="kicker">EN VIVO</span><span class="ph-right" id="nextMini"></span></div>
         <div class="pmain">
           <div class="cover"><div class="rings"></div><div class="art" id="art"><span id="artEmoji"></span></div></div>
           <div class="meta">
@@ -691,7 +713,7 @@ const traducir = m => ({'Invalid login credentials':'Email o contraseña incorre
 // ---------- Auth ----------
 let mode='login';
 function setMode(m){ mode=m; $('pw').autocomplete=m==='signup'?'new-password':'current-password'; $('apodoField').hidden=m!=='signup'; $('authBtn').textContent=m==='login'?'Entrar':'Crear cuenta';
-  $('mTitle').textContent=m==='login'?'Bienvenido de vuelta':'Sumate a la radio'; $('mSub').textContent=m==='login'?'Qué bueno verte. Volvé a sintonizar.':'Votá, chateá y guardá lo que te gusta.';
+  $('mTitle').textContent=m==='login'?'Bienvenido de vuelta':'Sumate a SYNC'; $('mSub').textContent=m==='login'?'Qué bueno verte. Volvé a sintonizar.':'Votá, chateá y guardá lo que te gusta.';
   $('swap').innerHTML=m==='login'?'¿Sos nuevo? <button type="button" class="link strong" id="swapBtn">Crear cuenta</button>':'¿Ya tenés cuenta? <button type="button" class="link strong" id="swapBtn">Entrar</button>';
   $('swapBtn').onclick=()=>setMode(m==='login'?'signup':'login'); $('forgot').parentElement.hidden=m!=='login'; }
 ['em','pw','ap'].forEach(id=>{ const el=$(id); el.addEventListener('blur',()=>{ if(el.required&&!el.value.trim()) $('authErr').textContent=id==='em'?'Falta tu email.':id==='pw'?'Falta la contraseña.':''; else if(id==='em'&&el.value&&!/^\S+@\S+\.\S+$/.test(el.value)) $('authErr').textContent='Ese email no parece válido.'; }); el.addEventListener('input',()=>{ $('authErr').textContent=''; }); });
@@ -812,10 +834,10 @@ document.addEventListener('keydown',e=>{ if(e.key==='/'&&document.activeElement.
 async function route(){
   const m=location.hash.match(/^#\/c\/([a-z0-9-]+)/);
   if(!channels.length) await loadChannels();
-  if(location.hash.startsWith('#/mi')){ leaveChannel(); $('viewChannel').classList.add('hidden'); $('viewIndex').classList.add('hidden'); $('viewMine').classList.remove('hidden'); document.title='Mi música · Radio Comunitaria'; await loadChannels(); renderMine(); window.scrollTo(0,0); return; }
+  if(location.hash.startsWith('#/mi')){ leaveChannel(); $('viewChannel').classList.add('hidden'); $('viewIndex').classList.add('hidden'); $('viewMine').classList.remove('hidden'); document.title='Mi música · SYNC'; await loadChannels(); renderMine(); window.scrollTo(0,0); return; }
   $('viewMine').classList.add('hidden');
   if(m && bySlug(m[1])) await openChannel(bySlug(m[1]));
-  else { leaveChannel(); $('viewChannel').classList.add('hidden'); $('viewIndex').classList.remove('hidden'); document.title='Radio Comunitaria'; await loadChannels(); renderIndex($('q').value); showWelcome(); window.scrollTo(0,0); }
+  else { leaveChannel(); $('viewChannel').classList.add('hidden'); $('viewIndex').classList.remove('hidden'); document.title='SYNC · la radio que arma la gente'; await loadChannels(); renderIndex($('q').value); showWelcome(); window.scrollTo(0,0); }
 }
 window.addEventListener('hashchange',route);
 function leaveChannel(){
@@ -829,7 +851,7 @@ async function openChannel(ch){
   const parent=ch.parent_id?channels.find(c=>c.id===ch.parent_id):null;
   $('crumbParent').innerHTML=parent?`<a href="#/c/${parent.slug}">${esc(parent.nombre)}</a><span> › </span>`:'';
   $('crumbName').textContent=ch.nombre;
-  document.title=`${ch.nombre} · Radio Comunitaria`;
+  document.title=`${ch.nombre} · SYNC`;
   $('chFavBtn').dataset.favCh=ch.id; renderHearts();
   const root = parent||ch; const siblings=[root, ...kids(root.id).sort((a,b)=>((listeners.get(b.id)||0)-(listeners.get(a.id)||0))||((b.plays_7d||0)-(a.plays_7d||0))||(b.temas-a.temas))];
   $('subnav').innerHTML=siblings.map(s=>{ const on=s.id===ch.id; const name=(s.parent_id?'':'Todo ')+s.nombre;
@@ -1094,7 +1116,7 @@ navBtns.forEach(b=>b.onclick=()=>{ const id=b.dataset.nav;
   else if(id==='you'){ if(!user) openModal('login'); else { $('menu')?.classList.toggle('open'); } setNav('you'); setTimeout(syncNav,1200); }
 });
 window.addEventListener('hashchange',syncNav);
-(async()=>{ await syncClock(); renderAuth(); joinPresence(); await route(); syncNav(); })();
+(async()=>{ await syncClock(); renderAuth(); joinPresence(); await route(); syncNav(); setTimeout(()=>$('splash')?.classList.add('off'),1100); setTimeout(()=>$('splash')?.remove(),1800); })();
 </script>
 </body>
 </html>

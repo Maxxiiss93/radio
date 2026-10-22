@@ -1,4 +1,4 @@
-# Radio Comunitaria · prototipo
+# SYNC · la radio que arma la gente
 
 Radio online con un canal por género y subgénero. En cada canal la audiencia registrada vota el próximo tema, todos escuchan lo mismo al mismo tiempo y chatean en vivo. Stack: HTML/JS + Supabase + Vercel.
 
@@ -28,3 +28,7 @@ Radio online con un canal por género y subgénero. En cada canal la audiencia r
 - Reacciones sobre el tema actual, perfiles con avatar, seguir usuarios.
 - Overlay para OBS si querés retransmitir también por YouTube.
 - Licencias SADAIC + AADI-CAPIF antes de pasar música comercial.
+
+## Marca
+
+Logotipo propio (lettering monolínea, sin tipografía de terceros). Archivos en `brand/`: `sync-wordmark*.svg` (marfil, ciruela, una tinta), `sync-mark*.svg` (la Y sola), `sync-stacked.svg`, `icon.svg` / `icon-192/512/180.png` (app), `favicon.svg`, `og.png` (compartir). Paleta: Deep Plum #542C5F · Electric Lime #C7E84B · Soft Ivory #F5F1E8.

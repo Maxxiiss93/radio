@@ -108,8 +108,16 @@
   /* Canal */
   .crumb { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--txt3); margin:8px 0 12px; flex-wrap:wrap }
   .crumb a:hover { color:#fff } .crumb b { color:#fff; font-weight:600 }
-  .subnav { display:flex; gap:8px; overflow-x:auto; padding:2px 0 10px; scrollbar-width:none } .subnav::-webkit-scrollbar { display:none }
-  .subnav .chip { white-space:nowrap } .subnav .chip.on { background:var(--acc); color:var(--acc-ink); border-color:var(--acc) }
+  .subnav { display:flex; gap:8px; overflow-x:auto; padding:2px 0 14px; scrollbar-width:none; height:154px } .subnav::-webkit-scrollbar { display:none }
+  .sub { position:relative; flex:0 0 46px; height:140px; border-radius:23px; overflow:hidden; background:var(--bg2); border:1px solid var(--edge); opacity:.5; display:flex; align-items:flex-end; text-decoration:none; transition:flex-basis .45s cubic-bezier(.4,0,.2,1), opacity .3s, border-color .3s; isolation:isolate }
+  .sub:hover { opacity:.8 } .sub.off { opacity:.3 }
+  .sub.on { flex-basis:230px; opacity:1; border-color:var(--acc) }
+  .sub .media { position:absolute; inset:0; z-index:0; background:linear-gradient(135deg,#3a3a3a,#111) center/cover; filter:grayscale(.6) } .sub.on .media { filter:none }
+  .sub .vlabel { position:absolute; z-index:2; left:50%; bottom:14px; translate:-50% 0; writing-mode:vertical-rl; rotate:180deg; font-size:12px; font-weight:700; white-space:nowrap; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,.7); transition:opacity .2s } .sub.on .vlabel { opacity:0 }
+  .sub .content { position:absolute; z-index:1; left:0; bottom:0; width:230px; padding:40px 14px 12px; background:linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,.85)); opacity:0; visibility:hidden; translate:0 6px; transition:.25s } .sub.on .content { opacity:1; visibility:visible; translate:0 0 }
+  .sub h4 { margin:0; font-size:16px; font-weight:800; letter-spacing:-.02em; color:#fff } .sub .m { font-size:11px; color:rgba(255,255,255,.7); margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+  .sub .tag2 { position:absolute; z-index:2; top:10px; left:10px; font-size:10px; font-weight:800; letter-spacing:.1em; padding:3px 8px; border-radius:999px; background:var(--acc); color:var(--acc-ink); opacity:0; transition:opacity .25s } .sub.on .tag2 { opacity:1 }
+  @media (max-width:640px) { .subnav { height:128px } .sub { flex-basis:38px; height:116px; border-radius:19px } .sub.on { flex-basis:190px } .sub .content { width:190px } }
   .grid { display:grid; grid-template-columns:1.15fr .85fr; gap:18px; margin-top:6px }
   @media (max-width:900px) { .grid { grid-template-columns:1fr } }
   .sec { padding:22px }
@@ -468,7 +476,11 @@ async function openChannel(ch){
   document.title=`${ch.nombre} · Radio Comunitaria`;
   $('chFavBtn').dataset.favCh=ch.id; renderHearts();
   const root = parent||ch; const siblings=[root, ...kids(root.id)];
-  $('subnav').innerHTML=siblings.map(s=>`<a class="chip ${s.id===ch.id?'on':''} ${s.temas?'':'off'}" href="#/c/${s.slug}">${s.parent_id?'':'Todo '}${esc(s.nombre)}</a>`).join('');
+  $('subnav').innerHTML=siblings.map(s=>{ const on=s.id===ch.id; const name=(s.parent_id?'':'Todo ')+s.nombre;
+    return `<a class="sub ${on?'on':''} ${s.temas?'':'off'}" href="#/c/${s.slug}" aria-current="${on?'page':'false'}" title="${esc(name)}">
+      <div class="media" style="${s.sonando_portada?`background-image:url(${esc(s.sonando_portada)})`:''}"></div><span class="vlabel">${esc(name)}</span>${on?'<span class="tag2">ESTÁS ACÁ</span>':''}
+      <div class="content"><h4>${esc(name)}</h4><div class="m">${s.sonando_titulo?esc(s.sonando_titulo)+' · '+esc(s.sonando_artista):(s.temas?s.temas+' temas':'sin temas')}</div></div></a>`; }).join('');
+  setTimeout(()=>$('subnav').querySelector('.sub.on')?.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'}),50);
   const hasTracks = ch.temas>0;
   $('hero').classList.toggle('hidden',!hasTracks); $('voteSec').classList.toggle('hidden',!hasTracks); $('emptyCh').classList.toggle('hidden',hasTracks);
   $('chat').innerHTML=''; $('cands').innerHTML='<div class="skeleton"></div><div class="skeleton"></div>';

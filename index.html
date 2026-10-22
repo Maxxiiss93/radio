@@ -1,0 +1,653 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0a">
+<title>Radio Comunitaria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg0:#0a0a0a; --bg1:#111; --bg2:#1a1a1a;
+    --glass:rgba(255,255,255,.06); --glass2:rgba(255,255,255,.11); --edge:rgba(255,255,255,.14); --edge2:rgba(255,255,255,.35);
+    --txt:#fff; --txt2:rgba(255,255,255,.7); --txt3:rgba(255,255,255,.45); --txt4:rgba(255,255,255,.25);
+    --acc:#ff6a3d; --acc2:#ffb15c; --acc-ink:#1a0a04; --acc-soft:rgba(255,106,61,.18); --acc-glow:rgba(255,106,61,.45);
+    --r:24px; --r2:16px;
+  }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent }
+  html,body { height:100% }
+  body { margin:0; color:var(--txt); font:15px/1.5 Sora, system-ui, sans-serif; -webkit-font-smoothing:antialiased; background:var(--bg0); overflow-x:hidden }
+  button { font:inherit; cursor:pointer; border:0; background:none; color:inherit }
+  input { font:inherit }
+  a { color:inherit; text-decoration:none }
+  ::selection { background:#fff; color:#000 }
+
+  .bg { position:fixed; inset:0; z-index:0; overflow:hidden; background:radial-gradient(120% 80% at 50% -20%, #1c1c1c, var(--bg0) 60%) }
+  .blob { position:absolute; width:60vmax; height:60vmax; border-radius:50%; filter:blur(100px); opacity:.16; background:#fff; animation:drift 30s ease-in-out infinite alternate; will-change:transform }
+  .b1 { top:-25vmax; left:-15vmax } .b2 { bottom:-30vmax; right:-10vmax; animation-delay:-12s; opacity:.1 }
+  .b3 { top:30vmax; right:10vmax; width:40vmax; height:40vmax; background:var(--acc); opacity:.1; animation-delay:-20s }
+  body.playing .b3 { opacity:.2 }
+  @keyframes drift { 50%{transform:translate(8vmax,-6vmax) scale(1.1)} 100%{transform:translate(-6vmax,8vmax) scale(.95)} }
+  body.playing .blob { animation-duration:12s; opacity:.22 }
+  .bg::after { content:""; position:absolute; inset:0; opacity:.35; mix-blend-mode:overlay; pointer-events:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .25 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>") }
+
+  .app { position:relative; z-index:1; max-width:1200px; margin:0 auto; padding:0 20px 130px }
+  .glass { background:var(--glass); backdrop-filter:blur(24px) saturate(140%); -webkit-backdrop-filter:blur(24px) saturate(140%); border:1px solid var(--edge); border-radius:var(--r); box-shadow:0 24px 60px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.14) }
+  header { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:18px 0 10px; position:sticky; top:0; z-index:5; background:linear-gradient(var(--bg0) 60%, transparent); margin:0 -20px; padding-left:20px; padding-right:20px }
+  .brand { display:flex; align-items:center; gap:12px; min-width:0 }
+  .logo { flex:none; animation:spin 12s linear infinite; filter:drop-shadow(0 0 14px rgba(255,255,255,.3)) }
+  @keyframes spin { to { transform:rotate(360deg) } }
+  .brand h1 { font-size:17px; font-weight:800; margin:0; letter-spacing:-.02em; white-space:nowrap }
+  .brand small { display:block; font-size:12px; color:var(--txt2); font-weight:500; white-space:nowrap }
+  .brand small i { display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--acc); margin-right:6px; box-shadow:0 0 10px var(--acc); animation:pulse 1.6s infinite }
+  @keyframes pulse { 50% { opacity:.35 } }
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 22px; border-radius:999px; font-weight:700; letter-spacing:-.01em; color:var(--acc-ink); background:linear-gradient(180deg,var(--acc2),var(--acc)); box-shadow:0 10px 30px var(--acc-glow), inset 0 1px 0 rgba(255,255,255,.5); transition:transform .15s, box-shadow .2s, opacity .2s }
+  .btn svg { flex:none }
+  .btn:hover { transform:translateY(-2px); box-shadow:0 14px 36px var(--acc-glow) } .btn:active { transform:scale(.97) }
+  .btn.glass { background:var(--glass2); color:#fff; border:1px solid var(--edge); box-shadow:none; backdrop-filter:blur(12px) }
+  .btn.sm { padding:9px 16px; font-size:13px }
+  .btn[disabled] { opacity:.7; transform:none; cursor:default }
+  .av { width:34px; height:34px; border-radius:50%; display:grid; place-items:center; font-weight:800; font-size:12px; color:#000; flex:none; border:2px solid rgba(255,255,255,.35); background:#ddd center/cover; overflow:hidden }
+  .menu { position:relative } .menu .dd { position:absolute; right:0; top:46px; min-width:200px; padding:6px; display:none; z-index:20 } .menu.open .dd { display:block }
+  .dd button, .dd label { display:flex; align-items:center; gap:10px; width:100%; text-align:left; padding:10px 12px; border-radius:10px; font-size:14px; cursor:pointer } .dd button:hover, .dd label:hover { background:rgba(255,255,255,.08) }
+  .dd .av { width:40px; height:40px } .dd .who { padding:8px 12px 10px; border-bottom:1px solid var(--edge); margin-bottom:6px; display:flex; align-items:center; gap:10px } .dd .who b { display:block } .dd .who span { font-size:12px; color:var(--txt3) }
+  .busy { opacity:.6; pointer-events:none }
+
+  /* Índice */
+  .hero-idx { padding:40px 0 20px }
+  .hero-idx h2 { font-size:clamp(34px,6vw,64px); font-weight:800; letter-spacing:-.04em; line-height:1; margin:0 0 10px; text-wrap:balance }
+  .hero-idx h2 span { color:var(--txt3) }
+  .hero-idx p { color:var(--txt2); margin:0; max-width:56ch; font-size:16px }
+  .search { margin:22px 0 10px; display:flex; align-items:center; gap:10px; padding:6px 6px 6px 18px; border-radius:999px; max-width:560px }
+  .search input { flex:1; background:none; border:0; outline:0; color:#fff; min-width:0; font-size:15px } .search input::placeholder { color:var(--txt3) }
+  .search kbd { font-size:11px; color:var(--txt3); border:1px solid var(--edge); padding:3px 7px; border-radius:6px }
+  .genres { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px,1fr)); gap:14px; margin-top:18px }
+  .genre { position:relative; aspect-ratio:1; border-radius:var(--r); overflow:hidden; display:flex; flex-direction:column; justify-content:flex-end; padding:18px; isolation:isolate; transition:transform .2s, box-shadow .2s; border:1px solid var(--edge); background:var(--bg2) }
+  .genre:hover { transform:translateY(-4px); box-shadow:0 30px 60px rgba(0,0,0,.6); border-color:var(--acc) }
+  .genre .media { position:absolute; inset:0; z-index:-1; background:linear-gradient(135deg,#444,#111) center/cover; filter:grayscale(1) contrast(1.05); transition:filter .35s, transform .6s }
+  .genre .media video { width:100%; height:100%; object-fit:cover; display:block }
+  .genre:hover .media { filter:grayscale(0); transform:scale(1.04) }
+  .genre .media.empty { display:grid; place-items:center; font-size:64px; font-weight:800; color:rgba(255,255,255,.08); letter-spacing:-.05em }
+  .genre::after { content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(180deg, rgba(0,0,0,.05) 30%, rgba(0,0,0,.85)) }
+  .genre h3 { margin:0; font-size:24px; font-weight:800; letter-spacing:-.03em; line-height:1 }
+  .genre .d { font-size:12px; color:var(--txt2); margin-top:6px }
+  .np { font-size:13px; color:var(--txt2); display:flex; align-items:center; gap:8px; min-height:20px; margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,255,255,.14); min-width:0 }
+  .np b { color:#fff; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0 } .np span { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--txt3) }
+  .np i { display:inline-flex; gap:2px; align-items:flex-end; height:12px; flex:none } .np i s { width:3px; background:var(--acc); height:4px; animation:eq .8s ease-in-out infinite; text-decoration:none } .np i s:nth-child(2){animation-delay:.2s} .np i s:nth-child(3){animation-delay:.4s}
+  @keyframes eq { 50% { height:12px } }
+  .np.off { color:var(--txt4) }
+  .tplay { position:absolute; right:14px; bottom:64px; width:46px; height:46px; border-radius:50%; background:var(--acc); color:var(--acc-ink); display:grid; place-items:center; box-shadow:0 8px 24px var(--acc-glow); opacity:0; transform:translateY(6px); transition:opacity .2s, transform .2s } .tplay svg { width:20px; height:20px }
+  .genre:hover .tplay, .genre.on .tplay { opacity:1; transform:none } .genre.on { border-color:var(--acc) } .genre.on .media { filter:none }
+  @media (hover:none) { .tplay { opacity:1; transform:none } }
+  .vid { position:absolute; top:14px; right:14px; font-size:10px; font-weight:800; letter-spacing:.12em; padding:4px 8px; border-radius:6px; background:var(--acc); color:var(--acc-ink); border:1px solid var(--edge); backdrop-filter:blur(6px) }
+  .chip { font-size:12px; padding:5px 10px; border-radius:999px; background:var(--glass); border:1px solid var(--edge); color:var(--txt2); transition:background .15s, color .15s }
+  .chip:hover { background:#fff; color:#000 } .chip.off { opacity:.45 } .chip.more { border-style:dashed }
+
+  /* Canal */
+  .crumb { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--txt3); margin:8px 0 12px; flex-wrap:wrap }
+  .crumb a:hover { color:#fff } .crumb b { color:#fff; font-weight:600 }
+  .subnav { display:flex; gap:8px; overflow-x:auto; padding:2px 0 10px; scrollbar-width:none } .subnav::-webkit-scrollbar { display:none }
+  .subnav .chip { white-space:nowrap } .subnav .chip.on { background:var(--acc); color:var(--acc-ink); border-color:var(--acc) }
+  .grid { display:grid; grid-template-columns:1.15fr .85fr; gap:18px; margin-top:6px }
+  @media (max-width:900px) { .grid { grid-template-columns:1fr } }
+  .sec { padding:22px }
+  .sec h2 { font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--txt3); margin:0 0 16px; display:flex; align-items:center; justify-content:space-between; gap:10px }
+  .sec h2 span { text-transform:none; letter-spacing:0; font-weight:500; color:var(--txt2) }
+  .hero { grid-column:1 / -1; padding:28px; display:grid; grid-template-columns:230px 1fr; gap:30px; align-items:center; position:relative; overflow:hidden }
+  @media (max-width:700px) { .hero { grid-template-columns:1fr; justify-items:center; text-align:center; padding:24px } }
+  .disc { width:230px; height:230px; border-radius:50%; position:relative; flex:none; background:conic-gradient(from 180deg,#1c1c1c,#2e2e2e,#161616,#1c1c1c); box-shadow:0 30px 60px rgba(0,0,0,.6), 0 0 0 1px var(--edge), 0 0 80px rgba(255,255,255,.08) }
+  .disc::before { content:""; position:absolute; inset:0; border-radius:50%; background:repeating-radial-gradient(circle, rgba(255,255,255,.06) 0 2px, transparent 2px 7px) }
+  .disc .art { position:absolute; inset:22%; border-radius:50%; background:linear-gradient(135deg,#fff,#777) center/cover; display:grid; place-items:center; font-size:34px; font-weight:800; color:#000; letter-spacing:-.04em; box-shadow:inset 0 0 0 4px rgba(0,0,0,.4); filter:grayscale(1) }
+  .disc .art::after { content:""; position:absolute; width:14px; height:14px; border-radius:50%; background:var(--bg0) }
+  body.playing .disc { animation:spin 6s linear infinite }
+  .halo { position:absolute; inset:-14px; border-radius:50%; border:2px solid transparent; border-top-color:var(--acc); border-right-color:rgba(255,255,255,.2); animation:spin 1.6s linear infinite; opacity:0; transition:opacity .3s }
+  body.playing .halo { opacity:1 }
+  .kicker { font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--acc2) }
+  .title { font-size:clamp(30px,5vw,54px); font-weight:800; letter-spacing:-.03em; line-height:1.02; margin:8px 0 4px; text-wrap:balance }
+  .artist { font-size:18px; color:var(--txt2); font-weight:500 }
+  .prog { margin-top:20px; max-width:560px } @media (max-width:700px) { .prog { width:100% } }
+  .bar { height:6px; border-radius:3px; background:rgba(255,255,255,.12); overflow:hidden }
+  .bar > div { height:100%; width:0; border-radius:3px; background:linear-gradient(90deg,var(--acc),var(--acc2)); box-shadow:0 0 16px var(--acc-glow); transition:width .95s linear }
+  .times { display:flex; justify-content:space-between; font-size:12px; color:var(--txt3); margin-top:8px; font-variant-numeric:tabular-nums; font-weight:600 }
+  .actions { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:18px } @media (max-width:700px) { .actions { justify-content:center } }
+  .vol { display:flex; align-items:center; gap:8px; color:var(--txt3); font-size:13px } .vol input { width:110px; accent-color:#fff }
+  .next { margin-top:14px; font-size:14px; color:var(--txt2) } .next b { color:#fff; font-weight:700 }
+  .waves { position:absolute; right:-40px; bottom:-30px; display:flex; gap:6px; align-items:flex-end; height:140px; opacity:.12; pointer-events:none }
+  .waves i { width:10px; border-radius:6px; background:linear-gradient(180deg,var(--acc),transparent); height:30px }
+  body.playing .waves i { animation:w 1.1s ease-in-out infinite } .waves i:nth-child(2n){animation-delay:.2s} .waves i:nth-child(3n){animation-delay:.4s} .waves i:nth-child(5n){animation-delay:.6s}
+  @keyframes w { 50% { height:140px } }
+  .empty-ch { grid-column:1 / -1; padding:48px 28px; text-align:center } .empty-ch h3 { font-size:26px; margin:0 0 8px; letter-spacing:-.02em } .empty-ch p { color:var(--txt2); margin:0 0 18px }
+
+  .cands { display:flex; flex-direction:column; gap:10px }
+  .cand { position:relative; display:grid; grid-template-columns:48px 1fr auto; gap:14px; align-items:center; padding:12px 14px; border-radius:var(--r2); text-align:left; width:100%; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); overflow:hidden; transition:transform .15s, background .2s, border-color .2s }
+  .cand:hover { background:rgba(255,255,255,.1); transform:translateX(4px) }
+  .cand .fill { position:absolute; inset:0; width:0; background:linear-gradient(90deg, var(--acc-soft), rgba(255,255,255,.02)); transition:width .7s cubic-bezier(.2,.8,.2,1); pointer-events:none }
+  .cand.mine { border-color:var(--acc); box-shadow:0 0 0 1px var(--acc), 0 0 24px var(--acc-glow) }
+  .cand > * { position:relative }
+  .ico { width:48px; height:48px; border-radius:14px; display:grid; place-items:center; font-weight:800; font-size:15px; background:rgba(255,255,255,.1); border:1px solid var(--edge) }
+  .cand.lead .ico { background:linear-gradient(135deg,var(--acc2),var(--acc)); color:var(--acc-ink); border-color:transparent; box-shadow:0 6px 18px var(--acc-glow) }
+  .cand .t { min-width:0 } .cand .t b { display:block; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis } .cand .t span { color:var(--txt2); font-size:13px }
+  .pct { font-size:20px; font-weight:800; font-variant-numeric:tabular-nums; text-align:right; letter-spacing:-.02em } .pct small { display:block; color:var(--txt3); font-size:11px; font-weight:600 }
+  .tag { position:absolute; right:12px; top:-9px; font-size:10px; font-weight:800; letter-spacing:.08em; padding:3px 9px; border-radius:999px; background:var(--acc); color:var(--acc-ink); display:none }
+  .cand.mine .tag { display:block }
+  .hint { margin-top:14px; font-size:13px; color:var(--txt3); display:flex; gap:10px; align-items:center; flex-wrap:wrap }
+  .count { font-variant-numeric:tabular-nums; font-weight:700; color:var(--acc2); background:var(--acc-soft); padding:4px 10px; border-radius:999px; font-size:12px }
+
+  .chatwrap { display:flex; flex-direction:column; height:540px } @media (max-width:900px) { .chatwrap { height:460px } }
+  .chat { flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:12px; padding-right:6px; scroll-behavior:smooth; overscroll-behavior:contain; mask-image:linear-gradient(transparent, #000 24px) }
+  .chat::-webkit-scrollbar { width:5px } .chat::-webkit-scrollbar-thumb { background:rgba(255,255,255,.2); border-radius:3px }
+  .msg { display:grid; grid-template-columns:34px 1fr; gap:10px; animation:in .25s ease }
+  @keyframes in { from { opacity:0; transform:translateY(8px) } }
+  .bub { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.08); border-radius:4px 16px 16px 16px; padding:8px 12px; display:inline-block; max-width:100%; word-break:break-word }
+  .msg .h { display:flex; gap:8px; align-items:baseline; font-size:12px; margin-bottom:3px } .msg .h b { font-weight:700 } .msg .h time { color:var(--txt3); font-size:11px }
+  .msg.me .bub { background:linear-gradient(135deg,var(--acc2),var(--acc)); color:var(--acc-ink); border-color:transparent }
+  .empty { color:var(--txt3); text-align:center; padding:40px 10px; font-size:14px }
+  .composer { display:flex; gap:8px; margin-top:12px; padding:6px 6px 6px 16px; background:rgba(255,255,255,.07); border:1px solid var(--edge); border-radius:999px; align-items:center }
+  .composer:focus-within { border-color:var(--acc); background:rgba(255,255,255,.1) }
+  .composer input { flex:1; background:none; border:0; outline:0; color:#fff; min-width:0 } .composer input::placeholder { color:var(--txt3) }
+  .composer button { width:40px; height:40px; border-radius:50%; background:var(--acc); color:var(--acc-ink); display:grid; place-items:center; flex:none; font-weight:800 }
+  .avstack { display:flex } .avstack .av { width:26px; height:26px; font-size:10px; margin-left:-9px } .avstack .av:first-child { margin:0 }
+
+  .mini { position:fixed; left:12px; right:12px; bottom:max(12px, env(safe-area-inset-bottom)); z-index:10; display:none; align-items:center; gap:12px; padding:10px 12px; border-radius:18px }
+  .mini .d { width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,#fff,#777) center/cover; flex:none; display:grid; place-items:center; font-weight:800; font-size:13px; color:#000; filter:grayscale(1) } body.playing .mini .d { animation:spin 6s linear infinite }
+  .mini .open { flex:1; min-width:0; display:flex; align-items:center; gap:12px; text-align:left; padding:0; color:inherit }
+  .mini .t { flex:1; min-width:0 } .mini .t b { display:block; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis } .mini .t span { font-size:12px; color:var(--txt2) }
+  .mini .p { position:absolute; left:16px; right:16px; bottom:0; height:2px; background:rgba(255,255,255,.15) } .mini .p i { display:block; height:100%; width:0; background:var(--acc); transition:width .95s linear }
+  .mini button { width:42px; height:42px; border-radius:50%; background:var(--acc); color:var(--acc-ink); display:grid; place-items:center; flex:none; font-size:16px }
+  .mini.show { display:flex }
+  .modal { position:fixed; inset:0; background:rgba(0,0,0,.6); backdrop-filter:blur(10px); display:none; place-items:center; z-index:60; padding:20px } .modal.open { display:grid }
+  .sheet { width:100%; max-width:390px; padding:26px; animation:in .2s ease }
+  .sheet h3 { margin:0 0 4px; font-size:26px; font-weight:800; letter-spacing:-.02em } .sheet p { margin:0 0 18px; color:var(--txt2); font-size:14px }
+  .tabs { display:flex; background:rgba(255,255,255,.06); border-radius:999px; padding:4px; margin-bottom:16px } .tabs button { flex:1; padding:9px; border-radius:999px; font-weight:700; color:var(--txt2) } .tabs button.on { background:var(--acc); color:var(--acc-ink) }
+  .field { margin-bottom:12px } .field label { display:block; font-size:12px; color:var(--txt3); margin-bottom:6px; font-weight:600 }
+  .field input { width:100%; background:rgba(255,255,255,.07); border:1px solid var(--edge); border-radius:12px; padding:12px 14px; color:#fff; outline:0 } .field input:focus { border-color:var(--acc); background:rgba(255,255,255,.1) }
+  .err { color:#ffb3b3; font-size:13px; min-height:18px; margin-top:6px }
+  .sheet .btn { width:100%; margin-top:8px }
+  .toasts { position:fixed; top:16px; left:50%; transform:translateX(-50%); z-index:70; display:flex; flex-direction:column; gap:8px; pointer-events:none }
+  .toast { padding:10px 18px; border-radius:999px; font-size:13px; font-weight:600; animation:in .2s ease; background:rgba(255,255,255,.12); backdrop-filter:blur(14px); border:1px solid var(--edge) }
+  .toast.err { background:rgba(255,80,80,.4) }
+  .skeleton { height:72px; border-radius:var(--r2); background:rgba(255,255,255,.06); animation:pulse 1.2s infinite }
+  .icbtn { width:40px; height:40px; border-radius:50%; display:grid; place-items:center; background:var(--glass2); border:1px solid var(--edge); color:var(--txt2); transition:background .15s, color .15s, transform .12s; flex:none }
+  .icbtn:hover { background:rgba(255,255,255,.18); color:#fff; transform:translateY(-1px) }
+  .icbtn.on { color:var(--acc); border-color:var(--acc); background:var(--acc-soft) } .icbtn.on svg { fill:var(--acc) }
+  .genre .chfav { position:absolute; top:14px; left:14px; width:36px; height:36px; background:rgba(0,0,0,.45); backdrop-filter:blur(6px) }
+  .genre .chfav.on { background:var(--acc-soft) }
+  .rowh { font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--txt3); margin:22px 0 10px }
+  .favrow { display:flex; gap:10px; overflow-x:auto; padding-bottom:6px; scrollbar-width:none } .favrow::-webkit-scrollbar { display:none }
+  .favch { display:flex; align-items:center; gap:10px; padding:8px 14px 8px 8px; border-radius:999px; background:var(--glass); border:1px solid var(--edge); white-space:nowrap; flex:none; transition:border-color .15s }
+  .favch:hover, .favch.on { border-color:var(--acc) } .favch .cv { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,#555,#222) center/cover; filter:grayscale(1) } .favch.on .cv { filter:none }
+  .favch b { display:block; font-size:14px } .favch small { font-size:11px; color:var(--txt3); display:block; max-width:160px; overflow:hidden; text-overflow:ellipsis }
+  .listmenu { position:absolute; z-index:30; top:52px; left:0; min-width:260px; padding:8px; border-radius:var(--r2); animation:in .15s ease }
+  .listmenu .lm-title { font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--txt3); padding:6px 10px }
+  .listmenu button[data-l] { display:flex; justify-content:space-between; align-items:center; width:100%; text-align:left; padding:10px 12px; border-radius:10px; font-size:14px } .listmenu button[data-l]:hover { background:rgba(255,255,255,.08) } .listmenu button[data-l] span { color:var(--txt3); font-size:12px }
+  .listmenu .lm-empty { padding:8px 12px; color:var(--txt3); font-size:13px }
+  .listmenu .lm-new { display:flex; gap:6px; padding:8px 6px 2px; border-top:1px solid var(--edge); margin-top:6px } .listmenu .lm-new input { flex:1; min-width:0; background:rgba(255,255,255,.07); border:1px solid var(--edge); border-radius:8px; padding:8px 10px; color:#fff; outline:0 } .listmenu .lm-new button { padding:8px 12px; border-radius:8px; background:var(--acc); color:var(--acc-ink); font-weight:700 }
+  .actions { position:relative }
+  .mine-h { padding:36px 0 16px } .mine-h h2 { font-size:clamp(30px,5vw,48px); font-weight:800; letter-spacing:-.04em; margin:0 0 6px } .mine-h p { color:var(--txt2); margin:0 }
+  .tabs.wide { max-width:420px; margin:18px 0 }
+  .tlist { display:flex; flex-direction:column; gap:8px }
+  .trow { display:grid; grid-template-columns:48px 1fr auto; gap:12px; align-items:center; padding:10px 12px; border-radius:var(--r2); background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08) }
+  .trow .cv { width:48px; height:48px; border-radius:10px; background:linear-gradient(135deg,#666,#222) center/cover; display:grid; place-items:center; font-weight:800; font-size:13px; color:#000; filter:grayscale(1) } .trow:hover .cv { filter:none }
+  .trow .ti { min-width:0 } .trow .ti b { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis } .trow .ti small { color:var(--txt3); font-size:12px } .trow .ti a:hover { color:var(--acc2) }
+  .trow .ta { display:flex; gap:6px }
+  .newlist { display:flex; gap:8px; margin-bottom:16px; max-width:520px } .newlist input { flex:1; min-width:0; background:rgba(255,255,255,.07); border:1px solid var(--edge); border-radius:999px; padding:10px 16px; color:#fff; outline:0 } .newlist input:focus { border-color:var(--acc) }
+  .plist { margin-bottom:12px } .plist summary { display:flex; align-items:center; gap:12px; cursor:pointer; list-style:none; padding:12px 14px; border-radius:var(--r2); } .plist summary::-webkit-details-marker { display:none }
+  .plist summary b { font-size:17px; letter-spacing:-.02em } .plist summary span { color:var(--txt3); font-size:12px; flex:1 } .plist summary .icbtn { width:34px; height:34px }
+  .plist .tlist { padding:4px 0 8px 14px }
+  .empty.small { padding:16px }
+  .hidden { display:none !important }
+</style>
+</head>
+<body>
+<div class="bg"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+<div class="app">
+  <header>
+    <a class="brand" href="#/"><svg class="logo" viewBox="0 0 40 40" width="40" height="40" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="#fff"/><circle cx="20" cy="20" r="11" fill="none" stroke="#0a0a0a" stroke-width="2"/><circle cx="20" cy="20" r="5" fill="none" stroke="#0a0a0a" stroke-width="2"/><circle cx="20" cy="20" r="2.4" fill="#ff6a3d"/><path d="M20 3v6M20 31v6" stroke="#0a0a0a" stroke-width="2" stroke-linecap="round"/></svg><div><h1>Radio Comunitaria</h1><small><i></i><span id="online">0</span> escuchando ahora</small></div></a>
+    <div style="display:flex;gap:8px;align-items:center"><a class="btn glass sm" id="mineLink" href="#/mi" hidden><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg> Mi música</a><div id="auth"></div></div>
+  </header>
+
+  <section id="viewIndex">
+    <div class="hero-idx">
+      <h2>Elegí tu canal.<br><span>La gente vota, todos escuchan.</span></h2>
+      <p>Un canal por género y subgénero. En cada uno, la audiencia elige el próximo tema y charla mientras suena.</p>
+      <div class="search glass"><span style="color:var(--txt3);display:flex"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></span><input id="q" placeholder="Buscar género o subgénero…" autocomplete="off"><kbd>/</kbd></div>
+    </div>
+    <div id="favChannels" hidden></div>
+    <div class="rowh">Todos los géneros</div>
+    <div class="genres" id="genres"><div class="skeleton glass" style="aspect-ratio:1;height:auto"></div><div class="skeleton glass" style="aspect-ratio:1;height:auto"></div><div class="skeleton glass" style="aspect-ratio:1;height:auto"></div></div>
+  </section>
+
+  <section id="viewChannel" class="hidden">
+    <div class="crumb" style="justify-content:space-between"><span><a href="#/">Canales</a> <span>›</span> <span id="crumbParent"></span><b id="crumbName"></b></span><button class="btn glass sm" id="chFavBtn"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg> <span id="chFavTxt">Seguir canal</span></button></div>
+    <div class="subnav" id="subnav"></div>
+    <div class="grid">
+      <div class="glass hero" id="hero">
+        <div class="disc"><div class="halo"></div><div class="art" id="art"><span id="artEmoji"></span></div></div>
+        <div>
+          <div class="kicker" id="kicker">Sonando ahora</div>
+          <h2 class="title" id="title">Cargando…</h2>
+          <div class="artist" id="artist">&nbsp;</div>
+          <div class="prog"><div class="bar"><div id="prog"></div></div><div class="times"><span id="elapsed">0:00</span><span id="remain">-0:00</span></div></div>
+          <div class="actions">
+            <button class="btn" id="tune"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Sintonizar</button>
+            <button class="btn glass" id="stopBtn" hidden>Parar</button>
+            <button class="icbtn" id="favBtn" title="Guardar en favoritos"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></button>
+            <button class="icbtn" id="listBtn" title="Agregar a una lista"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+            <label class="vol" id="volwrap" hidden><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 0 1 0 6"/></svg><input type="range" id="vol" min="0" max="1" step=".02" value="1" aria-label="Volumen"></label>
+          </div>
+          <div class="next" id="next"></div>
+        </div>
+        <div class="waves"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+      <div class="glass empty-ch hidden" id="emptyCh"><h3>Este canal todavía no tiene temas</h3><p>Sé el primero en proponer música para acá. Mientras tanto, probá otro subgénero.</p><a class="btn glass sm" href="#/">Ver todos los canales</a></div>
+      <section class="glass sec" id="voteSec">
+        <h2>Elegí lo que sigue <span class="count" id="countdown">—</span></h2>
+        <div class="cands" id="cands"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+        <div class="hint" id="votehint"></div>
+      </section>
+      <section class="glass sec" id="chatSec">
+        <h2>Chat del canal <span class="avstack" id="avstack"></span></h2>
+        <div class="chatwrap">
+          <div class="chat" id="chat"></div>
+          <form class="composer" id="chatform"><input id="chatinput" maxlength="300" placeholder="Escribí algo…" autocomplete="off" aria-label="Mensaje"><button type="submit" aria-label="Enviar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></form>
+        </div>
+      </section>
+    </div>
+  </section>
+  <section id="viewMine" class="hidden">
+    <div class="mine-h"><h2>Mi música</h2><p>Lo que guardaste, tus listas y los canales que seguís.</p></div>
+    <div class="tabs wide" id="mineTabs"><button class="on" data-t="favoritos">Favoritos</button><button data-t="listas">Listas</button><button data-t="canales">Canales</button></div>
+    <div id="mineBody"></div>
+  </section>
+  <audio id="player" preload="auto"></audio>
+</div>
+
+<div class="mini glass" id="mini"><button class="open" id="miniOpen" title="Abrir canal"><div class="d" id="miniCov"></div><div class="t"><b id="miniTitle">—</b><span id="miniArtist"></span></div></button><button id="miniBtn" aria-label="Parar" title="Parar"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></button><div class="p"><i id="miniProg"></i></div></div>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true">
+  <div class="sheet glass">
+    <h3 id="mTitle">Sumate a la radio</h3><p>Con una cuenta podés votar el próximo tema y chatear en cada canal.</p>
+    <div class="tabs"><button id="tabLogin" class="on" type="button">Entrar</button><button id="tabSignup" type="button">Crear cuenta</button></div>
+    <form id="authform">
+      <div class="field" id="apodoField" hidden><label>Apodo</label><input id="ap" maxlength="24" placeholder="cómo te van a ver"></div>
+      <div class="field"><label>Email</label><input id="em" type="email" required autocomplete="email"></div>
+      <div class="field"><label>Contraseña</label><input id="pw" type="password" required minlength="6" autocomplete="current-password"></div>
+      <div class="err" id="authErr"></div>
+      <button class="btn" id="authBtn" type="submit">Entrar</button>
+      <button class="btn glass" type="button" id="authClose">Cancelar</button>
+    </form>
+  </div>
+</div>
+<div class="toasts" id="toasts"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+// ====== CONFIG ======
+const SUPABASE_URL = 'https://fwrziwrqslpuoynspmuk.supabase.co';
+const SUPABASE_ANON = 'TU_ANON_KEY';
+// ====================
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+const STAR='<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7-6.2-3.7L5.8 21l1.6-7L2 9.3l7.1-.7z"/></svg>', CHECK='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M5 12l5 5L20 7"/></svg>';
+const ICON_CAM='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>', ICON_OUT='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4H5v16h5M14 8l4 4-4 4M18 12H9"/></svg>';
+const ICON_HEART='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>', ICON_PLUS='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>', ICON_TRASH='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>', ICON_X='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+const ICON_PLAY='<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+const ICON_LIVE='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 12h2l2-6 3 12 3-9 2 3h4"/></svg>';
+const $ = id => document.getElementById(id);
+const player = $('player');
+let user=null, profile=null, skew=0, channels=[], channel=null, state=null, track=null, myVote=null, lastTrackId=null, dbChan=null, presence=null;
+const play={ channel:null, state:null, track:null, sub:null, on:false };
+const names = new Map();
+const fmt = s => `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+const serverNow = () => Date.now() + skew;
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const PALETTE = ['#e6e6e6','#bdbdbd','#8f8f8f','#d4d4d4','#a3a3a3'];
+const colorOf = id => PALETTE[[...String(id)].reduce((a,c)=>a+c.charCodeAt(0),0) % PALETTE.length];
+const initials = s => (s||'?').split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+const avatar = (id,name,url) => url ? `<span class="av" style="background-image:url(${esc(url)})" title="${esc(name)}"></span>` : `<span class="av" style="background:${colorOf(id)}" title="${esc(name)}">${esc((name||'?').slice(0,2).toUpperCase())}</span>`;
+const toast = (m,k='') => { const t=document.createElement('div'); t.className='toast '+k; t.textContent=m; $('toasts').appendChild(t); setTimeout(()=>t.remove(),2800); };
+const traducir = m => ({'Invalid login credentials':'Email o contraseña incorrectos','User already registered':'Ese email ya tiene cuenta','Email not confirmed':'Confirmá tu email para entrar'}[m]||m);
+
+// ---------- Auth ----------
+let mode='login';
+function setMode(m){ mode=m; $('tabLogin').classList.toggle('on',m==='login'); $('tabSignup').classList.toggle('on',m==='signup'); $('apodoField').hidden=m!=='signup'; $('authBtn').textContent=m==='login'?'Entrar':'Crear cuenta'; $('mTitle').textContent=m==='login'?'Bienvenido de vuelta':'Sumate a la radio'; }
+function openModal(m='login'){ setMode(m); $('authErr').textContent=''; $('modal').classList.add('open'); setTimeout(()=>$('em').focus(),50); }
+const closeModal=()=>$('modal').classList.remove('open');
+$('tabLogin').onclick=()=>setMode('login'); $('tabSignup').onclick=()=>setMode('signup'); $('authClose').onclick=closeModal;
+$('modal').onclick=e=>{ if(e.target===$('modal')) closeModal(); };
+$('authform').onsubmit=async e=>{
+  e.preventDefault(); $('authErr').textContent=''; $('authBtn').disabled=true;
+  const email=$('em').value.trim(), password=$('pw').value; let error;
+  if(mode==='login') ({error}=await sb.auth.signInWithPassword({email,password}));
+  else { const apodo=$('ap').value.trim(); if(apodo.length<2){ $('authErr').textContent='Elegí un apodo de al menos 2 letras'; $('authBtn').disabled=false; return; }
+    ({error}=await sb.auth.signUp({email,password,options:{data:{apodo}}})); if(!error) toast('Cuenta creada. Si pedimos confirmación, revisá tu mail.'); }
+  $('authBtn').disabled=false; if(error) $('authErr').textContent=traducir(error.message); else closeModal();
+};
+function renderAuth(){
+  const box=$('auth');
+  if(user){ const n=profile?.apodo??'…', av=profile?.avatar;
+    box.innerHTML=`<div class="menu" id="menu"><button class="btn glass sm" id="menuBtn">${avatar(user.id,n,av)} ${esc(n)}</button>
+      <div class="dd glass"><div class="who">${avatar(user.id,n,av)}<div><b>${esc(n)}</b><span>${esc(user.email||'')}</span></div></div>
+      <label for="avatarFile">${ICON_CAM} Cambiar foto de perfil</label><input type="file" id="avatarFile" accept="image/*" hidden>
+      <button id="logout">${ICON_OUT} Cerrar sesión</button></div></div>`;
+    $('menuBtn').onclick=e=>{ e.stopPropagation(); $('menu').classList.toggle('open'); };
+    $('avatarFile').onchange=e=>{ if(e.target.files[0]) uploadAvatar(e.target.files[0]); };
+    $('logout').onclick=()=>{ sb.auth.signOut(); toast('Hasta la próxima'); }; }
+  else { box.innerHTML=`<button class="btn glass sm" id="btnLogin">Entrar</button> <button class="btn sm" id="btnSignup">Crear cuenta</button>`; $('btnLogin').onclick=()=>openModal('login'); $('btnSignup').onclick=()=>openModal('signup'); }
+}
+document.addEventListener('click',e=>{ const m=$('menu'); if(m&&!m.contains(e.target)) m.classList.remove('open'); });
+sb.auth.onAuthStateChange(async(_e,session)=>{ user=session?.user??null; profile=null; if(user){ const {data}=await sb.from('profiles').select('apodo,rol,avatar').eq('id',user.id).single(); profile=data; } renderAuth(); if(channel) loadRound(); joinPresence(); loadMine(); });
+
+async function uploadAvatar(file){
+  if(!user) return; $('menu')?.classList.add('busy'); toast('Subiendo foto…');
+  try{
+    const blob=await resizeImage(file,256);
+    const path=`${user.id}/avatar.jpg`;
+    const {error}=await sb.storage.from('avatars').upload(path,blob,{upsert:true,contentType:'image/jpeg',cacheControl:'3600'});
+    if(error) throw error;
+    const {data}=sb.storage.from('avatars').getPublicUrl(path); const url=data.publicUrl.startsWith('data:')?data.publicUrl:data.publicUrl+'?v='+Date.now();
+    const {error:e2}=await sb.from('profiles').update({avatar:url}).eq('id',user.id); if(e2) throw e2;
+    profile={...profile,avatar:url}; names.set(user.id,{apodo:profile.apodo,avatar:url}); renderAuth(); joinPresence();
+    document.querySelectorAll('.msg.me .av').forEach(a=>{ a.style.backgroundImage=`url(${url})`; a.textContent=''; });
+    toast('Foto actualizada');
+  }catch(e){ toast('No se pudo subir la foto: '+(e.message||e),'err'); renderAuth(); }
+}
+function resizeImage(file,size){
+  return new Promise((res,rej)=>{ const img=new Image(); img.onload=()=>{ const c=document.createElement('canvas'); c.width=c.height=size; const x=c.getContext('2d');
+    const s=Math.min(img.width,img.height); x.drawImage(img,(img.width-s)/2,(img.height-s)/2,s,s,0,0,size,size); c.toBlob(b=>b?res(b):rej(new Error('canvas')),'image/jpeg',.86); };
+    img.onerror=()=>rej(new Error('imagen inválida')); img.src=URL.createObjectURL(file); });
+}
+async function syncClock(){ const t0=Date.now(); const {data}=await sb.rpc('server_now'); const t1=Date.now(); if(data) skew=new Date(data).getTime()-(t0+t1)/2; }
+
+// ---------- Canales ----------
+async function loadChannels(){ const {data}=await sb.from('channel_overview').select('*').order('orden'); channels=data??[]; }
+const kids = id => channels.filter(c=>c.parent_id===id);
+const bySlug = s => channels.find(c=>c.slug===s);
+function renderIndex(q=''){
+  const box=$('genres'); box.innerHTML=''; q=q.trim().toLowerCase();
+  channels.filter(c=>!c.parent_id).forEach(g=>{
+    const subs=kids(g.id); const gm=g.nombre.toLowerCase().includes(q);
+    const subsShown = q && !gm ? subs.filter(s=>s.nombre.toLowerCase().includes(q)) : subs;
+    if(q && !gm && !subsShown.length) return;
+    const np = g.sonando_titulo ? `<i><s></s><s></s><s></s></i><b>${esc(g.sonando_titulo)}</b><span>· ${esc(g.sonando_artista)}</span>` : `Sin temas todavía`;
+    const media = g.sonando_video ? `<div class="media"><video src="${esc(g.sonando_video)}" poster="${esc(g.sonando_portada||'')}" muted loop autoplay playsinline preload="metadata"></video></div>`
+                : g.sonando_portada ? `<div class="media" style="background-image:url(${esc(g.sonando_portada)})"></div>`
+                : `<div class="media empty">${esc(g.nombre.slice(0,2).toUpperCase())}</div>`;
+    const d=document.createElement('a'); d.className='genre'; d.href='#/c/'+g.slug; d.dataset.id=g.id;
+    d.innerHTML=`${media}${g.sonando_video?'<span class="vid">VIDEO</span>':''}<h3>${esc(g.nombre)}</h3><div class="d">${esc(g.descripcion||'')} · ${g.temas} temas</div><div class="np ${g.sonando_titulo?'':'off'}">${np}</div><button class="icbtn chfav" data-fav-ch="${g.id}" title="Seguir canal" aria-label="Seguir ${esc(g.nombre)}">${ICON_HEART}</button>${g.temas?`<button class="tplay" title="Escuchar sin entrar al canal" aria-label="Escuchar ${esc(g.nombre)}">${ICON_PLAY}</button>`:''}`;
+    d.querySelector('.chfav').onclick=e=>{ e.preventDefault(); e.stopPropagation(); toggleFavChannel(g); };
+    const tp=d.querySelector('.tplay'); if(tp) tp.onclick=e=>{ e.preventDefault(); e.stopPropagation(); if(play.on&&play.channel?.id===g.id) stopPlay(); else tuneChannel(g); };
+    box.appendChild(d);
+  });
+  if(!box.children.length) box.innerHTML='<div class="empty">No encontramos ese género</div>';
+  renderIndexState(); renderHearts(); renderFavChannels();
+}
+$('q').oninput=e=>renderIndex(e.target.value);
+document.addEventListener('keydown',e=>{ if(e.key==='/'&&document.activeElement.tagName!=='INPUT'){ e.preventDefault(); location.hash='#/'; setTimeout(()=>$('q').focus(),0); } });
+
+// ---------- Router ----------
+async function route(){
+  const m=location.hash.match(/^#\/c\/([a-z0-9-]+)/);
+  if(!channels.length) await loadChannels();
+  if(location.hash.startsWith('#/mi')){ leaveChannel(); $('viewChannel').classList.add('hidden'); $('viewIndex').classList.add('hidden'); $('viewMine').classList.remove('hidden'); document.title='Mi música · Radio Comunitaria'; await loadChannels(); renderMine(); window.scrollTo(0,0); return; }
+  $('viewMine').classList.add('hidden');
+  if(m && bySlug(m[1])) await openChannel(bySlug(m[1]));
+  else { leaveChannel(); $('viewChannel').classList.add('hidden'); $('viewIndex').classList.remove('hidden'); document.title='Radio Comunitaria'; await loadChannels(); renderIndex($('q').value); window.scrollTo(0,0); }
+}
+window.addEventListener('hashchange',route);
+function leaveChannel(){
+  if(dbChan){ sb.removeChannel(dbChan); dbChan=null; }
+  channel=null; state=null; track=null; lastTrackId=null;
+}
+async function openChannel(ch){
+  if(channel?.id===ch.id) return;
+  leaveChannel(); channel=ch;
+  $('viewIndex').classList.add('hidden'); $('viewChannel').classList.remove('hidden'); window.scrollTo(0,0);
+  const parent=ch.parent_id?channels.find(c=>c.id===ch.parent_id):null;
+  $('crumbParent').innerHTML=parent?`<a href="#/c/${parent.slug}">${esc(parent.nombre)}</a><span> › </span>`:'';
+  $('crumbName').textContent=ch.nombre; $('kicker').textContent=`${ch.nombre} · sonando ahora`;
+  document.title=`${ch.nombre} · Radio Comunitaria`;
+  $('chFavBtn').dataset.favCh=ch.id; renderHearts();
+  const root = parent||ch; const siblings=[root, ...kids(root.id)];
+  $('subnav').innerHTML=siblings.map(s=>`<a class="chip ${s.id===ch.id?'on':''} ${s.temas?'':'off'}" href="#/c/${s.slug}">${s.parent_id?'':'Todo '}${esc(s.nombre)}</a>`).join('');
+  const hasTracks = ch.temas>0;
+  $('hero').classList.toggle('hidden',!hasTracks); $('voteSec').classList.toggle('hidden',!hasTracks); $('emptyCh').classList.toggle('hidden',hasTracks);
+  $('chat').innerHTML=''; $('cands').innerHTML='<div class="skeleton"></div><div class="skeleton"></div>';
+  if(hasTracks){ await sb.rpc('radio_tick',{ch:ch.id}); await loadState(); }
+  renderTuneBtn();
+  await loadChat();
+  dbChan=sb.channel('db-'+ch.id)
+    .on('postgres_changes',{event:'*',schema:'public',table:'radio_state',filter:`channel_id=eq.${ch.id}`},loadState)
+    .on('postgres_changes',{event:'*',schema:'public',table:'votes'},loadRound)
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:`channel_id=eq.${ch.id}`},p=>addMsg(p.new))
+    .subscribe();
+  if(presence) presence.track({apodo:profile?.apodo??'anónimo', avatar:profile?.avatar||null, canal:ch.id});
+}
+
+// ---------- Player ----------
+async function loadState(){
+  if(!channel) return;
+  const {data}=await sb.from('radio_state').select('track_id, inicio_at, round_id, tracks(*)').eq('channel_id',channel.id).maybeSingle();
+  if(!data?.tracks){ $('title').textContent='Preparando el canal…'; $('artist').textContent=''; return; }
+  state=data; track=data.tracks; lastTrackId=track.id;
+  $('title').textContent=track.titulo; $('artist').textContent=track.artista;
+  if(track.portada){ $('art').style.backgroundImage=`url(${track.portada})`; $('artEmoji').textContent=''; } else { $('art').style.backgroundImage=''; $('artEmoji').textContent=initials(track.artista); }
+  $('favBtn').dataset.favTrack=track.id; renderHearts(); renderTuneBtn(); loadRound();
+}
+const offsetOf=s=>(serverNow()-new Date(s.inicio_at).getTime())/1000;
+const offset=()=>offsetOf(state);
+function resync(force){ if(!play.track||!play.state) return; const o=offsetOf(play.state); if(o<0||o>play.track.duracion_seg) return; if(force||Math.abs(player.currentTime-o)>1.5) player.currentTime=o; }
+
+async function loadPlayState(){
+  if(!play.channel) return;
+  const {data}=await sb.from('radio_state').select('track_id, inicio_at, round_id, tracks(*)').eq('channel_id',play.channel.id).maybeSingle();
+  if(!data?.tracks) return;
+  const changed=data.tracks.id!==play.track?.id;
+  play.state=data; play.track=data.tracks;
+  $('miniTitle').textContent=play.track.titulo; $('miniArtist').textContent=`${play.track.artista} · ${play.channel.nombre}`;
+  $('miniCov').style.backgroundImage=play.track.portada?`url(${play.track.portada})`:''; $('miniCov').textContent=play.track.portada?'':initials(play.track.artista);
+  if(player.src!==play.track.url) player.src=play.track.url;
+  if(play.on){ player.play().then(()=>resync(true)).catch(()=>{}); if(changed) toast(`Ahora suena: ${play.track.titulo}`); }
+}
+async function tuneChannel(ch){
+  if(play.channel?.id===ch.id && play.on) return;
+  if(play.sub){ sb.removeChannel(play.sub); play.sub=null; }
+  play.channel=ch; play.state=null; play.track=null; play.on=true;
+  await loadPlayState();
+  if(!play.track){ play.on=false; return toast('Este canal todavía no tiene nada sonando'); }
+  try{ await player.play(); }catch(e){ play.on=false; renderTuneBtn(); return toast('No se pudo reproducir: '+e.message,'err'); }
+  resync(true); document.body.classList.add('playing'); $('mini').classList.add('show');
+  play.sub=sb.channel('play-'+ch.id).on('postgres_changes',{event:'*',schema:'public',table:'radio_state',filter:`channel_id=eq.${ch.id}`},loadPlayState).subscribe();
+  renderTuneBtn(); renderIndexState(); toast(`Sintonizando ${ch.nombre}`);
+}
+function stopPlay(){
+  player.pause(); play.on=false; document.body.classList.remove('playing'); $('mini').classList.remove('show');
+  if(play.sub){ sb.removeChannel(play.sub); play.sub=null; } play.channel=null; play.track=null; play.state=null;
+  renderTuneBtn(); renderIndexState();
+}
+function renderTuneBtn(){
+  const here = channel && play.channel?.id===channel.id && play.on;
+  $('tune').innerHTML = here ? ICON_LIVE+' Al aire' : ICON_PLAY+' Sintonizar';
+  $('tune').classList.toggle('glass', !!here);
+  $('stopBtn').hidden = !here; $('volwrap').hidden = !play.on;
+}
+function renderIndexState(){ document.querySelectorAll('.genre').forEach(g=>{ const on=play.on&&play.channel?.id===+g.dataset.id; g.classList.toggle('on',on); const b=g.querySelector('.tplay'); if(b) b.innerHTML=on?ICON_LIVE:ICON_PLAY; }); }
+$('tune').onclick=()=>{ if(channel) tuneChannel(channel); };
+$('stopBtn').onclick=stopPlay;
+$('miniBtn').onclick=stopPlay;
+$('miniOpen').onclick=()=>{ if(play.channel) location.hash='#/c/'+play.channel.slug; };
+$('vol').oninput=e=>player.volume=+e.target.value;
+player.addEventListener('ended',()=>{ if(play.channel) sb.rpc('radio_tick',{ch:play.channel.id}); });
+player.addEventListener('error',()=>{ if(play.on&&player.src) toast('Error al cargar el audio','err'); });
+setInterval(()=>{
+  if(track&&state&&channel){
+    const o=Math.max(0,Math.min(offset(),track.duracion_seg)), rem=track.duracion_seg-o, w=(o/track.duracion_seg*100)+'%';
+    $('elapsed').textContent=fmt(o); $('remain').textContent='-'+fmt(rem); $('prog').style.width=w; $('countdown').textContent='cierra en '+fmt(rem);
+    if(o>=track.duracion_seg+1) sb.rpc('radio_tick',{ch:channel.id});
+  }
+  if(play.on&&play.track&&play.state){
+    const o=Math.max(0,Math.min(offsetOf(play.state),play.track.duracion_seg));
+    $('miniProg').style.width=(o/play.track.duracion_seg*100)+'%';
+    if(o>=play.track.duracion_seg+1) sb.rpc('radio_tick',{ch:play.channel.id});
+  }
+},1000);
+setInterval(()=>resync(false),15000); setInterval(syncClock,60000);
+
+// ---------- Favoritos y listas ----------
+const mine = { tracks:new Set(), channels:new Set(), lists:[] };
+async function loadMine(){
+  mine.tracks.clear(); mine.channels.clear(); mine.lists=[];
+  if(!user) { renderHearts(); return; }
+  const [{data:ft},{data:fc},{data:pl}] = await Promise.all([
+    sb.from('favorite_tracks').select('track_id, tracks(*, channels(nombre,slug))').eq('user_id',user.id).order('creado_en',{ascending:false}),
+    sb.from('favorite_channels').select('channel_id').eq('user_id',user.id),
+    sb.from('playlists').select('id, nombre, publica, playlist_tracks(track_id, orden, tracks(*, channels(nombre,slug)))').eq('user_id',user.id).order('creado_en'),
+  ]);
+  mine.favRows = ft??[]; (ft??[]).forEach(r=>mine.tracks.add(r.track_id)); (fc??[]).forEach(r=>mine.channels.add(r.channel_id)); mine.lists=pl??[];
+  renderHearts(); renderFavChannels(); if(!$('viewMine').classList.contains('hidden')) renderMine();
+}
+async function toggleFavTrack(t){
+  if(!user) return openModal('login');
+  if(mine.tracks.has(t.id)){ await sb.from('favorite_tracks').delete().eq('user_id',user.id).eq('track_id',t.id); mine.tracks.delete(t.id); toast('Quitado de favoritos'); }
+  else { await sb.from('favorite_tracks').insert({user_id:user.id,track_id:t.id}); mine.tracks.add(t.id); toast(`Guardado: ${t.titulo}`); }
+  loadMine();
+}
+async function toggleFavChannel(ch){
+  if(!user) return openModal('login');
+  if(mine.channels.has(ch.id)){ await sb.from('favorite_channels').delete().eq('user_id',user.id).eq('channel_id',ch.id); mine.channels.delete(ch.id); toast(`Dejaste de seguir ${ch.nombre}`); }
+  else { await sb.from('favorite_channels').insert({user_id:user.id,channel_id:ch.id}); mine.channels.add(ch.id); toast(`Siguiendo ${ch.nombre}`); }
+  loadMine();
+}
+async function createList(nombre){
+  const {data,error}=await sb.from('playlists').insert({user_id:user.id,nombre}).select().single();
+  if(error) toast(traducir(error.message),'err'); else { toast(`Lista creada: ${nombre}`); await loadMine(); } return data;
+}
+async function addToList(listId,t){
+  const l=mine.lists.find(x=>x.id===listId); if(l?.playlist_tracks?.some(x=>x.track_id===t.id)) return toast('Ya está en esa lista');
+  const {error}=await sb.from('playlist_tracks').insert({playlist_id:listId,track_id:t.id,orden:(l?.playlist_tracks?.length||0)});
+  if(error) toast(traducir(error.message),'err'); else { toast(`Agregado a ${l?.nombre||'la lista'}`); loadMine(); }
+}
+async function removeFromList(listId,trackId){ await sb.from('playlist_tracks').delete().eq('playlist_id',listId).eq('track_id',trackId); loadMine(); }
+async function deleteList(listId){ await sb.from('playlists').delete().eq('id',listId); toast('Lista eliminada'); loadMine(); }
+
+function renderHearts(){
+  if(channel){ const on=mine.channels.has(channel.id); $('chFavTxt').textContent=on?'Siguiendo':'Seguir canal'; $('chFavBtn').classList.toggle('on',on); }
+  document.querySelectorAll('[data-fav-track]').forEach(b=>b.classList.toggle('on',mine.tracks.has(b.dataset.favTrack)));
+  document.querySelectorAll('[data-fav-ch]').forEach(b=>b.classList.toggle('on',mine.channels.has(+b.dataset.favCh)));
+  $('mineLink').hidden=!user;
+}
+function renderFavChannels(){
+  const box=$('favChannels'); const list=[...mine.channels].map(id=>channels.find(c=>c.id===id)).filter(Boolean);
+  box.hidden=!list.length; if(!list.length) return;
+  box.innerHTML=`<div class="rowh">Tus canales</div><div class="favrow">${list.map(c=>`<a class="favch ${play.on&&play.channel?.id===c.id?'on':''}" href="#/c/${c.slug}"><span class="cv" style="${c.sonando_portada?`background-image:url(${esc(c.sonando_portada)})`:''}"></span><span><b>${esc(c.nombre)}</b><small>${c.sonando_titulo?esc(c.sonando_titulo):'sin temas'}</small></span></a>`).join('')}</div>`;
+}
+// popover "agregar a lista"
+function openListMenu(anchor,t){
+  if(!user) return openModal('login');
+  document.querySelector('.listmenu')?.remove();
+  const m=document.createElement('div'); m.className='listmenu glass';
+  m.innerHTML=`<div class="lm-title">Agregar a una lista</div>${mine.lists.map(l=>`<button data-l="${l.id}">${l.playlist_tracks?.some(x=>x.track_id===t.id)?CHECK+' ':''}${esc(l.nombre)} <span>${l.playlist_tracks?.length||0}</span></button>`).join('')||'<div class="lm-empty">Todavía no tenés listas</div>'}
+    <form class="lm-new"><input placeholder="Nueva lista…" maxlength="60" required><button type="submit">Crear</button></form>`;
+  m.querySelectorAll('button[data-l]').forEach(b=>b.onclick=()=>{ addToList(b.dataset.l,t); m.remove(); });
+  m.querySelector('form').onsubmit=async e=>{ e.preventDefault(); const n=e.target.querySelector('input').value.trim(); if(!n) return; const l=await createList(n); if(l) addToList(l.id,t); m.remove(); };
+  anchor.parentElement.appendChild(m); setTimeout(()=>document.addEventListener('click',function h(e){ if(!m.contains(e.target)){ m.remove(); document.removeEventListener('click',h); } }),0);
+}
+$('favBtn').onclick=()=>{ if(track) toggleFavTrack(track); };
+$('listBtn').onclick=e=>{ if(track) openListMenu(e.currentTarget,track); };
+$('chFavBtn').onclick=()=>{ if(channel) toggleFavChannel(channel); };
+
+// ---------- Vista Mi música ----------
+let mineTab='favoritos';
+function renderMine(){
+  $('mineTabs').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.t===mineTab));
+  const box=$('mineBody'); box.innerHTML='';
+  if(!user){ box.innerHTML='<div class="empty">Entrá para ver tus favoritos y listas.</div>'; return; }
+  const trackRow=(t,extra='')=>`<div class="trow"><span class="cv" style="${t.portada?`background-image:url(${esc(t.portada)})`:''}">${t.portada?'':esc(initials(t.artista))}</span>
+      <span class="ti"><b>${esc(t.titulo)}</b><small>${esc(t.artista)} · <a href="#/c/${t.channels?.slug||''}">${esc(t.channels?.nombre||'')}</a></small></span>
+      <span class="ta">${t.channels?`<button class="icbtn" title="Escuchar el canal" data-ch="${esc(t.channels.slug)}">${ICON_PLAY}</button>`:''}<button class="icbtn" title="Agregar a lista" data-list='${esc(JSON.stringify({id:t.id,titulo:t.titulo}))}'>${ICON_PLUS}</button>${extra}</span></div>`;
+  if(mineTab==='favoritos'){
+    const rows=mine.favRows||[]; if(!rows.length){ box.innerHTML='<div class="empty">Todavía no guardaste temas. Tocá el corazón cuando algo te guste.</div>'; return; }
+    box.innerHTML=`<div class="tlist">${rows.map(r=>trackRow(r.tracks,`<button class="icbtn on" title="Quitar" data-unfav="${r.track_id}">${ICON_HEART}</button>`)).join('')}</div>`;
+  }
+  if(mineTab==='listas'){
+    box.innerHTML=`<form class="newlist" id="newListForm"><input id="newListName" placeholder="Nombre de la lista nueva…" maxlength="60" required><button class="btn sm" type="submit">Crear lista</button></form>
+      ${mine.lists.length?mine.lists.map(l=>`<details class="plist" open><summary><b>${esc(l.nombre)}</b><span>${l.playlist_tracks?.length||0} temas</span><button class="icbtn" title="Eliminar lista" data-dellist="${l.id}">${ICON_TRASH}</button></summary>
+        <div class="tlist">${(l.playlist_tracks||[]).sort((a,b)=>a.orden-b.orden).map(x=>trackRow(x.tracks,`<button class="icbtn" title="Quitar de la lista" data-rm="${l.id}|${x.track_id}">${ICON_X}</button>`)).join('')||'<div class="empty small">Lista vacía. Agregá temas desde el canal o desde favoritos.</div>'}</div></details>`).join(''):'<div class="empty">Creá tu primera lista.</div>'}`;
+    $('newListForm').onsubmit=async e=>{ e.preventDefault(); const n=$('newListName').value.trim(); if(n){ await createList(n); } };
+  }
+  if(mineTab==='canales'){
+    const list=[...mine.channels].map(id=>channels.find(c=>c.id===id)).filter(Boolean);
+    if(!list.length){ box.innerHTML='<div class="empty">No seguís ningún canal. Tocá el corazón en un género.</div>'; return; }
+    box.innerHTML=`<div class="tlist">${list.map(c=>`<div class="trow"><span class="cv" style="${c.sonando_portada?`background-image:url(${esc(c.sonando_portada)})`:''}"></span><span class="ti"><b><a href="#/c/${c.slug}">${esc(c.nombre)}</a></b><small>${c.sonando_titulo?esc(c.sonando_titulo)+' · '+esc(c.sonando_artista):'sin temas'}</small></span>
+      <span class="ta"><button class="icbtn" title="Escuchar" data-ch="${c.slug}">${ICON_PLAY}</button><button class="icbtn on" title="Dejar de seguir" data-unch="${c.id}">${ICON_HEART}</button></span></div>`).join('')}</div>`;
+  }
+  box.querySelectorAll('[data-ch]').forEach(b=>b.onclick=()=>{ const c=bySlug(b.dataset.ch); if(c) tuneChannel(c); });
+  box.querySelectorAll('[data-unfav]').forEach(b=>b.onclick=()=>toggleFavTrack({id:b.dataset.unfav,titulo:''}));
+  box.querySelectorAll('[data-unch]').forEach(b=>b.onclick=()=>toggleFavChannel(channels.find(c=>c.id===+b.dataset.unch)));
+  box.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{ const [l,t]=b.dataset.rm.split('|'); removeFromList(l,t); });
+  box.querySelectorAll('[data-dellist]').forEach(b=>b.onclick=e=>{ e.preventDefault(); if(b.dataset.confirm){ deleteList(b.dataset.dellist); } else { b.dataset.confirm='1'; b.textContent='¿Seguro?'; setTimeout(()=>{ delete b.dataset.confirm; b.innerHTML=ICON_TRASH; },3000); } });
+  box.querySelectorAll('[data-list]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); openListMenu(b,JSON.parse(b.dataset.list)); });
+}
+$('mineTabs').onclick=e=>{ const b=e.target.closest('button'); if(b){ mineTab=b.dataset.t; renderMine(); } };
+
+// ---------- Votación ----------
+async function loadRound(){
+  if(!state?.round_id||!channel) return;
+  const {data}=await sb.from('candidate_votes').select('*').eq('round_id',state.round_id).order('votos',{ascending:false});
+  myVote=null; if(user){ const {data:v}=await sb.from('votes').select('track_id').eq('round_id',state.round_id).eq('user_id',user.id).maybeSingle(); myVote=v?.track_id??null; }
+  const list=data??[], total=list.reduce((a,c)=>a+c.votos,0), max=list[0]?.votos??0;
+  const box=$('cands'); box.innerHTML=''; if(!list.length){ box.innerHTML='<div class="empty">Sin candidatos todavía</div>'; return; }
+  list.forEach((c,i)=>{
+    const pct=total?Math.round(c.votos/total*100):0, lead=c.votos===max&&max>0;
+    const b=document.createElement('button'); b.type='button'; b.className='cand'+(c.track_id===myVote?' mine':'')+(lead?' lead':'');
+    b.innerHTML=`<div class="fill" style="width:${pct}%"></div><div class="ico">${lead?STAR:i+1}</div><div class="t"><b>${esc(c.titulo)}</b><span>${esc(c.artista)}</span></div>
+      <div class="pct">${pct}%<small>${c.votos} ${c.votos===1?'voto':'votos'}</small></div><span class="tag">TU VOTO</span>`;
+    b.onclick=()=>vote(c.track_id,c.titulo); box.appendChild(b);
+  });
+  const lead=list[0];
+  $('next').innerHTML=max>0?`Después suena: <b>${esc(lead.titulo)}</b> · ${esc(lead.artista)}`:'Nadie votó todavía. Elegí vos lo que sigue.';
+  $('votehint').innerHTML=user?(myVote?CHECK+' Podés cambiar tu voto hasta que termine el tema.':'Tocá un tema para votarlo.'):`<span>Para votar hace falta cuenta</span><button class="btn glass sm" id="hintLogin">Entrar</button>`;
+  if($('hintLogin')) $('hintLogin').onclick=()=>openModal('login');
+}
+async function vote(track_id,titulo){
+  if(!user) return openModal('login'); if(track_id===myVote) return;
+  const {error}=await sb.from('votes').upsert({round_id:state.round_id,track_id,user_id:user.id},{onConflict:'round_id,user_id'});
+  if(error) toast(traducir(error.message),'err'); else { toast(`Votaste: ${titulo}`); loadRound(); }
+}
+
+// ---------- Chat ----------
+async function nameOf(id){ if(!names.has(id)){ const {data}=await sb.from('profiles').select('apodo,avatar').eq('id',id).single(); names.set(id,{apodo:data?.apodo??'…',avatar:data?.avatar||null}); } return names.get(id); }
+async function addMsg(m,scroll=true){
+  if(!channel||m.channel_id!==channel.id) return;
+  const p=await nameOf(m.user_id), name=p.apodo; const chat=$('chat'); const atBottom=chat.scrollHeight-chat.scrollTop-chat.clientHeight<80;
+  const d=document.createElement('div'); d.className='msg'+(user&&m.user_id===user.id?' me':'');
+  d.innerHTML=`${avatar(m.user_id,name,p.avatar)}<div><div class="h"><b>${esc(name)}</b><time>${new Date(m.creado_en).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})}</time></div><div class="bub">${esc(m.texto)}</div></div>`;
+  chat.querySelector('.empty')?.remove(); chat.appendChild(d);
+  if(scroll&&(atBottom||(user&&m.user_id===user.id))) chat.scrollTop=chat.scrollHeight;
+}
+async function loadChat(){
+  if(!channel) return;
+  const {data}=await sb.from('messages').select('*').eq('channel_id',channel.id).order('creado_en',{ascending:false}).limit(50);
+  $('chat').innerHTML=''; if(!data?.length){ $('chat').innerHTML='<div class="empty">Nadie escribió en este canal todavía. Rompé el hielo.</div>'; return; }
+  for(const m of data.reverse()) await addMsg(m,false); $('chat').scrollTop=$('chat').scrollHeight;
+}
+$('chatform').onsubmit=async e=>{ e.preventDefault(); if(!user) return openModal('login'); const texto=$('chatinput').value.trim(); if(!texto||!channel) return; $('chatinput').value='';
+  const {error}=await sb.from('messages').insert({channel_id:channel.id,user_id:user.id,texto}); if(error){ toast(traducir(error.message),'err'); $('chatinput').value=texto; } };
+$('chatinput').addEventListener('focus',()=>{ if(!user){ $('chatinput').blur(); openModal('login'); } });
+
+// ---------- Presencia ----------
+function joinPresence(){
+  if(presence) sb.removeChannel(presence);
+  presence=sb.channel('presencia',{config:{presence:{key:user?.id??crypto.randomUUID()}}})
+    .on('presence',{event:'sync'},()=>{ const st=presence.presenceState(); const all=Object.keys(st); $('online').textContent=all.length;
+      const here=all.filter(k=>st[k][0]?.canal===channel?.id);
+      $('avstack').innerHTML=here.slice(0,6).map(k=>avatar(k,st[k][0]?.apodo??'anónimo',st[k][0]?.avatar)).join('')+(here.length>6?`<span style="margin-left:6px;font-size:12px">+${here.length-6}</span>`:''); })
+    .subscribe(async s=>{ if(s==='SUBSCRIBED') await presence.track({apodo:profile?.apodo??'anónimo', avatar:profile?.avatar||null, canal:channel?.id??null}); });
+}
+
+(async()=>{ await syncClock(); renderAuth(); joinPresence(); await route(); })();
+</script>
+</body>
+</html>

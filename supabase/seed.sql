@@ -91,14 +91,14 @@ join p on p.slug = s.parent_slug;
 -- ---------- Catálogo de prueba ----------
 -- Subí los MP3 a un bucket público "tracks" y ajustá títulos, duraciones (seg) y el subgénero.
 insert into tracks (titulo, artista, url, duracion_seg, channel_id) values
-('Tema 1', 'Artista A', 'https://fwrziwrqslpuoynspmuk.supabase.co/storage/v1/object/public/tracks/01.mp3', 180, (select id from channels where slug='rock-nacional')),
-('Tema 2', 'Artista B', 'https://fwrziwrqslpuoynspmuk.supabase.co/storage/v1/object/public/tracks/02.mp3', 210, (select id from channels where slug='rock-nacional')),
-('Tema 3', 'Artista C', 'https://fwrziwrqslpuoynspmuk.supabase.co/storage/v1/object/public/tracks/03.mp3', 195, (select id from channels where slug='rock-alternativo')),
-('Tema 4', 'Artista D', 'https://fwrziwrqslpuoynspmuk.supabase.co/storage/v1/object/public/tracks/04.mp3', 240, (select id from channels where slug='cumbia-villera')),
-('Tema 5', 'Artista E', 'https://fwrziwrqslpuoynspmuk.supabase.co/storage/v1/object/public/tracks/05.mp3', 170, (select id from channels where slug='cumbia-pop')),
-('Tema 6', 'Artista F', 'https://fwrziwrqslpuoynspmuk.supabase.co/storage/v1/object/public/tracks/06.mp3', 200, (select id from channels where slug='trap')),
-('Tema 7', 'Artista G', 'https://fwrziwrqslpuoynspmuk.supabase.co/storage/v1/object/public/tracks/07.mp3', 220, (select id from channels where slug='house')),
-('Tema 8', 'Artista H', 'https://fwrziwrqslpuoynspmuk.supabase.co/storage/v1/object/public/tracks/08.mp3', 185, (select id from channels where slug='local-rock'));
+('Tema 1', 'Artista A', 'https://cgvdvkuxjqzcnnsagyvw.supabase.co/storage/v1/object/public/tracks/01.mp3', 180, (select id from channels where slug='rock-nacional')),
+('Tema 2', 'Artista B', 'https://cgvdvkuxjqzcnnsagyvw.supabase.co/storage/v1/object/public/tracks/02.mp3', 210, (select id from channels where slug='rock-nacional')),
+('Tema 3', 'Artista C', 'https://cgvdvkuxjqzcnnsagyvw.supabase.co/storage/v1/object/public/tracks/03.mp3', 195, (select id from channels where slug='rock-alternativo')),
+('Tema 4', 'Artista D', 'https://cgvdvkuxjqzcnnsagyvw.supabase.co/storage/v1/object/public/tracks/04.mp3', 240, (select id from channels where slug='cumbia-villera')),
+('Tema 5', 'Artista E', 'https://cgvdvkuxjqzcnnsagyvw.supabase.co/storage/v1/object/public/tracks/05.mp3', 170, (select id from channels where slug='cumbia-pop')),
+('Tema 6', 'Artista F', 'https://cgvdvkuxjqzcnnsagyvw.supabase.co/storage/v1/object/public/tracks/06.mp3', 200, (select id from channels where slug='trap')),
+('Tema 7', 'Artista G', 'https://cgvdvkuxjqzcnnsagyvw.supabase.co/storage/v1/object/public/tracks/07.mp3', 220, (select id from channels where slug='house')),
+('Tema 8', 'Artista H', 'https://cgvdvkuxjqzcnnsagyvw.supabase.co/storage/v1/object/public/tracks/08.mp3', 185, (select id from channels where slug='local-rock'));
 
 -- Arrancar todos los canales que tengan temas:
 select radio_tick_all();

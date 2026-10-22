@@ -200,9 +200,6 @@ end $$;
 
 create or replace function server_now() returns timestamptz language sql stable as $$ select now() $$;
 
-select cron.unschedule('radio_tick') where exists (select 1 from cron.job where jobname = 'radio_tick');
-select cron.schedule('radio_tick', '10 seconds', 'select public.radio_tick_all()');
-
 -- ============================================================
 -- RLS
 -- ============================================================
@@ -267,7 +264,20 @@ create policy "avatars actualizar propio" on storage.objects for update to authe
 create policy "avatars borrar propio" on storage.objects for delete to authenticated
   using (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
 
+-- ---------- Audio (Storage) ----------
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('tracks', 'tracks', true, 52428800, array['audio/mpeg','audio/mp4','audio/aac','audio/ogg','audio/wav','image/jpeg','image/png','image/webp','video/mp4','video/webm'])
+on conflict (id) do nothing;
+create policy "tracks leer" on storage.objects for select using (bucket_id = 'tracks');
+create policy "tracks subir moderador" on storage.objects for insert to authenticated
+  with check (bucket_id = 'tracks' and exists (select 1 from profiles where id = auth.uid() and rol = 'moderador'));
+create policy "tracks borrar moderador" on storage.objects for delete to authenticated
+  using (bucket_id = 'tracks' and exists (select 1 from profiles where id = auth.uid() and rol = 'moderador'));
+
 alter publication supabase_realtime add table radio_state, votes, messages;
 
 grant execute on function radio_tick(int), server_now(), channel_track_ids(int) to anon, authenticated;
 revoke execute on function open_round(int,int), resolve_round(int), radio_tick_all() from anon, authenticated;
+select cron.unschedule('radio_tick') where exists (select 1 from cron.job where jobname = 'radio_tick');
+select cron.schedule('radio_tick', '10 seconds', 'select public.radio_tick_all()');
+

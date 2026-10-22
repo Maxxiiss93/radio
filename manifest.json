@@ -4,8 +4,8 @@
   "description": "La radio que arma la gente. Votá el próximo tema y escuchá en vivo.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1a0e1f",
-  "theme_color": "#1a0e1f",
+  "background_color": "#0e0d10",
+  "theme_color": "#0e0d10",
   "icons": [
     {
       "src": "/brand/icon-192.png",

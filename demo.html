@@ -66,26 +66,42 @@
   .search { margin:22px 0 10px; display:flex; align-items:center; gap:10px; padding:6px 6px 6px 18px; border-radius:999px; max-width:560px }
   .search input { flex:1; background:none; border:0; outline:0; color:#fff; min-width:0; font-size:15px } .search input::placeholder { color:var(--txt3) }
   .search kbd { font-size:11px; color:var(--txt3); border:1px solid var(--edge); padding:3px 7px; border-radius:6px }
-  .genres { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px,1fr)); gap:14px; margin-top:18px }
-  @media (max-width:640px) { .genres { grid-template-columns:1fr 1fr; gap:10px } .genre { padding:12px; aspect-ratio:4/5 } .genre h3 { font-size:17px } .genre .d { display:none } .np { font-size:11px; margin-top:8px; padding-top:6px } .tplay { width:38px; height:38px; right:10px; bottom:52px } .tplay svg { width:16px; height:16px } .genre .chfav { top:10px; left:10px; width:32px; height:32px } .genre .chfav svg { width:15px; height:15px } }
-  .genre { position:relative; aspect-ratio:1; border-radius:var(--r); overflow:hidden; display:flex; flex-direction:column; justify-content:flex-end; padding:18px; isolation:isolate; transition:transform .2s, box-shadow .2s; border:1px solid var(--edge); background:var(--bg2) }
-  .genre:hover { transform:translateY(-4px); box-shadow:0 30px 60px rgba(0,0,0,.6); border-color:var(--acc) }
-  .genre .media { position:absolute; inset:0; z-index:-1; background:linear-gradient(135deg,#444,#111) center/cover; filter:grayscale(1) contrast(1.05); transition:filter .35s, transform .6s }
+  /* Acordeón horizontal de géneros */
+  .genres { display:flex; gap:12px; height:460px; margin-top:18px; overflow-x:auto; overflow-y:hidden; scrollbar-width:none; padding-bottom:4px; scroll-snap-type:x proximity }
+  .genres::-webkit-scrollbar { display:none }
+  .genre { position:relative; flex:0 0 64px; height:100%; border-radius:36px; overflow:hidden; background:var(--bg2); border:1px solid var(--edge); opacity:.45; cursor:pointer; transition:flex-basis .5s cubic-bezier(.4,0,.2,1), opacity .4s, border-color .3s; scroll-snap-align:start; display:flex; align-items:flex-end; isolation:isolate; text-decoration:none }
+  .genre:hover { opacity:.7 }
+  .genre.active { flex-basis:400px; opacity:1; border-color:rgba(255,255,255,.22); cursor:default }
+  @media (max-width:640px) { .genres { height:400px; gap:8px } .genre { flex-basis:44px; border-radius:24px } .genre.active { flex-basis:calc(100vw - 40px - 44px*2 - 16px) } .genre .vlabel { font-size:13px; bottom:20px } .genres-hint span:last-child { display:none } }
+  .genre .media { position:absolute; z-index:0; top:50%; left:50%; translate:-50% -50%; height:100%; width:100%; min-width:400px; background:linear-gradient(135deg,#444,#111) center/cover; filter:grayscale(.6) }
+  .genre.active .media { filter:grayscale(0); animation:kenburns 18s ease-in-out infinite alternate }
+  @keyframes kenburns { from { scale:1 } to { scale:1.08 } }
   .genre .media video { width:100%; height:100%; object-fit:cover; display:block }
-  .genre:hover .media { filter:grayscale(0); transform:scale(1.04) }
-  .genre .media.empty { display:grid; place-items:center; font-size:64px; font-weight:800; color:rgba(255,255,255,.08); letter-spacing:-.05em }
-  .genre::after { content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(180deg, rgba(0,0,0,.05) 30%, rgba(0,0,0,.85)) }
-  .genre h3 { margin:0; font-size:24px; font-weight:800; letter-spacing:-.03em; line-height:1 }
-  .genre .d { font-size:12px; color:var(--txt2); margin-top:6px }
-  .np { font-size:13px; color:var(--txt2); display:flex; align-items:center; gap:8px; min-height:20px; margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,255,255,.14); min-width:0 }
-  .np b { color:#fff; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0 } .np span { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--txt3) }
+  .genre .media.empty { display:grid; place-items:center; font-size:72px; font-weight:800; color:rgba(255,255,255,.07); letter-spacing:-.05em }
+  .genre .vlabel { position:absolute; z-index:2; left:50%; bottom:28px; translate:-50% 0; writing-mode:vertical-rl; rotate:180deg; font-size:15px; font-weight:700; letter-spacing:.02em; white-space:nowrap; color:#fff; text-shadow:0 2px 10px rgba(0,0,0,.6); transition:opacity .2s }
+  .genre.active .vlabel { opacity:0; pointer-events:none }
+  .genre .content { position:absolute; z-index:1; left:0; bottom:0; width:400px; max-width:100%; padding:100px 22px 22px; display:flex; align-items:flex-end; gap:14px; background:linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,.85)); transition:opacity .25s }
+  @media (max-width:640px) { .genre .content { width:calc(100vw - 40px - 44px*2 - 16px); padding:70px 16px 16px; flex-direction:column; align-items:stretch; gap:12px } .genre .ctrls { justify-content:flex-end } .genre h3 { font-size:22px } }
+  .genre .content > * { opacity:0; visibility:hidden; translate:0 8px; transition:.25s }
+  .genre.active .content > * { opacity:1; visibility:visible; translate:0 0 }
+  .genre .info { flex:1; min-width:0 }
+  .genre h3 { margin:0; font-size:26px; font-weight:800; letter-spacing:-.03em; line-height:1; color:rgba(255,255,255,.96) }
+  .genre .d { font-size:12px; color:rgba(255,255,255,.66); margin-top:6px }
+  .np { font-size:13px; color:rgba(255,255,255,.8); display:flex; align-items:center; gap:8px; min-height:20px; margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,255,255,.16); min-width:0 }
+  .np b { color:#fff; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0 } .np span { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:rgba(255,255,255,.55) }
   .np i { display:inline-flex; gap:2px; align-items:flex-end; height:12px; flex:none } .np i s { width:3px; background:var(--acc); height:4px; animation:eq .8s ease-in-out infinite; text-decoration:none } .np i s:nth-child(2){animation-delay:.2s} .np i s:nth-child(3){animation-delay:.4s}
   @keyframes eq { 50% { height:12px } }
-  .np.off { color:var(--txt4) }
-  .tplay { position:absolute; right:14px; bottom:64px; width:46px; height:46px; border-radius:50%; background:var(--acc); color:var(--acc-ink); display:grid; place-items:center; box-shadow:0 8px 24px var(--acc-glow); opacity:0; transform:translateY(6px); transition:opacity .2s, transform .2s } .tplay svg { width:20px; height:20px }
-  .genre:hover .tplay, .genre.on .tplay { opacity:1; transform:none } .genre.on { border-color:var(--acc) } .genre.on .media { filter:none }
-  @media (hover:none) { .tplay { opacity:1; transform:none } }
-  .vid { position:absolute; top:14px; right:14px; font-size:10px; font-weight:800; letter-spacing:.12em; padding:4px 8px; border-radius:6px; background:var(--acc); color:var(--acc-ink); border:1px solid var(--edge); backdrop-filter:blur(6px) }
+  .np.off { color:rgba(255,255,255,.4) }
+  .genre .ctrls { display:flex; flex-direction:row; gap:8px; flex:none; align-items:center }
+  .genre .ctrls .icbtn { width:40px; height:40px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.4); backdrop-filter:blur(10px); color:rgba(255,255,255,.96) }
+  .genre .ctrls .icbtn:hover { background:rgba(255,255,255,.2); border-color:rgba(255,255,255,.8) }
+  .genre .ctrls .tplay { width:40px; height:40px; border-radius:50%; background:var(--acc); color:var(--acc-ink); display:grid; place-items:center; box-shadow:0 6px 18px var(--acc-glow); flex:none } .genre .ctrls .tplay svg { width:18px; height:18px }
+  .genre.on { border-color:var(--acc) }
+  .genre.on .ctrls .tplay { background:#fff; color:#000 }
+  .genre .vid { position:absolute; z-index:2; top:14px; right:14px; font-size:10px; font-weight:800; letter-spacing:.12em; padding:4px 8px; border-radius:6px; background:var(--acc); color:var(--acc-ink); opacity:0; transition:opacity .25s } .genre.active .vid { opacity:1 }
+  .genre .enter { position:absolute; z-index:2; top:14px; left:14px; padding:6px 12px; border-radius:999px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.4); backdrop-filter:blur(10px); font-size:12px; font-weight:700; color:#fff; opacity:0; visibility:hidden; transition:.25s } .genre.active .enter { opacity:1; visibility:visible }
+  .genre .enter:hover { background:rgba(255,255,255,.2) }
+  .genres-hint { font-size:12px; color:var(--txt3); margin-top:10px; display:flex; justify-content:space-between; gap:10px } .genres-hint kbd { border:1px solid var(--edge); border-radius:5px; padding:1px 6px; font-size:11px }
   .chip { font-size:12px; padding:5px 10px; border-radius:999px; background:var(--glass); border:1px solid var(--edge); color:var(--txt2); transition:background .15s, color .15s }
   .chip:hover { background:#fff; color:#000 } .chip.off { opacity:.45 } .chip.more { border-style:dashed }
 
@@ -179,8 +195,7 @@
   .icbtn { width:40px; height:40px; border-radius:50%; display:grid; place-items:center; background:var(--glass2); border:1px solid var(--edge); color:var(--txt2); transition:background .15s, color .15s, transform .12s; flex:none }
   .icbtn:hover { background:rgba(255,255,255,.18); color:#fff; transform:translateY(-1px) }
   .icbtn.on { color:var(--acc); border-color:var(--acc); background:var(--acc-soft) } .icbtn.on svg { fill:var(--acc) }
-  .genre .chfav { position:absolute; top:14px; left:14px; width:36px; height:36px; background:rgba(0,0,0,.45); backdrop-filter:blur(6px) }
-  .genre .chfav.on { background:var(--acc-soft) }
+  .genre .chfav.on { background:var(--acc-soft); border-color:var(--acc) }
   .welcome { padding:16px 18px; margin-top:18px; display:flex; flex-direction:column; gap:14px; border-color:rgba(255,106,61,.35) }
   .w-steps { display:grid; grid-template-columns:repeat(3,1fr); gap:14px }
   @media (max-width:700px) { .w-steps { grid-template-columns:1fr } }
@@ -243,7 +258,8 @@
     </div>
     <div id="favChannels" hidden></div>
     <div class="rowh">Todos los géneros</div>
-    <div class="genres" id="genres"><div class="skeleton glass" style="aspect-ratio:1;height:auto"></div><div class="skeleton glass" style="aspect-ratio:1;height:auto"></div><div class="skeleton glass" style="aspect-ratio:1;height:auto"></div></div>
+    <div class="genres" id="genres" role="list"><div class="skeleton" style="flex:0 0 400px;height:100%;border-radius:36px"></div><div class="skeleton" style="flex:0 0 64px;height:100%;border-radius:36px"></div><div class="skeleton" style="flex:0 0 64px;height:100%;border-radius:36px"></div></div>
+    <div class="genres-hint"><span>Tocá un género para abrirlo; tocalo de nuevo para entrar al canal.</span><span>← → para desplazar</span></div>
   </section>
 
   <section id="viewChannel" class="hidden">
@@ -636,8 +652,10 @@ async function syncClock(){ const t0=Date.now(); const {data}=await sb.rpc('serv
 async function loadChannels(){ const {data}=await sb.from('channel_overview').select('*').order('orden'); channels=data??[]; }
 const kids = id => channels.filter(c=>c.parent_id===id);
 const bySlug = s => channels.find(c=>c.slug===s);
+let activeGenre=null;
 function renderIndex(q=''){
   const box=$('genres'); box.innerHTML=''; q=q.trim().toLowerCase();
+  const roots=channels.filter(c=>!c.parent_id); if(!activeGenre||!roots.some(r=>r.slug===activeGenre&&(!q||r.nombre.toLowerCase().includes(q)))) activeGenre=null;
   channels.filter(c=>!c.parent_id).forEach(g=>{
     const subs=kids(g.id); const gm=g.nombre.toLowerCase().includes(q);
     const subsShown = q && !gm ? subs.filter(s=>s.nombre.toLowerCase().includes(q)) : subs;
@@ -646,19 +664,27 @@ function renderIndex(q=''){
     const media = g.sonando_video ? `<div class="media"><video src="${esc(g.sonando_video)}" poster="${esc(g.sonando_portada||'')}" muted loop autoplay playsinline preload="metadata"></video></div>`
                 : g.sonando_portada ? `<div class="media" style="background-image:url(${esc(g.sonando_portada)})"></div>`
                 : `<div class="media empty">${esc(g.nombre.slice(0,2).toUpperCase())}</div>`;
-    const d=document.createElement('a'); d.className='genre'; d.href='#/c/'+g.slug; d.dataset.id=g.id;
-    d.innerHTML=`${media}${g.sonando_video?'<span class="vid">VIDEO</span>':''}<h3>${esc(g.nombre)}</h3><div class="d">${esc(g.descripcion||'')} · ${g.temas} temas</div><div class="np ${g.sonando_titulo?'':'off'}">${np}</div><button class="icbtn chfav" data-fav-ch="${g.id}" title="Seguir canal" aria-label="Seguir ${esc(g.nombre)}">${ICON_HEART}</button>${g.temas?`<button class="tplay" title="Escuchar sin entrar al canal" aria-label="Escuchar ${esc(g.nombre)}">${ICON_PLAY}</button>`:''}`;
+    const d=document.createElement('div'); d.className='genre'+(g.slug===activeGenre?' active':''); d.dataset.id=g.id; d.dataset.slug=g.slug; d.setAttribute('role','button'); d.tabIndex=0; d.setAttribute('aria-expanded', g.slug===activeGenre); d.setAttribute('aria-label', g.nombre);
+    d.innerHTML=`${media}<span class="vlabel">${esc(g.nombre)}</span>${g.sonando_video?'<span class="vid">VIDEO</span>':''}
+      <a class="enter" href="#/c/${g.slug}">Entrar al canal →</a>
+      <div class="content"><div class="info"><h3>${esc(g.nombre)}</h3><div class="d">${esc(g.descripcion||'')} · ${g.temas} temas</div><div class="np ${g.sonando_titulo?'':'off'}">${np}</div></div>
+      <div class="ctrls"><button class="icbtn chfav" data-fav-ch="${g.id}" title="Seguir canal" aria-label="Seguir ${esc(g.nombre)}" aria-pressed="false">${ICON_HEART}</button>${g.temas?`<button class="tplay" title="Escuchar" aria-label="Escuchar ${esc(g.nombre)}">${ICON_PLAY}</button>`:''}</div></div>`;
+    const activate=()=>{ if(d.classList.contains('active')) return; activeGenre=g.slug; box.querySelectorAll('.genre').forEach(x=>{ x.classList.toggle('active',x===d); x.setAttribute('aria-expanded',x===d); }); d.scrollIntoView({behavior:'smooth',block:'nearest',inline:'nearest'}); };
+    d.onclick=e=>{ if(e.target.closest('.ctrls,.enter')) return; if(d.classList.contains('active')) location.hash='#/c/'+g.slug; else activate(); };
+    d.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); d.onclick(e); } };
     d.querySelector('.chfav').onclick=e=>{ e.preventDefault(); e.stopPropagation(); toggleFavChannel(g); };
     const tp=d.querySelector('.tplay'); if(tp) tp.onclick=e=>{ e.preventDefault(); e.stopPropagation(); if(play.on&&play.channel?.id===g.id) stopPlay(); else tuneChannel(g); };
     box.appendChild(d);
   });
   if(!box.children.length) box.innerHTML='<div class="empty">No encontramos ese género</div>';
+  else if(!box.querySelector('.genre.active')){ const f=box.querySelector('.genre'); f.classList.add('active'); f.setAttribute('aria-expanded','true'); activeGenre=f.dataset.slug; }
   renderIndexState(); renderHearts(); renderFavChannels();
 }
 $('q').oninput=e=>renderIndex(e.target.value);
 function showWelcome(){ let seen=false; try{ seen=localStorage.getItem('bienvenida')==='1'; }catch{} $('welcome').hidden = seen; $('wSignup').hidden=!!user; if(user) $('wStep3').textContent='Votá, chateá y guardá favoritos con el corazón.'; }
 $('wClose').onclick=()=>{ try{ localStorage.setItem('bienvenida','1'); }catch{} $('welcome').hidden=true; };
 $('wSignup').onclick=()=>{ $('wClose').onclick(); openModal('signup'); };
+document.addEventListener('keydown',e=>{ if((e.key==='ArrowRight'||e.key==='ArrowLeft')&&!$('viewIndex').classList.contains('hidden')&&document.activeElement.tagName!=='INPUT'){ const all=[...document.querySelectorAll('#genres .genre')]; const i=all.findIndex(x=>x.classList.contains('active')); const n=all[i+(e.key==='ArrowRight'?1:-1)]; if(n){ e.preventDefault(); n.click(); n.focus(); } } });
 document.addEventListener('keydown',e=>{ if(e.key==='/'&&document.activeElement.tagName!=='INPUT'){ e.preventDefault(); location.hash='#/'; setTimeout(()=>$('q').focus(),0); } });
 
 // ---------- Router ----------
@@ -747,7 +773,7 @@ function renderTuneBtn(){
   $('tune').classList.toggle('glass', !!here);
   $('stopBtn').hidden = !here; $('volwrap').hidden = !play.on;
 }
-function renderIndexState(){ document.querySelectorAll('.genre').forEach(g=>{ const on=play.on&&play.channel?.id===+g.dataset.id; g.classList.toggle('on',on); const b=g.querySelector('.tplay'); if(b) b.innerHTML=on?ICON_LIVE:ICON_PLAY; }); }
+function renderIndexState(){ document.querySelectorAll('.genre').forEach(g=>{ const on=play.on&&play.channel?.id===+g.dataset.id; g.classList.toggle('on',on); const b=g.querySelector('.tplay'); if(b){ b.innerHTML=on?ICON_LIVE:ICON_PLAY; b.title=on?'Parar':'Escuchar'; } }); }
 $('tune').onclick=()=>{ if(channel) tuneChannel(channel); };
 $('stopBtn').onclick=stopPlay;
 $('miniBtn').onclick=stopPlay;

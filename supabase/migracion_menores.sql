@@ -1,6 +1,6 @@
 -- ============================================================
 -- SYNC · Cuentas de menores supervisadas + chat separado
--- Ejecutar completo en el SQL Editor (después de schema.sql).
+-- Ya aplicada en el proyecto cgvdvkuxjqzcnnsagyvw (22/10/2026). Para proyectos nuevos: ejecutar después de schema.sql.
 -- ============================================================
 
 -- ---------- Perfiles: menor / tutor / chat ----------
@@ -102,11 +102,11 @@ create or replace function texto_apto_menores(t text) returns text
 language plpgsql immutable as $$
 declare s text := lower(t);
 begin
-  if s ~ '(https?://|www\.|\.com\b|\.ar\b|\.net\b|\.org\b)' then return 'En el chat de menores no se pueden compartir links.'; end if;
+  if s ~ '(https?://|www\.|\.com\y|\.ar\y|\.net\y|\.org\y)' then return 'En el chat de menores no se pueden compartir links.'; end if;
   if s ~ '[0-9][0-9 .\-]{6,}[0-9]' then return 'En el chat de menores no se pueden compartir números de teléfono.'; end if;
   if s ~ '[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}' then return 'En el chat de menores no se pueden compartir mails.'; end if;
-  if s ~ '(\binsta(gram)?\b|\bwhats?app\b|\btelegram\b|\bsnap(chat)?\b|\btiktok\b|\bdiscord\b|\bfacebook\b|\busuario:|\bagregame\b|\bagregáme\b|\bseguime\b|\bpasame tu\b|\bpasá tu\b)' then return 'En el chat de menores no se comparten redes ni formas de contacto.'; end if;
-  if s ~ '(\bputa\b|\bputo\b|\bmierda\b|\bpelotud[oa]s?\b|\bboludo\b|\bboluda\b|\bforr[oa]s?\b|\bconch[a]\b|\bcarajo\b|\bculo\b|\bverga\b|\bpija\b|\bhij[oa] de puta\b|\bidiota\b|\bimbécil\b|\bestúpid[oa]\b|\bmogólic[oa]\b|\bretrasad[oa]\b|\bmatate\b|\bsuicid)' then return 'Ese mensaje no va en el chat de menores. Decilo de otra forma.'; end if;
+  if s ~ '(\yinsta(gram)?\y|\ywhats?app\y|\ytelegram\y|\ysnap(chat)?\y|\ytiktok\y|\ydiscord\y|\yfacebook\y|\yusuario:|\yagregame\y|\yagregáme\y|\yseguime\y|\ypasame tu\y|\ypasá tu\y)' then return 'En el chat de menores no se comparten redes ni formas de contacto.'; end if;
+  if s ~ '(\yputa\y|\yputo\y|\ymierda\y|\ypelotud[oa]s?\y|\yboludo\y|\yboluda\y|\yforr[oa]s?\y|\yconch[a]\y|\ycarajo\y|\yculo\y|\yverga\y|\ypija\y|\yhij[oa] de puta\y|\yidiota\y|\yimbécil\y|\yestúpid[oa]\y|\ymogólic[oa]\y|\yretrasad[oa]\y|\ymatate\y|\ysuicid)' then return 'Ese mensaje no va en el chat de menores. Decilo de otra forma.'; end if;
   return null;
 end $$;
 

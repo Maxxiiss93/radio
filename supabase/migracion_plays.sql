@@ -1,3 +1,4 @@
+-- Ya aplicada en el proyecto cgvdvkuxjqzcnnsagyvw (22/10/2026).
 
 -- ---------- Reproducciones por canal (ranking cuando no hay oyentes en vivo) ----------
 create table if not exists channel_plays (

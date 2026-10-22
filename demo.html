@@ -13,7 +13,7 @@
     --plum:#542C5F; --lime:#C7E84B; --ivory:#F5F1E8;
     --bg0:#1a0e1f; --bg1:#241427; --bg2:#301b36;
     --glass:rgba(245,241,232,.06); --glass2:rgba(245,241,232,.11); --edge:rgba(245,241,232,.14); --edge2:rgba(245,241,232,.35);
-    --txt:#F5F1E8; --txt2:rgba(245,241,232,.72); --txt3:rgba(245,241,232,.48); --txt4:rgba(245,241,232,.28);
+    --txt:#F5F1E8; --txt2:rgba(245,241,232,.72); --txt3:rgba(245,241,232,.54); --txt4:rgba(245,241,232,.28);
     --acc:#C7E84B; --acc2:#E4F68E; --acc-ink:#1b2306; --acc-soft:rgba(199,232,75,.18); --acc-glow:rgba(199,232,75,.4);
     --r:24px; --r2:16px;
   }
@@ -77,7 +77,7 @@
   .ticker .track { display:flex; gap:10px; width:max-content; animation:tick 60s linear infinite }
   .ticker:hover .track { animation-play-state:paused }
   @keyframes tick { to { translate:-50% 0 } }
-  .ticker a { display:inline-flex; align-items:center; gap:8px; padding:7px 12px 7px 8px; border-radius:999px; background:var(--glass); border:1px solid var(--edge); font-size:12px; color:var(--txt2); white-space:nowrap; transition:border-color .15s, color .15s }
+  .ticker a { display:inline-flex; align-items:center; gap:8px; min-height:40px; padding:6px 12px 6px 8px; border-radius:999px; background:var(--glass); border:1px solid var(--edge); font-size:12px; color:var(--txt2); white-space:nowrap; transition:border-color .15s, color .15s }
   .ticker a:hover { border-color:var(--acc); color:#fff }
   .ticker a .cv { width:22px; height:22px; border-radius:50%; background:linear-gradient(135deg,#8a5a98,#2a1430) center/cover; flex:none; filter:grayscale(1) } .ticker a:hover .cv { filter:none }
   .ticker a b { color:#fff; font-weight:600 } .ticker a em { font-style:normal; color:var(--txt3) }
@@ -93,9 +93,9 @@
   .grow .gh b { width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.25); display:grid; place-items:center; font-size:12px; font-weight:800; font-variant-numeric:tabular-nums; flex:none; color:#fff }
   .grow.top3 .gh b { background:var(--acc); color:var(--acc-ink); border-color:transparent }
   .grow .gh .n { font-weight:700; color:#fff; font-size:15px } .grow .gh .l { color:var(--txt3) } .grow .gh .l i { display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--acc); margin-right:5px; vertical-align:middle; box-shadow:0 0 8px var(--acc) }
-  .acc { display:flex; gap:10px; height:300px; overflow-x:auto; overflow-y:hidden; scrollbar-width:none; scroll-snap-type:x proximity; padding-bottom:2px }
+  .acc { display:flex; gap:10px; height:300px; overflow-x:auto; overflow-y:hidden; contain:paint; scrollbar-width:none; scroll-snap-type:x proximity; padding-bottom:2px }
   .acc::-webkit-scrollbar { display:none }
-  .item { position:relative; flex:0 0 56px; height:100%; border-radius:30px; overflow:hidden; background:var(--bg2); border:1px solid var(--edge); opacity:.5; cursor:pointer; transition:flex-basis .5s cubic-bezier(.4,0,.2,1), opacity .4s, border-color .3s; scroll-snap-align:start; display:flex; align-items:flex-end; isolation:isolate; text-decoration:none; color:inherit }
+  .item { position:relative; flex:0 0 56px; height:100%; border-radius:30px; overflow:hidden; contain:paint; background:var(--bg2); border:1px solid var(--edge); opacity:.5; cursor:pointer; transition:flex-basis .5s cubic-bezier(.4,0,.2,1), opacity .4s, border-color .3s; scroll-snap-align:start; display:flex; align-items:flex-end; isolation:isolate; text-decoration:none; color:inherit }
   .item:hover { opacity:.75 } .item.off { opacity:.3 }
   .item.active { flex-basis:420px; opacity:1; border-color:rgba(255,255,255,.22); cursor:default }
   .item.on { border-color:var(--acc) }
@@ -109,7 +109,7 @@
   .item.active .vlabel { opacity:0; pointer-events:none }
   .item .content { position:absolute; z-index:1; left:0; bottom:0; width:420px; max-width:100%; padding:90px 20px 18px; display:flex; align-items:flex-end; gap:12px; background:linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,.85)) }
   @media (max-width:640px) { .item .content { width:calc(100vw - 40px - 40px*2 - 24px); padding:70px 14px 14px } .item h3 { font-size:21px } }
-  .item .content > * { opacity:0; visibility:hidden; translate:0 8px; transition:.25s }
+  .item .content > * { opacity:0; visibility:hidden; translate:0 8px; transition:opacity .25s, visibility .25s, translate .25s }
   .item.active .content > * { opacity:1; visibility:visible; translate:0 0 }
   .item .info { flex:1; min-width:0 }
   .item h3 { margin:0; font-size:24px; font-weight:800; letter-spacing:-.03em; line-height:1; color:rgba(255,255,255,.96) }
@@ -126,7 +126,7 @@
   .item .ctrls .tplay { width:40px; height:40px; border-radius:50%; background:var(--acc); color:var(--acc-ink); display:grid; place-items:center; box-shadow:0 6px 18px var(--acc-glow); flex:none } .item .ctrls .tplay svg { width:18px; height:18px }
   .item.on .ctrls .tplay { background:var(--ivory); color:var(--plum) }
   .item .vid { position:absolute; z-index:2; top:14px; left:14px; font-size:10px; font-weight:800; letter-spacing:.12em; padding:4px 8px; border-radius:6px; background:var(--acc); color:var(--acc-ink); opacity:0; transition:opacity .25s } .item.active .vid { opacity:1 }
-  .item .enter { position:absolute; z-index:2; top:14px; right:14px; padding:6px 12px; border-radius:999px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.4); backdrop-filter:blur(10px); font-size:12px; font-weight:700; color:#fff; opacity:0; visibility:hidden; transition:.25s; text-decoration:none } .item.active .enter { opacity:1; visibility:visible }
+  .item .enter { position:absolute; z-index:2; top:12px; right:12px; min-height:40px; display:inline-flex; align-items:center; padding:6px 14px; border-radius:999px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.4); backdrop-filter:blur(10px); font-size:12px; font-weight:700; color:#fff; opacity:0; visibility:hidden; transition:opacity .25s, visibility .25s, translate .25s; text-decoration:none } .item.active .enter { opacity:1; visibility:visible }
   .item .enter:hover { background:rgba(255,255,255,.2) }
   .item .live-big { font-size:12px; color:rgba(255,255,255,.75); margin-top:6px } .item .live-big i { display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--acc); margin-right:5px; box-shadow:0 0 8px var(--acc) }
   .genres-hint { font-size:12px; color:var(--txt3); margin-top:10px; display:flex; justify-content:space-between; gap:10px }
@@ -134,20 +134,21 @@
   .chip:hover { background:#fff; color:#000 } .chip.off { opacity:.45 } .chip.more { border-style:dashed }
 
   /* Canal */
-  .crumb { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--txt3); margin:8px 0 12px; flex-wrap:wrap }
-  .crumb a:hover { color:#fff } .crumb b { color:#fff; font-weight:600 }
-  .subnav { display:flex; gap:8px; overflow-x:auto; padding:2px 0 14px; scrollbar-width:none; height:154px } .subnav::-webkit-scrollbar { display:none }
-  .sub { position:relative; flex:0 0 46px; height:140px; border-radius:23px; overflow:hidden; background:var(--bg2); border:1px solid var(--edge); opacity:.5; display:flex; align-items:flex-end; text-decoration:none; transition:flex-basis .45s cubic-bezier(.4,0,.2,1), opacity .3s, border-color .3s; isolation:isolate }
+  .crumb { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--txt3); margin:8px 0 12px; flex-wrap:wrap; max-width:100% } .crumb > span:first-child { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+  .crumb a { display:inline-flex; align-items:center; min-height:40px } .crumb a:hover { color:#fff } .crumb b { color:#fff; font-weight:600 }
+  .subnav { display:flex; gap:8px; overflow-x:auto; overflow-y:hidden; padding:2px 0 14px; scrollbar-width:none; height:154px; contain:paint } .subnav::-webkit-scrollbar { display:none }
+  .sub { position:relative; flex:0 0 46px; height:140px; max-width:100%; contain:paint; border-radius:23px; overflow:hidden; background:var(--bg2); border:1px solid var(--edge); opacity:.5; display:flex; align-items:flex-end; text-decoration:none; transition:flex-basis .45s cubic-bezier(.4,0,.2,1), opacity .3s, border-color .3s; isolation:isolate }
   .sub:hover { opacity:.8 } .sub.off { opacity:.3 }
   .sub.on { flex-basis:230px; opacity:1; border-color:var(--acc) }
   .sub .media { position:absolute; inset:0; z-index:0; background:linear-gradient(135deg,#6a3a78,#2a1430) center/cover; filter:grayscale(.6) } .sub.on .media { filter:none }
   .sub .vlabel { position:absolute; z-index:2; left:50%; bottom:14px; translate:-50% 0; writing-mode:vertical-rl; rotate:180deg; font-size:12px; font-weight:700; white-space:nowrap; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,.7); transition:opacity .2s } .sub.on .vlabel { opacity:0 }
-  .sub .content { position:absolute; z-index:1; left:0; bottom:0; width:230px; padding:40px 14px 12px; background:linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,.85)); opacity:0; visibility:hidden; translate:0 6px; transition:.25s } .sub.on .content { opacity:1; visibility:visible; translate:0 0 }
+  .sub .content { position:absolute; z-index:1; left:0; bottom:0; width:230px; padding:40px 14px 12px; background:linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,.85)); opacity:0; visibility:hidden; translate:0 6px; transition:opacity .25s, visibility .25s, translate .25s } .sub.on .content { opacity:1; visibility:visible; translate:0 0 }
   .sub h4 { margin:0; font-size:16px; font-weight:800; letter-spacing:-.02em; color:#fff } .sub .m { font-size:11px; color:rgba(255,255,255,.7); margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
   .sub .tag2 { position:absolute; z-index:2; top:10px; left:10px; font-size:10px; font-weight:800; letter-spacing:.1em; padding:3px 8px; border-radius:999px; background:var(--acc); color:var(--acc-ink); opacity:0; transition:opacity .25s } .sub.on .tag2 { opacity:1 }
-  @media (max-width:640px) { .subnav { height:128px } .sub { flex-basis:38px; height:116px; border-radius:19px } .sub.on { flex-basis:190px } .sub .content { width:190px } }
-  .grid { display:grid; grid-template-columns:1.15fr .85fr; gap:18px; margin-top:6px }
-  @media (max-width:900px) { .grid { grid-template-columns:1fr } }
+  @media (max-width:640px) { .subnav { height:128px } .sub { flex-basis:44px; height:116px; border-radius:22px } .sub.on { flex-basis:190px } .sub .content { width:190px } }
+  .grid { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr); gap:18px; margin-top:6px }
+  @media (max-width:900px) { .grid { grid-template-columns:minmax(0,1fr) } }
+  .grid > * { min-width:0 }
   .sec { padding:22px }
   .sec h2 { font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--txt3); margin:0 0 16px; display:flex; align-items:center; justify-content:space-between; gap:10px }
   .sec h2 span { text-transform:none; letter-spacing:0; font-weight:500; color:var(--txt2) }
@@ -205,7 +206,7 @@
   .msg.me .bub { background:linear-gradient(135deg,var(--acc2),var(--acc)); color:var(--acc-ink); border-color:transparent }
   .empty { color:var(--txt3); text-align:center; padding:40px 10px; font-size:14px }
   .quick { display:flex; gap:6px; overflow-x:auto; padding:10px 0 2px; scrollbar-width:none } .quick::-webkit-scrollbar { display:none }
-  .quick button { flex:none; padding:6px 12px; border-radius:999px; background:var(--glass); border:1px solid var(--edge); font-size:13px; color:var(--txt2); transition:background .15s, color .15s } .quick button:hover { background:var(--acc); color:var(--acc-ink); border-color:var(--acc) }
+  .quick button { flex:none; min-height:40px; padding:8px 14px; border-radius:999px; background:var(--glass); border:1px solid var(--edge); font-size:13px; color:var(--txt2); transition:background .15s, color .15s } .quick button:hover { background:var(--acc); color:var(--acc-ink); border-color:var(--acc) }
   .composer { display:flex; gap:8px; margin-top:12px; padding:6px 6px 6px 16px; background:rgba(255,255,255,.07); border:1px solid var(--edge); border-radius:999px; align-items:center }
   .composer:focus-within { border-color:var(--acc); background:rgba(255,255,255,.1) }
   .composer input { flex:1; background:none; border:0; outline:0; color:#fff; min-width:0 } .composer input::placeholder { color:var(--txt3) }
@@ -267,6 +268,7 @@
   .icbtn { width:40px; height:40px; border-radius:50%; display:grid; place-items:center; background:var(--glass2); border:1px solid var(--edge); color:var(--txt2); transition:background .15s, color .15s, transform .12s; flex:none }
   .icbtn:hover { background:rgba(255,255,255,.18); color:#fff; transform:translateY(-1px) }
   .icbtn.on { color:var(--acc); border-color:var(--acc); background:var(--acc-soft) } .icbtn.on svg { fill:var(--acc) }
+  .icbtn.danger { width:auto; border-radius:999px; padding:0 12px; font-size:12px; font-weight:700; background:rgba(255,90,90,.18); border-color:#ff6b6b; color:#ffb3b3 }
   .welcome { padding:16px 18px; margin-top:18px; display:flex; flex-direction:column; gap:14px; border-color:rgba(199,232,75,.35) }
   .w-steps { display:grid; grid-template-columns:repeat(3,1fr); gap:14px }
   @media (max-width:700px) { .w-steps { grid-template-columns:1fr } }
@@ -274,7 +276,7 @@
   .w-actions { display:flex; gap:8px; flex-wrap:wrap }
   .rowh { font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--txt3); margin:22px 0 10px }
   .favrow { display:flex; gap:10px; overflow-x:auto; padding-bottom:6px; scrollbar-width:none } .favrow::-webkit-scrollbar { display:none }
-  .favch { display:flex; align-items:center; gap:10px; padding:8px 14px 8px 8px; border-radius:999px; background:var(--glass); border:1px solid var(--edge); white-space:nowrap; flex:none; transition:border-color .15s }
+  .favch { display:flex; align-items:center; gap:10px; min-height:44px; padding:5px 14px 5px 5px; border-radius:999px; background:var(--glass); border:1px solid var(--edge); white-space:nowrap; flex:none; transition:border-color .15s }
   .favch:hover, .favch.on { border-color:var(--acc) } .favch .cv { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,#8a5a98,#2a1430) center/cover; filter:grayscale(1) } .favch.on .cv { filter:none }
   .favch b { display:block; font-size:14px } .favch small { font-size:11px; color:var(--txt3); display:block; max-width:160px; overflow:hidden; text-overflow:ellipsis }
   .listmenu { position:absolute; z-index:30; top:52px; left:0; min-width:260px; padding:8px; border-radius:var(--r2); animation:in .15s ease }
@@ -286,10 +288,10 @@
   .mine-h { padding:36px 0 16px } .mine-h h2 { font-size:clamp(30px,5vw,48px); font-weight:800; letter-spacing:-.04em; margin:0 0 6px } .mine-h p { color:var(--txt2); margin:0 }
   .tabs.wide { max-width:420px; margin:18px 0 }
   .tlist { display:flex; flex-direction:column; gap:8px }
-  .trow { display:grid; grid-template-columns:48px 1fr auto; gap:12px; align-items:center; padding:10px 12px; border-radius:var(--r2); background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08) }
+  .trow { display:grid; grid-template-columns:48px minmax(0,1fr) auto; gap:12px; align-items:center; padding:10px 12px; border-radius:var(--r2); background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08) }
   .trow .cv { width:48px; height:48px; border-radius:10px; background:linear-gradient(135deg,#8a5a98,#2a1430) center/cover; display:grid; place-items:center; font-weight:800; font-size:13px; color:#000; filter:grayscale(1) } .trow:hover .cv { filter:none }
-  .trow .ti { min-width:0 } .trow .ti b { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis } .trow .ti small { color:var(--txt3); font-size:12px } .trow .ti a:hover { color:var(--acc2) }
-  .trow .ta { display:flex; gap:6px }
+  .trow .ti { min-width:0 } .trow .ti b { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; line-height:1.25 } .trow .ti small { color:var(--txt3); font-size:12px } .trow .ti a { display:inline-block; padding:12px 0; margin:-12px 0; text-decoration:underline; text-decoration-color:var(--txt4); text-underline-offset:3px } .trow .ti a:hover { color:var(--acc2) }
+  .trow .ta { display:flex; gap:6px } @media (max-width:480px) { .trow { grid-template-columns:48px minmax(0,1fr); } .trow .ta { grid-column:1 / -1; justify-content:flex-end } }
   .newlist { display:flex; gap:8px; margin-bottom:16px; max-width:520px } .newlist input { flex:1; min-width:0; background:rgba(255,255,255,.07); border:1px solid var(--edge); border-radius:999px; padding:10px 16px; color:#fff; outline:0 } .newlist input:focus { border-color:var(--acc) }
   .plist { margin-bottom:12px } .plist summary { display:flex; align-items:center; gap:12px; cursor:pointer; list-style:none; padding:12px 14px; border-radius:var(--r2); } .plist summary::-webkit-details-marker { display:none }
   .plist summary b { font-size:17px; letter-spacing:-.02em } .plist summary span { color:var(--txt3); font-size:12px; flex:1 } .plist summary .icbtn { width:34px; height:34px }
@@ -301,6 +303,7 @@
   .field input:focus-visible, .listmenu .lm-new input:focus-visible, .newlist input:focus-visible { outline:2px solid var(--acc); outline-offset:1px }
   @media (prefers-reduced-motion:reduce) { *, *::before, *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important } .blob { display:none } }
   button, a, .cand, .item { touch-action:manipulation }
+  .sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap }
   .hidden, [hidden] { display:none !important }
 </style>
 </head>
@@ -319,7 +322,7 @@
       <div class="eyebrow"><i></i>En vivo · <span id="heroOnline">0</span> personas escuchando</div>
       <h2 id="heroTitle" aria-label="Elegí tu canal. La gente vota, todos escuchan."><span class="w">Elegí</span> <span class="w">tu</span> <span class="w">canal.</span><br><span class="w dim">La</span> <span class="w dim">gente</span> <span class="w dim">vota,</span> <span class="w dim">todos</span> <span class="w dim">escuchan.</span></h2>
       <p class="lead">Un canal por género y subgénero. La audiencia elige el próximo tema y charla mientras suena.</p>
-      <div class="search glass"><span style="color:var(--txt3);display:flex"><svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></span><input id="q" type="search" placeholder="Buscar género o subgénero…" autocomplete="off" spellcheck="false" aria-label="Buscar género o subgénero" enterkeyhint="search"><kbd>/</kbd></div>
+      <label for="q" class="sr">Buscar género o subgénero</label><div class="search glass"><span style="color:var(--txt3);display:flex"><svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></span><input id="q" type="search" placeholder="Buscar género o subgénero…" autocomplete="off" spellcheck="false" aria-label="Buscar género o subgénero" enterkeyhint="search"><kbd>/</kbd></div>
       <div class="ticker" id="ticker" aria-label="Sonando ahora en los canales"><div class="track" id="tickerTrack"></div></div>
     </div>
     <div class="welcome glass" id="welcome" hidden>
@@ -328,7 +331,7 @@
         <div><b>2</b><span>Mientras suena, la audiencia vota el próximo tema.</span></div>
         <div><b>3</b><span id="wStep3">Con una cuenta votás, chateás y guardás favoritos.</span></div>
       </div>
-      <div class="w-actions"><button class="btn sm" id="wSignup">Crear cuenta</button><button class="btn glass sm" id="wClose">Ahora no</button></div>
+      <div class="w-actions"><button class="btn sm" id="wSignup">Crear cuenta</button><button class="btn glass sm" id="wClose">Cerrar guía</button></div>
     </div>
     <div id="favChannels" hidden></div>
     <div class="rowh">Todos los géneros</div>
@@ -337,7 +340,7 @@
   </section>
 
   <section id="viewChannel" class="hidden">
-    <div class="crumb" style="justify-content:space-between"><span><a href="#/">Canales</a> <span>›</span> <span id="crumbParent"></span><b id="crumbName"></b></span><button class="btn glass sm" id="chFavBtn"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg> <span id="chFavTxt">Seguir canal</span></button></div>
+    <div class="crumb" style="justify-content:space-between;flex-wrap:wrap;min-width:0"><span><a href="#/">Canales</a> <span>›</span> <span id="crumbParent"></span><b id="crumbName"></b></span><button class="btn glass sm" id="chFavBtn"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg> <span id="chFavTxt">Seguir canal</span></button></div>
     <div class="subnav" id="subnav"></div>
     <div class="grid">
       <div class="glass hero player" id="hero">
@@ -691,6 +694,7 @@ function setMode(m){ mode=m; $('pw').autocomplete=m==='signup'?'new-password':'c
   $('mTitle').textContent=m==='login'?'Bienvenido de vuelta':'Sumate a la radio'; $('mSub').textContent=m==='login'?'Qué bueno verte. Volvé a sintonizar.':'Votá, chateá y guardá lo que te gusta.';
   $('swap').innerHTML=m==='login'?'¿Sos nuevo? <button type="button" class="link strong" id="swapBtn">Crear cuenta</button>':'¿Ya tenés cuenta? <button type="button" class="link strong" id="swapBtn">Entrar</button>';
   $('swapBtn').onclick=()=>setMode(m==='login'?'signup':'login'); $('forgot').parentElement.hidden=m!=='login'; }
+['em','pw','ap'].forEach(id=>{ const el=$(id); el.addEventListener('blur',()=>{ if(el.required&&!el.value.trim()) $('authErr').textContent=id==='em'?'Falta tu email.':id==='pw'?'Falta la contraseña.':''; else if(id==='em'&&el.value&&!/^\S+@\S+\.\S+$/.test(el.value)) $('authErr').textContent='Ese email no parece válido.'; }); el.addEventListener('input',()=>{ $('authErr').textContent=''; }); });
 $('eye').onclick=()=>{ const p=$('pw'); p.type=p.type==='password'?'text':'password'; $('eye').setAttribute('aria-label',p.type==='password'?'Mostrar contraseña':'Ocultar contraseña'); };
 $('forgot').onclick=async()=>{ const email=$('em').value.trim(); if(!email) return $('authErr').textContent='Escribí tu email y volvé a tocar.'; const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin}); $('authErr').textContent=error?traducir(error.message):''; if(!error) toast('Te mandamos un mail para cambiar la contraseña'); };
 document.querySelectorAll('.social [data-prov]').forEach(b=>b.onclick=async()=>{ const {error}=await sb.auth.signInWithOAuth({provider:b.dataset.prov,options:{redirectTo:location.origin}}); if(error) toast(b.dataset.prov==='google'?'Google todavía no está habilitado':'Apple todavía no está habilitado','err'); });
@@ -718,7 +722,7 @@ function renderAuth(){
     $('menuBtn').onclick=e=>{ e.stopPropagation(); $('menu').classList.toggle('open'); };
     $('avatarFile').onchange=e=>{ if(e.target.files[0]) uploadAvatar(e.target.files[0]); };
     $('logout').onclick=()=>{ sb.auth.signOut(); toast('Hasta la próxima'); }; }
-  else { box.innerHTML=`<button class="btn glass sm" id="btnLogin">Entrar</button> <button class="btn sm" id="btnSignup"><span>Crear cuenta</span><b class="only-m">Registrarme</b></button>`; $('btnLogin').onclick=()=>openModal('login'); $('btnSignup').onclick=()=>openModal('signup'); }
+  else { box.innerHTML=`<button class="btn glass sm" id="btnLogin">Entrar</button> <button class="btn sm" id="btnSignup"><span>Crear cuenta</span><b class="only-m">Crear cuenta</b></button>`; $('btnLogin').onclick=()=>openModal('login'); $('btnSignup').onclick=()=>openModal('signup'); }
 }
 document.addEventListener('click',e=>{ const m=$('menu'); if(m&&!m.contains(e.target)) m.classList.remove('open'); });
 sb.auth.onAuthStateChange(async(_e,session)=>{ user=session?.user??null; profile=null; if(user){ const {data}=await sb.from('profiles').select('apodo,rol,avatar').eq('id',user.id).single(); profile=data; } renderAuth(); if(channel) loadRound(); joinPresence(); loadMine(); });
@@ -991,28 +995,28 @@ function renderMine(){
   if(!user){ box.innerHTML='<div class="empty">Entrá para ver tus favoritos y listas.</div>'; return; }
   const trackRow=(t,extra='')=>`<div class="trow"><span class="cv" style="${t.portada?`background-image:url(${esc(t.portada)})`:''}">${t.portada?'':esc(initials(t.artista))}</span>
       <span class="ti"><b>${esc(t.titulo)}</b><small>${esc(t.artista)} · <a href="#/c/${t.channels?.slug||''}">${esc(t.channels?.nombre||'')}</a></small></span>
-      <span class="ta">${t.channels?`<button class="icbtn" title="Escuchar el canal" data-ch="${esc(t.channels.slug)}">${ICON_PLAY}</button>`:''}<button class="icbtn" title="Agregar a lista" data-list='${esc(JSON.stringify({id:t.id,titulo:t.titulo}))}'>${ICON_PLUS}</button>${extra}</span></div>`;
+      <span class="ta">${t.channels?`<button class="icbtn" title="Escuchar el canal" aria-label="Escuchar ${esc(t.channels.nombre)}" data-ch="${esc(t.channels.slug)}">${ICON_PLAY}</button>`:''}<button class="icbtn" title="Agregar a lista" aria-label="Agregar ${esc(t.titulo)} a una lista" data-list='${esc(JSON.stringify({id:t.id,titulo:t.titulo}))}'>${ICON_PLUS}</button>${extra}</span></div>`;
   if(mineTab==='favoritos'){
     const rows=mine.favRows||[]; if(!rows.length){ box.innerHTML='<div class="empty">Todavía no guardaste temas. Tocá el corazón cuando algo te guste.</div>'; return; }
-    box.innerHTML=`<div class="tlist">${rows.map(r=>trackRow(r.tracks,`<button class="icbtn on" title="Quitar" data-unfav="${r.track_id}">${ICON_HEART}</button>`)).join('')}</div>`;
+    box.innerHTML=`<div class="tlist">${rows.map(r=>trackRow(r.tracks,`<button class="icbtn on" title="Quitar de favoritos" aria-label="Quitar ${esc(r.tracks.titulo)} de favoritos" data-unfav="${r.track_id}">${ICON_HEART}</button>`)).join('')}</div>`;
   }
   if(mineTab==='listas'){
     box.innerHTML=`<form class="newlist" id="newListForm"><input id="newListName" placeholder="Nombre de la lista nueva…" maxlength="60" required><button class="btn sm" type="submit">Crear lista</button></form>
-      ${mine.lists.length?mine.lists.map(l=>`<details class="plist" open><summary><b>${esc(l.nombre)}</b><span>${l.playlist_tracks?.length||0} temas</span><button class="icbtn" title="Eliminar lista" data-dellist="${l.id}">${ICON_TRASH}</button></summary>
-        <div class="tlist">${(l.playlist_tracks||[]).sort((a,b)=>a.orden-b.orden).map(x=>trackRow(x.tracks,`<button class="icbtn" title="Quitar de la lista" data-rm="${l.id}|${x.track_id}">${ICON_X}</button>`)).join('')||'<div class="empty small">Lista vacía. Agregá temas desde el canal o desde favoritos.</div>'}</div></details>`).join(''):'<div class="empty">Creá tu primera lista.</div>'}`;
+      ${mine.lists.length?mine.lists.map(l=>`<details class="plist" open><summary><b>${esc(l.nombre)}</b><span>${l.playlist_tracks?.length||0} temas</span><button class="icbtn" title="Eliminar lista" aria-label="Eliminar la lista ${esc(l.nombre)}" data-dellist="${l.id}">${ICON_TRASH}</button></summary>
+        <div class="tlist">${(l.playlist_tracks||[]).sort((a,b)=>a.orden-b.orden).map(x=>trackRow(x.tracks,`<button class="icbtn" title="Quitar de la lista" aria-label="Quitar ${esc(x.tracks.titulo)} de la lista" data-rm="${l.id}|${x.track_id}">${ICON_X}</button>`)).join('')||'<div class="empty small">Lista vacía. Agregá temas desde el canal o desde favoritos.</div>'}</div></details>`).join(''):'<div class="empty">Creá tu primera lista.</div>'}`;
     $('newListForm').onsubmit=async e=>{ e.preventDefault(); const n=$('newListName').value.trim(); if(n){ await createList(n); } };
   }
   if(mineTab==='canales'){
     const list=[...mine.channels].map(id=>channels.find(c=>c.id===id)).filter(Boolean);
     if(!list.length){ box.innerHTML='<div class="empty">No seguís ningún canal. Tocá el corazón en un género.</div>'; return; }
     box.innerHTML=`<div class="tlist">${list.map(c=>`<div class="trow"><span class="cv" style="${c.sonando_portada?`background-image:url(${esc(c.sonando_portada)})`:''}"></span><span class="ti"><b><a href="#/c/${c.slug}">${esc(c.nombre)}</a></b><small>${c.sonando_titulo?esc(c.sonando_titulo)+' · '+esc(c.sonando_artista):'sin temas'}</small></span>
-      <span class="ta"><button class="icbtn" title="Escuchar" data-ch="${c.slug}">${ICON_PLAY}</button><button class="icbtn on" title="Dejar de seguir" data-unch="${c.id}">${ICON_HEART}</button></span></div>`).join('')}</div>`;
+      <span class="ta"><button class="icbtn" title="Escuchar" aria-label="Escuchar ${esc(c.nombre)}" data-ch="${c.slug}">${ICON_PLAY}</button><button class="icbtn on" title="Dejar de seguir" aria-label="Dejar de seguir ${esc(c.nombre)}" data-unch="${c.id}">${ICON_HEART}</button></span></div>`).join('')}</div>`;
   }
   box.querySelectorAll('[data-ch]').forEach(b=>b.onclick=()=>{ const c=bySlug(b.dataset.ch); if(c) tuneChannel(c); });
   box.querySelectorAll('[data-unfav]').forEach(b=>b.onclick=()=>toggleFavTrack({id:b.dataset.unfav,titulo:''}));
   box.querySelectorAll('[data-unch]').forEach(b=>b.onclick=()=>toggleFavChannel(channels.find(c=>c.id===+b.dataset.unch)));
   box.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{ const [l,t]=b.dataset.rm.split('|'); removeFromList(l,t); });
-  box.querySelectorAll('[data-dellist]').forEach(b=>b.onclick=e=>{ e.preventDefault(); if(b.dataset.confirm){ deleteList(b.dataset.dellist); } else { b.dataset.confirm='1'; b.textContent='¿Seguro?'; setTimeout(()=>{ delete b.dataset.confirm; b.innerHTML=ICON_TRASH; },3000); } });
+  box.querySelectorAll('[data-dellist]').forEach(b=>b.onclick=e=>{ e.preventDefault(); if(b.dataset.confirm){ deleteList(b.dataset.dellist); } else { b.dataset.confirm='1'; b.textContent='Eliminar "'+(mine.lists.find(l=>l.id===b.dataset.dellist)?.nombre||'lista')+'"'; b.classList.add('danger'); setTimeout(()=>{ delete b.dataset.confirm; b.innerHTML=ICON_TRASH; },3000); } });
   box.querySelectorAll('[data-list]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); openListMenu(b,JSON.parse(b.dataset.list)); });
 }
 $('mineTabs').onclick=e=>{ const b=e.target.closest('button'); if(b){ mineTab=b.dataset.t; renderMine(); } };

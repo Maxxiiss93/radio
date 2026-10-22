@@ -59,10 +59,29 @@
   .busy { opacity:.6; pointer-events:none }
 
   /* Índice */
-  .hero-idx { padding:40px 0 20px }
-  .hero-idx h2 { font-size:clamp(34px,6vw,64px); font-weight:800; letter-spacing:-.04em; line-height:1; margin:0 0 10px; text-wrap:balance }
-  .hero-idx h2 span { color:var(--txt3) }
-  .hero-idx p { color:var(--txt2); margin:0; max-width:56ch; font-size:16px }
+  .hero-idx { padding:34px 0 10px; position:relative; overflow:hidden; margin:0 -20px; padding-left:20px; padding-right:20px }
+  .hero-idx::before { content:""; position:absolute; left:-40px; top:-10px; width:520px; height:320px; background:radial-gradient(closest-side, rgba(255,106,61,.18), transparent); filter:blur(30px); pointer-events:none; z-index:-1; animation:heroGlow 9s ease-in-out infinite alternate }
+  @keyframes heroGlow { from { translate:0 0; opacity:.7 } to { translate:120px 20px; opacity:1 } }
+  .eyebrow { display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--txt2); padding:6px 12px 6px 10px; border-radius:999px; background:var(--glass); border:1px solid var(--edge); margin-bottom:18px; animation:fadeUp .6s ease both }
+  .eyebrow i { width:7px; height:7px; border-radius:50%; background:var(--acc); box-shadow:0 0 10px var(--acc); animation:pulse 1.6s infinite }
+  .hero-idx h2 { font-size:clamp(36px,6.4vw,68px); font-weight:800; letter-spacing:-.04em; line-height:.98; margin:0 0 14px; text-wrap:balance }
+  .hero-idx h2 .w { display:inline-block; animation:fadeUp .7s cubic-bezier(.2,.8,.2,1) both }
+  .hero-idx h2 .w.dim { color:var(--txt3) }
+  .hero-idx h2 .w:nth-child(1){animation-delay:.05s} .hero-idx h2 .w:nth-child(2){animation-delay:.12s} .hero-idx h2 .w:nth-child(3){animation-delay:.19s}
+  .hero-idx h2 .w:nth-child(5){animation-delay:.34s} .hero-idx h2 .w:nth-child(6){animation-delay:.4s} .hero-idx h2 .w:nth-child(7){animation-delay:.46s} .hero-idx h2 .w:nth-child(8){animation-delay:.52s} .hero-idx h2 .w:nth-child(9){animation-delay:.58s}
+  @keyframes fadeUp { from { opacity:0; translate:0 14px; filter:blur(6px) } to { opacity:1; translate:0 0; filter:blur(0) } }
+  .hero-idx .lead { color:var(--txt2); margin:0; max-width:52ch; font-size:16px; animation:fadeUp .7s .7s ease both }
+  .hero-idx .search { animation:fadeUp .7s .85s ease both }
+  .ticker { margin-top:14px; overflow:hidden; max-width:100%; contain:paint; mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); animation:fadeUp .7s 1s ease both }
+  .ticker .track { display:flex; gap:10px; width:max-content; animation:tick 60s linear infinite }
+  .ticker:hover .track { animation-play-state:paused }
+  @keyframes tick { to { translate:-50% 0 } }
+  .ticker a { display:inline-flex; align-items:center; gap:8px; padding:7px 12px 7px 8px; border-radius:999px; background:var(--glass); border:1px solid var(--edge); font-size:12px; color:var(--txt2); white-space:nowrap; transition:border-color .15s, color .15s }
+  .ticker a:hover { border-color:var(--acc); color:#fff }
+  .ticker a .cv { width:22px; height:22px; border-radius:50%; background:linear-gradient(135deg,#666,#222) center/cover; flex:none; filter:grayscale(1) } .ticker a:hover .cv { filter:none }
+  .ticker a b { color:#fff; font-weight:600 } .ticker a em { font-style:normal; color:var(--txt3) }
+  .ticker a i { display:inline-flex; gap:2px; align-items:flex-end; height:10px } .ticker a i s { width:2px; background:var(--acc); height:3px; animation:eq .8s ease-in-out infinite; text-decoration:none } .ticker a i s:nth-child(2){animation-delay:.2s} .ticker a i s:nth-child(3){animation-delay:.4s}
+  @media (prefers-reduced-motion:reduce) { .ticker .track { animation:none; flex-wrap:wrap; width:auto } .hero-idx::before { animation:none } }
   .search { margin:22px 0 10px; display:flex; align-items:center; gap:10px; padding:6px 6px 6px 18px; border-radius:999px; max-width:560px }
   .search input { flex:1; background:none; border:0; outline:0; color:#fff; min-width:0; font-size:15px } .search input::placeholder { color:var(--txt3) }
   .search kbd { font-size:11px; color:var(--txt3); border:1px solid var(--edge); padding:3px 7px; border-radius:6px }
@@ -259,9 +278,11 @@
 
   <section id="viewIndex">
     <div class="hero-idx">
-      <h2>Elegí tu canal.<br><span>La gente vota, todos escuchan.</span></h2>
-      <p>Un canal por género y subgénero. En cada uno, la audiencia elige el próximo tema y charla mientras suena.</p>
+      <div class="eyebrow"><i></i>En vivo · <span id="heroOnline">0</span> personas escuchando</div>
+      <h2 id="heroTitle" aria-label="Elegí tu canal. La gente vota, todos escuchan."><span class="w">Elegí</span> <span class="w">tu</span> <span class="w">canal.</span><br><span class="w dim">La</span> <span class="w dim">gente</span> <span class="w dim">vota,</span> <span class="w dim">todos</span> <span class="w dim">escuchan.</span></h2>
+      <p class="lead">Un canal por género y subgénero. La audiencia elige el próximo tema y charla mientras suena.</p>
       <div class="search glass"><span style="color:var(--txt3);display:flex"><svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></span><input id="q" type="search" placeholder="Buscar género o subgénero…" autocomplete="off" spellcheck="false" aria-label="Buscar género o subgénero" enterkeyhint="search"><kbd>/</kbd></div>
+      <div class="ticker" id="ticker" aria-label="Sonando ahora en los canales"><div class="track" id="tickerTrack"></div></div>
     </div>
     <div class="welcome glass" id="welcome" hidden>
       <div class="w-steps">
@@ -690,7 +711,14 @@ function itemEl(c, label, isGenre){
   const tp=d.querySelector('.tplay'); if(tp) tp.onclick=e=>{ e.preventDefault(); e.stopPropagation(); if(play.on&&play.channel?.id===c.id) stopPlay(); else tuneChannel(c); };
   return d;
 }
+function renderTicker(){
+  const live=channels.filter(c=>c.sonando_titulo).sort((a,b)=>score(b)-score(a)).slice(0,14);
+  const t=$('tickerTrack'); if(!live.length){ $('ticker').hidden=true; return; } $('ticker').hidden=false;
+  const html=live.map(c=>`<a href="#/c/${c.slug}"><span class="cv" style="${c.sonando_portada?`background-image:url(${esc(c.sonando_portada)})`:''}"></span><i><s></s><s></s><s></s></i><em>${esc(c.nombre)}</em><b>${esc(c.sonando_titulo)}</b><em>· ${esc(c.sonando_artista)}</em></a>`).join('');
+  t.innerHTML=html+html; t.style.animationDuration=Math.max(30, live.length*6)+'s';
+}
 function renderIndex(q=''){
+  renderTicker(); $('heroOnline').textContent=$('online').textContent;
   const box=$('genres'); box.innerHTML=''; q=q.trim().toLowerCase();
   const roots=channels.filter(c=>!c.parent_id).sort((a,b)=>score(b)-score(a));
   let rank=0;
@@ -980,7 +1008,7 @@ $('chatinput').addEventListener('focus',()=>{ if(!user){ $('chatinput').blur(); 
 function joinPresence(){
   if(presence) sb.removeChannel(presence);
   presence=sb.channel('presencia',{config:{presence:{key:user?.id??crypto.randomUUID()}}})
-    .on('presence',{event:'sync'},()=>{ const st=presence.presenceState(); const all=Object.keys(st); $('online').textContent=all.length;
+    .on('presence',{event:'sync'},()=>{ const st=presence.presenceState(); const all=Object.keys(st); $('online').textContent=all.length; if($('heroOnline')) $('heroOnline').textContent=all.length;
       listeners.clear(); all.forEach(k=>{ const c=st[k][0]?.canal; if(c) listeners.set(c,(listeners.get(c)||0)+1); });
       if(!$('viewIndex').classList.contains('hidden')&&channels.length){ const act={}; document.querySelectorAll('#genres .grow').forEach(r=>act[r.dataset.slug]=r.querySelector('.item.active')?.dataset.slug); renderIndex($('q').value); document.querySelectorAll('#genres .grow').forEach(r=>{ const want=act[r.dataset.slug]; if(want){ r.querySelectorAll('.item').forEach(x=>{ const on=x.dataset.slug===want; x.classList.toggle('active',on); x.setAttribute('aria-expanded',on); }); } }); }
       const here=all.filter(k=>st[k][0]?.viendo===channel?.id||st[k][0]?.canal===channel?.id);

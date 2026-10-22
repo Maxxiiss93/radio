@@ -329,6 +329,10 @@
   .trow .cv { width:48px; height:48px; border-radius:10px; background:linear-gradient(135deg,#3a3540,#141317) center/cover; display:grid; place-items:center; font-weight:800; font-size:13px; color:#000; filter:grayscale(1) } .trow:hover .cv { filter:none }
   .trow .ti { min-width:0 } .trow .ti b { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; line-height:1.25 } .trow .ti small { color:var(--txt3); font-size:12px } .trow .ti a { display:inline-block; padding:12px 0; margin:-12px 0; text-decoration:underline; text-decoration-color:var(--txt4); text-underline-offset:3px } .trow .ti a:hover { color:var(--acc2) }
   .trow .ta { display:flex; gap:6px } @media (max-width:480px) { .trow { grid-template-columns:48px minmax(0,1fr); } .trow .ta { grid-column:1 / -1; justify-content:flex-end } }
+  .load-form { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; margin-bottom:10px } .load-form label { display:flex; flex-direction:column; gap:4px; font-size:12px; color:var(--txt3); min-width:0 } .load-form label.wide { grid-column:1 / -1 }
+  .load-form input, .load-form select { width:100%; min-width:0; background:rgba(255,255,255,.07); border:1px solid var(--edge); border-radius:12px; padding:11px 14px; color:var(--ivory); font:inherit; font-size:14px } .load-form select { appearance:auto } .load-form input:focus, .load-form select:focus { outline:2px solid var(--acc); outline-offset:1px; border-color:transparent }
+  .load-form .st { font-size:12px; color:var(--txt3); min-height:1.4em } .load-form .st.ok { color:var(--acc) } .load-form .st.err { color:#f3a0a0 }
+  .tlist .trow.off { opacity:.45 } .trow .cv.mini-cv { width:40px; height:40px; font-size:12px }
   .newlist { display:flex; gap:8px; margin-bottom:16px; max-width:520px } .newlist input { flex:1; min-width:0; background:rgba(255,255,255,.07); border:1px solid var(--edge); border-radius:999px; padding:10px 16px; color:#fff; outline:0 } .newlist input:focus { border-color:var(--acc) }
   .plist { margin-bottom:12px } .plist summary { display:flex; align-items:center; gap:12px; cursor:pointer; list-style:none; padding:12px 14px; border-radius:var(--r2); } .plist summary::-webkit-details-marker { display:none }
   .plist summary b { font-size:17px; letter-spacing:-.02em } .plist summary span { color:var(--txt3); font-size:12px; flex:1 } .plist summary .icbtn { width:34px; height:34px }
@@ -422,6 +426,10 @@
     <div class="mine-h"><h2>Mi música</h2><p>Lo que guardaste, tus listas y los canales que seguís.</p></div>
     <div class="tabs wide" id="mineTabs"><button class="on" data-t="favoritos">Favoritos</button><button data-t="listas">Listas</button><button data-t="canales">Canales</button><button data-t="supervision" id="tabSup">Supervisión</button></div>
     <div id="mineBody"></div>
+  </section>
+  <section id="viewLoad" class="hidden">
+    <div class="mine-h"><h2>Cargar temas</h2><p>Pegá el link del audio, completá los datos y elegí el subgénero. La duración se detecta sola.</p></div>
+    <div id="loadBody"></div>
   </section>
   <audio id="player" preload="auto"></audio>
 </div>
@@ -624,7 +632,7 @@ window.DEMO_SB = (() => {
   channels.forEach(c => { messages[c.id] = []; for (let i=0;i<6;i++) messages[c.id].push({ id:uid(), channel_id:c.id, user_id:botIds[Math.floor(Math.random()*botIds.length)], texto:frases[Math.floor(Math.random()*frases.length)], creado_en:new Date(now()-(6-i)*90000).toISOString() }); });
 
   // ---------- Usuario demo ----------
-  const me = { id:'me', email:'vos@demo' }; profiles.me = { apodo:'vos', rol:'oyente', avatar:null, es_menor:false, tutor_id:null, chat_habilitado:true };
+  const me = { id:'me', email:'vos@demo' }; profiles.me = { apodo:'vos', rol:'moderador', avatar:null, es_menor:false, tutor_id:null, chat_habilitado:true };
   profiles.kid = { apodo:'Juli (12)', rol:'oyente', avatar:null, es_menor:true, tutor_id:'me', chat_habilitado:true }; const demoCodes = {};
   let session = { user: me }; const authCbs = [];
 
@@ -655,6 +663,7 @@ window.DEMO_SB = (() => {
   };
   function from(table) {
     if (table==='profiles') { const u = { update(obj){ return { eq(_k,id){ Object.assign(profiles[id], obj); return Promise.resolve({error:null}); } }; } }; const base = fromQ(table); base.update = u.update; return base; }
+    if (table==='tracks') { const base = fromQ(table); base.update = obj => ({ eq(_k,id){ const t = tracks.find(x=>String(x.id)===String(id)); if (t) Object.assign(t, obj); return Promise.resolve({error:null}); } }); base.delete = () => ({ eq(_k,id){ const i = tracks.findIndex(x=>String(x.id)===String(id)); if (i>=0) tracks.splice(i,1); return Promise.resolve({error:null}); } }); return base; }
     return fromQ(table);
   }
   function fromQ(table) {
@@ -669,6 +678,7 @@ window.DEMO_SB = (() => {
       delete() { const d = { eq(k,v){ filters.push(r => String(r[k])===String(v)); return d; }, then(res){ const store = { favorite_tracks:fav_tracks, favorite_channels:fav_channels, playlists, playlist_tracks }[table]; if (store) for (let i=store.length-1;i>=0;i--) if (filters.every(f=>f(store[i]))) { if (table==='playlists') { for (let j=playlist_tracks.length-1;j>=0;j--) if (playlist_tracks[j].playlist_id===store[i].id) playlist_tracks.splice(j,1); } store.splice(i,1); } res({ error:null }); } }; return d; },
       insert(obj) {
         const store = { favorite_tracks:fav_tracks, favorite_channels:fav_channels, playlists, playlist_tracks }[table];
+        if (table==='tracks') { const row = { id:uid(), activo:true, creado_en:new Date().toISOString(), ...obj }; tracks.push(row); return Promise.resolve({ data:row, error:null }); }
         if (store) { const row = { ...obj }; if (table==='playlists') { row.id = uid(); row.publica = false; row.creado_en = new Date().toISOString(); } if (table==='favorite_tracks'||table==='favorite_channels') row.creado_en = new Date().toISOString(); store.push(row); const p = Promise.resolve({ data:row, error:null }); p.select = () => ({ single: () => Promise.resolve({ data:row, error:null }) }); return p; }
         if (table==='messages') { const p = profiles[obj.user_id]||{}; if (p.es_menor && p.chat_habilitado===false) return Promise.resolve({ error:{ message:'Tu tutor pausó el chat de esta cuenta' } }); const m = { id:uid(), creado_en:new Date().toISOString(), sala: p.es_menor?'menores':'adultos', ...obj }; messages[obj.channel_id].push(m); setTimeout(()=>emit('messages', m), 50); } return Promise.resolve({ error:null }); },
       then(res) {
@@ -715,6 +725,7 @@ const STAR='<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
 const ICON_SHIELD='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4" stroke-linecap="round"/></svg>';
 const ICON_CAM='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>', ICON_OUT='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4H5v16h5M14 8l4 4-4 4M18 12H9"/></svg>';
 const ICON_HEART='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>', ICON_PLUS='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>', ICON_TRASH='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>', ICON_X='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+const ICON_PAUSE='<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>';
 const ICON_PLAY='<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
 const ICON_LIVE='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 12h2l2-6 3 12 3-9 2 3h4"/></svg>';
 const $ = id => document.getElementById(id);
@@ -766,6 +777,7 @@ function renderAuth(){
       <div class="dd glass"><div class="who">${avatar(user.id,n,av)}<div><b>${esc(n)}</b><span>${esc(user.email||'')}</span></div></div>
       <label for="avatarFile">${ICON_CAM} Cambiar foto de perfil</label><input type="file" id="avatarFile" accept="image/*" hidden>
       ${profile?.es_menor?`<div class="who sup"><b>Cuenta supervisada</b><span>Chat separado, visible para tu tutor.</span></div>`:`<a href="#/mi/supervision">${ICON_SHIELD} Cuentas supervisadas</a>`}
+      ${profile?.rol==='moderador'?`<a href="#/cargar">${ICON_PLUS} Cargar temas</a>`:''}
       <button id="logout">${ICON_OUT} Cerrar sesión</button></div></div>`;
     $('menuBtn').onclick=e=>{ e.stopPropagation(); $('menu').classList.toggle('open'); };
     $('avatarFile').onchange=e=>{ if(e.target.files[0]) uploadAvatar(e.target.files[0]); };
@@ -773,7 +785,7 @@ function renderAuth(){
   else { box.innerHTML=`<button class="btn glass sm" id="btnLogin">Entrar</button> <button class="btn sm" id="btnSignup"><span>Crear cuenta</span><b class="only-m">Crear cuenta</b></button>`; $('btnLogin').onclick=()=>openModal('login'); $('btnSignup').onclick=()=>openModal('signup'); }
 }
 document.addEventListener('click',e=>{ const m=$('menu'); if(m&&!m.contains(e.target)) m.classList.remove('open'); });
-sb.auth.onAuthStateChange(async(_e,session)=>{ user=session?.user??null; profile=null; if(user){ const {data}=await sb.from('profiles').select('apodo,rol,avatar,es_menor,tutor_id,chat_habilitado').eq('id',user.id).single(); profile=data; } renderAuth(); if(channel){ loadRound(); loadChat(); } renderChatMode(); joinPresence(); loadMine(); });
+sb.auth.onAuthStateChange(async(_e,session)=>{ user=session?.user??null; profile=null; if(user){ const {data}=await sb.from('profiles').select('apodo,rol,avatar,es_menor,tutor_id,chat_habilitado').eq('id',user.id).single(); profile=data; } renderAuth(); if(channel){ loadRound(); loadChat(); } renderChatMode(); joinPresence(); loadMine(); if(!$('viewLoad').classList.contains('hidden')) renderLoad(); });
 
 async function uploadAvatar(file){
   if(!user) return; $('menu')?.classList.add('busy'); toast('Subiendo foto…');
@@ -862,6 +874,8 @@ async function route(){
   if(!channels.length) await loadChannels();
   if(location.hash.startsWith('#/mi')){ if(location.hash==='#/mi/supervision') mineTab='supervision'; leaveChannel(); $('viewChannel').classList.add('hidden'); $('viewIndex').classList.add('hidden'); $('viewMine').classList.remove('hidden'); document.title='Mi música · SYNC'; await loadChannels(); renderMine(); window.scrollTo(0,0); return; }
   $('viewMine').classList.add('hidden');
+  if(location.hash==='#/cargar'){ leaveChannel(); $('viewChannel').classList.add('hidden'); $('viewIndex').classList.add('hidden'); $('viewLoad').classList.remove('hidden'); document.title='Cargar temas · SYNC'; await loadChannels(); renderLoad(); window.scrollTo(0,0); return; }
+  $('viewLoad').classList.add('hidden');
   if(m && bySlug(m[1])) await openChannel(bySlug(m[1]));
   else { leaveChannel(); $('viewChannel').classList.add('hidden'); $('viewIndex').classList.remove('hidden'); document.title='SYNC · la radio que arma la gente'; await loadChannels(); renderIndex($('q').value); showWelcome(); window.scrollTo(0,0); }
 }
@@ -1056,6 +1070,45 @@ async function renderSupervision(box){
     if(b.dataset.chat){ const on=b.dataset.on==='1'; const {error}=await sb.from('profiles').update({chat_habilitado:!on}).eq('id',b.dataset.chat); if(error) return toast(traducir(error.message),'err'); toast(on?'Chat pausado':'Chat reanudado'); renderSupervision(box); }
     if(b.dataset.free){ if(!confirm(`¿Liberar la cuenta de ${b.dataset.n}? Pasa a ser una cuenta de adulto y deja de estar supervisada.`)) return; const {error}=await sb.rpc('liberar_menor',{p_user:b.dataset.free}); if(error) return toast(traducir(error.message),'err'); toast('Cuenta liberada'); renderSupervision(box); }
     if(b.dataset.msgs){ const el=$('msgs-'+b.dataset.msgs); if(el.classList.contains('open')){ el.classList.remove('open'); return; } const {data}=await sb.from('messages').select('texto,creado_en,channels(nombre)').eq('user_id',b.dataset.msgs).order('creado_en',{ascending:false}).limit(30); el.innerHTML=data?.length?data.map(m=>`<div>${esc(m.texto)}<time>${esc(m.channels?.nombre||'')} · ${new Date(m.creado_en).toLocaleString('es-AR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</time></div>`).join(''):'<div class="empty small">Todavía no escribió nada.</div>'; el.classList.add('open'); } };
+}
+const hojas=()=>channels.filter(c=>c.parent_id).map(c=>({...c,padre:channels.find(p=>p.id===c.parent_id)?.nombre||''})).sort((a,b)=>(a.padre+a.nombre).localeCompare(b.padre+b.nombre,'es'));
+async function renderLoad(){
+  const box=$('loadBody');
+  if(!user||profile?.rol!=='moderador'){ box.innerHTML='<div class="empty">Esta pantalla es solo para moderadores.</div>'; return; }
+  const opts=hojas().map(c=>`<option value="${c.id}">${esc(c.padre)} › ${esc(c.nombre)}</option>`).join('');
+  box.innerHTML=`<form class="sup-card load-form" id="loadForm" novalidate>
+      <label class="wide">Link del audio (MP3 / M4A / OGG)<input id="lUrl" type="url" placeholder="https://…/tema.mp3" required inputmode="url" autocomplete="off"><span class="st" id="lSt"></span></label>
+      <label>Título<input id="lTit" maxlength="120" required></label>
+      <label>Artista<input id="lArt" maxlength="120" required></label>
+      <label>Subgénero<select id="lCh" required><option value="">Elegí…</option>${opts}</select></label>
+      <label>Duración (segundos)<input id="lDur" type="number" min="11" required placeholder="se detecta sola"></label>
+      <label>Link de la portada (opcional)<input id="lCov" type="url" placeholder="https://…/portada.jpg"></label>
+      <label>Link de video corto (opcional)<input id="lVid" type="url" placeholder="https://…/clip.mp4"></label>
+      <div class="wide" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button class="btn" type="submit" id="lBtn">Agregar tema</button><button class="btn glass sm" type="button" id="lTest">Probar audio</button><span class="hint" style="margin:0">Si el link no se puede reproducir acá, tampoco va a sonar en la radio.</span></div>
+    </form>
+    <div class="sup-card"><h3>Temas cargados <span id="lCount" style="color:var(--txt3);font-weight:400"></span></h3><div class="newlist"><input id="lFilter" placeholder="Filtrar por título, artista o canal…"></div><div class="tlist" id="lList"><div class="empty small">Cargando…</div></div></div>`;
+  const probe=document.createElement('audio'); probe.preload='metadata';
+  let detectado=null;
+  const detectar=()=>{ const u=$('lUrl').value.trim(); const st=$('lSt'); if(!/^https?:\/\//.test(u)){ st.textContent=''; return; } st.className='st'; st.textContent='Leyendo el audio…'; detectado=null; probe.src=u;
+    probe.onloadedmetadata=()=>{ if(isFinite(probe.duration)&&probe.duration>10){ detectado=Math.round(probe.duration); $('lDur').value=detectado; st.className='st ok'; st.textContent=`Audio OK · ${fmt(detectado)}`; } else { st.className='st err'; st.textContent='No pude leer la duración. Cargala a mano.'; } };
+    probe.onerror=()=>{ st.className='st err'; st.textContent='No se puede reproducir ese link desde el navegador (¿es un link directo al archivo? ¿permite acceso desde otros sitios?).'; }; };
+  $('lUrl').addEventListener('change',detectar); $('lUrl').addEventListener('blur',detectar);
+  $('lTest').onclick=()=>{ const u=$('lUrl').value.trim(); if(!u) return toast('Pegá un link primero','err'); if(probe.paused||probe.src!==u){ if(probe.src!==u) probe.src=u; probe.currentTime=0; probe.play().then(()=>{ $('lTest').textContent='Parar prueba'; }).catch(()=>toast('No se pudo reproducir','err')); } else { probe.pause(); $('lTest').textContent='Probar audio'; } };
+  $('loadForm').onsubmit=async e=>{ e.preventDefault(); const url=$('lUrl').value.trim(), titulo=$('lTit').value.trim(), artista=$('lArt').value.trim(), channel_id=+$('lCh').value, duracion_seg=+$('lDur').value, portada=$('lCov').value.trim()||null, video=$('lVid').value.trim()||null;
+    if(!/^https?:\/\//.test(url)) return toast('El link del audio tiene que empezar con http(s)://','err'); if(!titulo||!artista) return toast('Faltan título o artista','err'); if(!channel_id) return toast('Elegí un subgénero','err'); if(!(duracion_seg>10)) return toast('La duración tiene que ser mayor a 10 segundos','err');
+    $('lBtn').disabled=true; const {error}=await sb.from('tracks').insert({titulo,artista,url,duracion_seg,portada,video,channel_id,agregado_por:user.id}); $('lBtn').disabled=false;
+    if(error) return toast(traducir(error.message),'err'); toast(`"${titulo}" agregado`); probe.onerror=null; probe.onloadedmetadata=null; probe.removeAttribute('src'); probe.pause(); $('lTest').textContent='Probar audio'; ['lUrl','lTit','lArt','lDur','lCov','lVid'].forEach(i=>$(i).value=''); $('lSt').textContent=''; $('lUrl').focus(); listar(); };
+  async function listar(){ const {data}=await sb.from('tracks').select('id,titulo,artista,url,duracion_seg,portada,activo,channel_id,creado_en').order('creado_en',{ascending:false}).limit(500); const q=($('lFilter').value||'').toLowerCase();
+    const rows=(data||[]).map(t=>({...t,ch:channels.find(c=>c.id===t.channel_id)})).filter(t=>!q||(t.titulo+' '+t.artista+' '+(t.ch?.nombre||'')).toLowerCase().includes(q));
+    $('lCount').textContent=`· ${data?.length||0}`;
+    $('lList').innerHTML=rows.length?rows.map(t=>`<div class="trow ${t.activo?'':'off'}"><span class="cv mini-cv" style="${t.portada?`background-image:url(${esc(t.portada)})`:''}">${t.portada?'':esc(initials(t.artista))}</span>
+      <span class="ti"><b>${esc(t.titulo)}</b><small>${esc(t.artista)} · ${esc(t.ch?.nombre||'?')} · ${fmt(t.duracion_seg)}${t.activo?'':' · pausado'}</small></span>
+      <span class="ta"><button class="icbtn" title="${t.activo?'Pausar (no entra en las votaciones)':'Activar'}" aria-label="${t.activo?'Pausar':'Activar'} ${esc(t.titulo)}" data-tog="${t.id}" data-on="${t.activo?1:0}">${t.activo?ICON_PAUSE:ICON_PLAY}</button><button class="icbtn" title="Eliminar" aria-label="Eliminar ${esc(t.titulo)}" data-del="${t.id}" data-n="${esc(t.titulo)}">${ICON_TRASH}</button></span></div>`).join(''):'<div class="empty small">Todavía no hay temas cargados.</div>'; }
+  $('lFilter').oninput=listar;
+  $('lList').onclick=async e=>{ const b=e.target.closest('button'); if(!b) return;
+    if(b.dataset.tog){ const {error}=await sb.from('tracks').update({activo:b.dataset.on!=='1'}).eq('id',b.dataset.tog); if(error) return toast(traducir(error.message),'err'); listar(); }
+    if(b.dataset.del){ if(!confirm(`¿Eliminar "${b.dataset.n}" del catálogo? Si está sonando ahora, termina y no vuelve a entrar.`)) return; const {error}=await sb.from('tracks').delete().eq('id',b.dataset.del); if(error) return toast(traducir(error.message),'err'); toast('Tema eliminado'); listar(); } };
+  listar();
 }
 function renderMine(){
   $('mineTabs').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.t===mineTab));

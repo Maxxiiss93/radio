@@ -66,22 +66,26 @@
   .search { margin:22px 0 10px; display:flex; align-items:center; gap:10px; padding:6px 6px 6px 18px; border-radius:999px; max-width:560px }
   .search input { flex:1; background:none; border:0; outline:0; color:#fff; min-width:0; font-size:15px } .search input::placeholder { color:var(--txt3) }
   .search kbd { font-size:11px; color:var(--txt3); border:1px solid var(--edge); padding:3px 7px; border-radius:6px }
-  /* Acordeón horizontal de géneros */
-  .genres { display:flex; gap:12px; height:460px; margin-top:18px; overflow-x:auto; overflow-y:hidden; scrollbar-width:none; padding-bottom:4px; scroll-snap-type:x proximity }
-  .genres::-webkit-scrollbar { display:none }
-  .genre { position:relative; flex:0 0 64px; height:100%; border-radius:36px; overflow:hidden; background:var(--bg2); border:1px solid var(--edge); opacity:.45; cursor:pointer; transition:flex-basis .5s cubic-bezier(.4,0,.2,1), opacity .4s, border-color .3s; scroll-snap-align:start; display:flex; align-items:flex-end; isolation:isolate; text-decoration:none }
-  .genre:hover { opacity:.7 }
-  .genre.active { flex-basis:400px; opacity:1; border-color:rgba(255,255,255,.22); cursor:default }
-  @media (max-width:640px) { .genres { height:400px; gap:8px } .genre { flex-basis:44px; border-radius:24px } .genre.active { flex-basis:calc(100vw - 40px - 44px*2 - 16px) } .genre .vlabel { font-size:13px; bottom:20px } .genres-hint span:last-child { display:none } }
-  .genre .media { position:absolute; z-index:0; top:50%; left:50%; translate:-50% -50%; height:100%; width:100%; min-width:400px; background:linear-gradient(135deg,#444,#111) center/cover; filter:grayscale(.6) }
+  /* Acordeón vertical de géneros (ordenado por oyentes) */
+  .genres { display:flex; flex-direction:column; gap:10px; margin-top:18px }
+  .genre { position:relative; flex:none; height:60px; width:100%; border-radius:30px; overflow:hidden; background:var(--bg2); border:1px solid var(--edge); opacity:.55; cursor:pointer; transition:height .5s cubic-bezier(.4,0,.2,1), opacity .4s, border-color .3s; display:flex; align-items:flex-end; isolation:isolate; text-decoration:none }
+  .genre:hover { opacity:.8 }
+  .genre.active { height:380px; opacity:1; border-color:rgba(255,255,255,.22); cursor:default; border-radius:32px }
+  @media (max-width:640px) { .genre { height:52px; border-radius:26px } .genre.active { height:340px } }
+  .genre .rank { position:absolute; z-index:2; left:18px; top:50%; translate:0 -50%; display:flex; align-items:center; gap:12px; transition:opacity .2s; max-width:calc(100% - 36px) }
+  .genre .rank b { width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.3); display:grid; place-items:center; font-size:12px; font-weight:800; flex:none; font-variant-numeric:tabular-nums }
+  .genre .rank .n { font-size:15px; font-weight:700; color:#fff; white-space:nowrap }
+  .genre .rank .l { font-size:12px; color:rgba(255,255,255,.6); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0 }
+  .genre .rank .l i { display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--acc); margin-right:5px; vertical-align:middle }
+  .genre.active .rank { opacity:0; pointer-events:none }
+  .genre.top3 .rank b { background:var(--acc); color:var(--acc-ink); border-color:transparent }
+  .genre .media { position:absolute; z-index:0; inset:0; height:100%; width:100%; background:linear-gradient(135deg,#444,#111) center/cover; filter:grayscale(.6) }
   .genre.active .media { filter:grayscale(0); animation:kenburns 18s ease-in-out infinite alternate }
   @keyframes kenburns { from { scale:1 } to { scale:1.08 } }
   .genre .media video { width:100%; height:100%; object-fit:cover; display:block }
   .genre .media.empty { display:grid; place-items:center; font-size:72px; font-weight:800; color:rgba(255,255,255,.07); letter-spacing:-.05em }
-  .genre .vlabel { position:absolute; z-index:2; left:50%; bottom:28px; translate:-50% 0; writing-mode:vertical-rl; rotate:180deg; font-size:15px; font-weight:700; letter-spacing:.02em; white-space:nowrap; color:#fff; text-shadow:0 2px 10px rgba(0,0,0,.6); transition:opacity .2s }
-  .genre.active .vlabel { opacity:0; pointer-events:none }
-  .genre .content { position:absolute; z-index:1; left:0; bottom:0; width:400px; max-width:100%; padding:100px 22px 22px; display:flex; align-items:flex-end; gap:14px; background:linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,.85)); transition:opacity .25s }
-  @media (max-width:640px) { .genre .content { width:calc(100vw - 40px - 44px*2 - 16px); padding:70px 16px 16px; flex-direction:column; align-items:stretch; gap:12px } .genre .ctrls { justify-content:flex-end } .genre h3 { font-size:22px } }
+  .genre .content { position:absolute; z-index:1; left:0; right:0; bottom:0; padding:100px 22px 22px; display:flex; align-items:flex-end; gap:14px; background:linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,.85)); transition:opacity .25s }
+  @media (max-width:640px) { .genre .content { padding:70px 16px 16px } .genre h3 { font-size:22px } }
   .genre .content > * { opacity:0; visibility:hidden; translate:0 8px; transition:.25s }
   .genre.active .content > * { opacity:1; visibility:visible; translate:0 0 }
   .genre .info { flex:1; min-width:0 }
@@ -98,10 +102,11 @@
   .genre .ctrls .tplay { width:40px; height:40px; border-radius:50%; background:var(--acc); color:var(--acc-ink); display:grid; place-items:center; box-shadow:0 6px 18px var(--acc-glow); flex:none } .genre .ctrls .tplay svg { width:18px; height:18px }
   .genre.on { border-color:var(--acc) }
   .genre.on .ctrls .tplay { background:#fff; color:#000 }
-  .genre .vid { position:absolute; z-index:2; top:14px; right:14px; font-size:10px; font-weight:800; letter-spacing:.12em; padding:4px 8px; border-radius:6px; background:var(--acc); color:var(--acc-ink); opacity:0; transition:opacity .25s } .genre.active .vid { opacity:1 }
-  .genre .enter { position:absolute; z-index:2; top:14px; left:14px; padding:6px 12px; border-radius:999px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.4); backdrop-filter:blur(10px); font-size:12px; font-weight:700; color:#fff; opacity:0; visibility:hidden; transition:.25s } .genre.active .enter { opacity:1; visibility:visible }
+  .genre .vid { position:absolute; z-index:2; top:14px; left:14px; font-size:10px; font-weight:800; letter-spacing:.12em; padding:4px 8px; border-radius:6px; background:var(--acc); color:var(--acc-ink); opacity:0; transition:opacity .25s } .genre.active .vid { opacity:1 }
+  .genre .enter { position:absolute; z-index:2; top:14px; right:14px; padding:6px 12px; border-radius:999px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.4); backdrop-filter:blur(10px); font-size:12px; font-weight:700; color:#fff; opacity:0; visibility:hidden; transition:.25s } .genre.active .enter { opacity:1; visibility:visible }
   .genre .enter:hover { background:rgba(255,255,255,.2) }
-  .genres-hint { font-size:12px; color:var(--txt3); margin-top:10px; display:flex; justify-content:space-between; gap:10px } .genres-hint kbd { border:1px solid var(--edge); border-radius:5px; padding:1px 6px; font-size:11px }
+  .genres-hint { font-size:12px; color:var(--txt3); margin-top:10px; display:flex; justify-content:space-between; gap:10px }
+  .genre .live-big { font-size:12px; color:rgba(255,255,255,.75); margin-top:6px } .genre .live-big i { display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--acc); margin-right:5px; box-shadow:0 0 8px var(--acc) } .genres-hint kbd { border:1px solid var(--edge); border-radius:5px; padding:1px 6px; font-size:11px }
   .chip { font-size:12px; padding:5px 10px; border-radius:999px; background:var(--glass); border:1px solid var(--edge); color:var(--txt2); transition:background .15s, color .15s }
   .chip:hover { background:#fff; color:#000 } .chip.off { opacity:.45 } .chip.more { border-style:dashed }
 
@@ -267,7 +272,7 @@
     <div id="favChannels" hidden></div>
     <div class="rowh">Todos los géneros</div>
     <div class="genres" id="genres" role="list"><div class="skeleton" style="flex:0 0 400px;height:100%;border-radius:36px"></div><div class="skeleton" style="flex:0 0 64px;height:100%;border-radius:36px"></div><div class="skeleton" style="flex:0 0 64px;height:100%;border-radius:36px"></div></div>
-    <div class="genres-hint"><span>Tocá un género para abrirlo; tocalo de nuevo para entrar al canal.</span><span>← → para desplazar</span></div>
+    <div class="genres-hint"><span>Ordenados por oyentes ahora mismo. Tocá un género para abrirlo; tocalo de nuevo para entrar al canal.</span><span>↑ ↓ para moverte</span></div>
   </section>
 
   <section id="viewChannel" class="hidden">
@@ -417,11 +422,15 @@ async function syncClock(){ const t0=Date.now(); const {data}=await sb.rpc('serv
 async function loadChannels(){ const {data}=await sb.from('channel_overview').select('*').order('orden'); channels=data??[]; }
 const kids = id => channels.filter(c=>c.parent_id===id);
 const bySlug = s => channels.find(c=>c.slug===s);
-let activeGenre=null;
+let activeGenre=null; const listeners=new Map(); // channel_id -> oyentes en vivo (presencia)
+const kidsIds=id=>[id,...kids(id).map(k=>k.id)];
+const listenersOf=g=>kidsIds(g.id).reduce((a,id)=>a+(listeners.get(id)||0),0);
+const score=g=>listenersOf(g)*1e6 + (g.plays_7d||0)*1e3 + (g.temas||0);
 function renderIndex(q=''){
   const box=$('genres'); box.innerHTML=''; q=q.trim().toLowerCase();
-  const roots=channels.filter(c=>!c.parent_id); if(!activeGenre||!roots.some(r=>r.slug===activeGenre&&(!q||r.nombre.toLowerCase().includes(q)))) activeGenre=null;
-  channels.filter(c=>!c.parent_id).forEach(g=>{
+  const roots=channels.filter(c=>!c.parent_id).sort((a,b)=>score(b)-score(a)); if(!activeGenre||!roots.some(r=>r.slug===activeGenre&&(!q||r.nombre.toLowerCase().includes(q)))) activeGenre=null;
+  let rank=0;
+  roots.forEach(g=>{
     const subs=kids(g.id); const gm=g.nombre.toLowerCase().includes(q);
     const subsShown = q && !gm ? subs.filter(s=>s.nombre.toLowerCase().includes(q)) : subs;
     if(q && !gm && !subsShown.length) return;
@@ -429,12 +438,13 @@ function renderIndex(q=''){
     const media = g.sonando_video ? `<div class="media"><video src="${esc(g.sonando_video)}" poster="${esc(g.sonando_portada||'')}" muted loop autoplay playsinline preload="metadata"></video></div>`
                 : g.sonando_portada ? `<div class="media" style="background-image:url(${esc(g.sonando_portada)})"></div>`
                 : `<div class="media empty">${esc(g.nombre.slice(0,2).toUpperCase())}</div>`;
-    const d=document.createElement('div'); d.className='genre'+(g.slug===activeGenre?' active':''); d.dataset.id=g.id; d.dataset.slug=g.slug; d.setAttribute('role','button'); d.tabIndex=0; d.setAttribute('aria-expanded', g.slug===activeGenre); d.setAttribute('aria-label', g.nombre);
-    d.innerHTML=`${media}<span class="vlabel">${esc(g.nombre)}</span>${g.sonando_video?'<span class="vid">VIDEO</span>':''}
+    rank++; const oy=listenersOf(g); const liveTxt=oy?`${oy} escuchando`:(g.plays_7d?`${g.plays_7d} reproducciones esta semana`:'');
+    const d=document.createElement('div'); d.className='genre'+(g.slug===activeGenre?' active':'')+(rank<=3&&(oy||g.plays_7d)?' top3':''); d.dataset.id=g.id; d.dataset.slug=g.slug; d.setAttribute('role','button'); d.tabIndex=0; d.setAttribute('aria-expanded', g.slug===activeGenre); d.setAttribute('aria-label', g.nombre);
+    d.innerHTML=`${media}<div class="rank"><b>${rank}</b><span class="n">${esc(g.nombre)}</span><span class="l">${oy?'<i></i>':''}${esc(liveTxt||(g.sonando_titulo?g.sonando_titulo+' · '+g.sonando_artista:'sin temas'))}</span></div>${g.sonando_video?'<span class="vid">VIDEO</span>':''}
       <a class="enter" href="#/c/${g.slug}">Entrar al canal →</a>
-      <div class="content"><div class="info"><h3>${esc(g.nombre)}</h3><div class="d">${esc(g.descripcion||'')} · ${g.temas} temas</div><div class="np ${g.sonando_titulo?'':'off'}">${np}</div></div>
+      <div class="content"><div class="info"><h3>#${rank} ${esc(g.nombre)}</h3><div class="d">${esc(g.descripcion||'')} · ${g.temas} temas</div>${liveTxt?`<div class="live-big">${oy?'<i></i>':''}${esc(liveTxt)}</div>`:''}<div class="np ${g.sonando_titulo?'':'off'}">${np}</div></div>
       <div class="ctrls"><button class="icbtn chfav" data-fav-ch="${g.id}" title="Seguir canal" aria-label="Seguir ${esc(g.nombre)}" aria-pressed="false">${ICON_HEART}</button>${g.temas?`<button class="tplay" title="Escuchar" aria-label="Escuchar ${esc(g.nombre)}">${ICON_PLAY}</button>`:''}</div></div>`;
-    const activate=()=>{ if(d.classList.contains('active')) return; activeGenre=g.slug; box.querySelectorAll('.genre').forEach(x=>{ x.classList.toggle('active',x===d); x.setAttribute('aria-expanded',x===d); }); d.scrollIntoView({behavior:'smooth',block:'nearest',inline:'nearest'}); };
+    const activate=()=>{ if(d.classList.contains('active')) return; activeGenre=g.slug; box.querySelectorAll('.genre').forEach(x=>{ x.classList.toggle('active',x===d); x.setAttribute('aria-expanded',x===d); }); setTimeout(()=>d.scrollIntoView({behavior:'smooth',block:'nearest'}),520); };
     d.onclick=e=>{ if(e.target.closest('.ctrls,.enter')) return; if(d.classList.contains('active')) location.hash='#/c/'+g.slug; else activate(); };
     d.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); d.onclick(e); } };
     d.querySelector('.chfav').onclick=e=>{ e.preventDefault(); e.stopPropagation(); toggleFavChannel(g); };
@@ -449,7 +459,7 @@ $('q').oninput=e=>renderIndex(e.target.value);
 function showWelcome(){ let seen=false; try{ seen=localStorage.getItem('bienvenida')==='1'; }catch{} $('welcome').hidden = seen; $('wSignup').hidden=!!user; if(user) $('wStep3').textContent='Votá, chateá y guardá favoritos con el corazón.'; }
 $('wClose').onclick=()=>{ try{ localStorage.setItem('bienvenida','1'); }catch{} $('welcome').hidden=true; };
 $('wSignup').onclick=()=>{ $('wClose').onclick(); openModal('signup'); };
-document.addEventListener('keydown',e=>{ if((e.key==='ArrowRight'||e.key==='ArrowLeft')&&!$('viewIndex').classList.contains('hidden')&&document.activeElement.tagName!=='INPUT'){ const all=[...document.querySelectorAll('#genres .genre')]; const i=all.findIndex(x=>x.classList.contains('active')); const n=all[i+(e.key==='ArrowRight'?1:-1)]; if(n){ e.preventDefault(); n.click(); n.focus(); } } });
+document.addEventListener('keydown',e=>{ if((e.key==='ArrowDown'||e.key==='ArrowUp')&&!$('viewIndex').classList.contains('hidden')&&document.activeElement.tagName!=='INPUT'){ const all=[...document.querySelectorAll('#genres .genre')]; const i=all.findIndex(x=>x.classList.contains('active')); const n=all[i+(e.key==='ArrowDown'?1:-1)]; if(n){ e.preventDefault(); n.click(); n.focus(); } } });
 document.addEventListener('keydown',e=>{ if(e.key==='/'&&document.activeElement.tagName!=='INPUT'){ e.preventDefault(); location.hash='#/'; setTimeout(()=>$('q').focus(),0); } });
 
 // ---------- Router ----------
@@ -475,7 +485,7 @@ async function openChannel(ch){
   $('crumbName').textContent=ch.nombre; $('kicker').textContent=`${ch.nombre} · sonando ahora`;
   document.title=`${ch.nombre} · Radio Comunitaria`;
   $('chFavBtn').dataset.favCh=ch.id; renderHearts();
-  const root = parent||ch; const siblings=[root, ...kids(root.id)];
+  const root = parent||ch; const siblings=[root, ...kids(root.id).sort((a,b)=>((listeners.get(b.id)||0)-(listeners.get(a.id)||0))||((b.plays_7d||0)-(a.plays_7d||0))||(b.temas-a.temas))];
   $('subnav').innerHTML=siblings.map(s=>{ const on=s.id===ch.id; const name=(s.parent_id?'':'Todo ')+s.nombre;
     return `<a class="sub ${on?'on':''} ${s.temas?'':'off'}" href="#/c/${s.slug}" aria-current="${on?'page':'false'}" title="${esc(name)}">
       <div class="media" style="${s.sonando_portada?`background-image:url(${esc(s.sonando_portada)})`:''}"></div><span class="vlabel">${esc(name)}</span>${on?'<span class="tag2">ESTÁS ACÁ</span>':''}
@@ -492,7 +502,7 @@ async function openChannel(ch){
     .on('postgres_changes',{event:'*',schema:'public',table:'votes'},loadRound)
     .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:`channel_id=eq.${ch.id}`},p=>addMsg(p.new))
     .subscribe();
-  if(presence) presence.track({apodo:profile?.apodo??'anónimo', avatar:profile?.avatar||null, canal:ch.id});
+  if(presence) presence.track({apodo:profile?.apodo??'anónimo', avatar:profile?.avatar||null, canal:play.channel?.id??null, viendo:ch.id});
 }
 
 // ---------- Player ----------
@@ -530,11 +540,14 @@ async function tuneChannel(ch){
   resync(true); document.body.classList.add('playing'); $('mini').classList.add('show');
   play.sub=sb.channel('play-'+ch.id).on('postgres_changes',{event:'*',schema:'public',table:'radio_state',filter:`channel_id=eq.${ch.id}`},loadPlayState).subscribe();
   renderTuneBtn(); renderIndexState(); toast(`Sintonizando ${ch.nombre}`);
+  if(presence) presence.track({apodo:profile?.apodo??'anónimo', avatar:profile?.avatar||null, canal:ch.id, viendo:channel?.id??null});
+  sb.rpc('log_play',{ch:ch.id});
 }
 function stopPlay(){
   player.pause(); play.on=false; document.body.classList.remove('playing'); $('mini').classList.remove('show');
   if(play.sub){ sb.removeChannel(play.sub); play.sub=null; } play.channel=null; play.track=null; play.state=null;
   renderTuneBtn(); renderIndexState();
+  if(presence) presence.track({apodo:profile?.apodo??'anónimo', avatar:profile?.avatar||null, canal:null, viendo:channel?.id??null});
 }
 function renderTuneBtn(){
   const here = channel && play.channel?.id===channel.id && play.on;
@@ -713,9 +726,11 @@ function joinPresence(){
   if(presence) sb.removeChannel(presence);
   presence=sb.channel('presencia',{config:{presence:{key:user?.id??crypto.randomUUID()}}})
     .on('presence',{event:'sync'},()=>{ const st=presence.presenceState(); const all=Object.keys(st); $('online').textContent=all.length;
-      const here=all.filter(k=>st[k][0]?.canal===channel?.id);
+      listeners.clear(); all.forEach(k=>{ const c=st[k][0]?.canal; if(c) listeners.set(c,(listeners.get(c)||0)+1); });
+      if(!$('viewIndex').classList.contains('hidden')&&channels.length){ const prev=[...document.querySelectorAll('#genres .genre')].map(x=>x.dataset.id).join(); renderIndex($('q').value); }
+      const here=all.filter(k=>st[k][0]?.viendo===channel?.id||st[k][0]?.canal===channel?.id);
       $('avstack').innerHTML=here.slice(0,6).map(k=>avatar(k,st[k][0]?.apodo??'anónimo',st[k][0]?.avatar)).join('')+(here.length>6?`<span style="margin-left:6px;font-size:12px">+${here.length-6}</span>`:''); })
-    .subscribe(async s=>{ if(s==='SUBSCRIBED') await presence.track({apodo:profile?.apodo??'anónimo', avatar:profile?.avatar||null, canal:channel?.id??null}); });
+    .subscribe(async s=>{ if(s==='SUBSCRIBED') await presence.track({apodo:profile?.apodo??'anónimo', avatar:profile?.avatar||null, canal:play.channel?.id??null, viendo:channel?.id??null}); });
 }
 
 (async()=>{ await syncClock(); renderAuth(); joinPresence(); await route(); })();

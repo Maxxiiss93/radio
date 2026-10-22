@@ -229,6 +229,13 @@
   .msg .h { display:flex; gap:8px; align-items:baseline; font-size:12px; margin-bottom:3px } .msg .h b { font-weight:700 } .msg .h time { color:var(--txt3); font-size:11px }
   .msg.me .bub { background:var(--plum); color:var(--ivory); border-color:transparent }
   .empty { color:var(--txt3); text-align:center; padding:40px 10px; font-size:14px }
+  .chatnote { font-size:12.5px; color:var(--txt3); padding:8px 12px; border:1px solid var(--edge); border-radius:10px; background:var(--bg2); margin-bottom:8px }
+  .hint { display:block; font-size:12px; color:var(--txt3); margin:6px 2px 0; line-height:1.4 }
+  .dd .who.sup { display:block } .dd .who.sup b { color:var(--acc) }
+  .sup-card { border:1px solid var(--edge); border-radius:var(--r); background:var(--bg1); padding:16px; margin-bottom:12px } .sup-card h3 { margin:0 0 6px; font-size:16px } .sup-card p { margin:0 0 12px; color:var(--txt3); font-size:13.5px; line-height:1.5 }
+  .code { font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:28px; letter-spacing:.3em; color:var(--acc); background:var(--bg2); border:1px dashed rgba(199,232,75,.4); border-radius:10px; padding:12px 16px; display:inline-block; margin:4px 0 10px }
+  .sup-row { display:flex; align-items:center; gap:12px; padding:12px 0; border-top:1px solid var(--edge); flex-wrap:wrap } .sup-row .ta { flex-basis:100%; justify-content:flex-start } .sup-row .ti { flex:1; min-width:0 } .sup-row .ti b { display:block } .sup-row .ti small { color:var(--txt3) } .sup-row .ta { display:flex; gap:6px; flex-wrap:wrap }
+  .sup-msgs { margin-top:8px; display:none; flex-direction:column; gap:6px } .sup-msgs.open { display:flex } .sup-msgs div { font-size:13px; padding:8px 10px; background:var(--bg2); border-radius:8px } .sup-msgs time { color:var(--txt3); font-size:11px; margin-left:6px }
   .quick { display:flex; gap:6px; overflow-x:auto; padding:10px 0 2px; scrollbar-width:none } .quick::-webkit-scrollbar { display:none }
   .quick button { flex:none; min-height:40px; padding:8px 14px; border-radius:999px; background:var(--glass); border:1px solid var(--edge); font-size:13px; color:var(--txt2); transition:background .15s, color .15s } .quick button:hover { background:var(--acc); color:var(--acc-ink); border-color:var(--acc) }
   .composer { display:flex; gap:8px; margin-top:12px; padding:6px 6px 6px 16px; background:rgba(255,255,255,.07); border:1px solid var(--edge); border-radius:999px; align-items:center }
@@ -395,10 +402,11 @@
         <div class="hint" id="votehint"></div>
       </section>
       <section class="glass sec" id="chatSec">
-        <h2>Chat del canal <span class="avstack" id="avstack"></span></h2>
+        <h2><span id="chatTitle">Chat del canal</span> <span class="avstack" id="avstack"></span></h2>
         <div class="chatwrap">
           <div class="chat" id="chat" role="log" aria-live="polite" aria-label="Mensajes del canal"></div>
           <div class="quick" id="quick"><button type="button" data-q="🔥 temazo">🔥 temazo</button><button type="button" data-q="👏👏👏">👏</button><button type="button" data-q="❤️">❤️</button><button type="button" data-q="¿quién lo pidió? 😂">😂</button><button type="button" data-q="subile!">subile!</button></div>
+          <div class="chatnote" id="chatnote" hidden></div>
           <form class="composer" id="chatform"><input id="chatinput" maxlength="300" placeholder="Escribí algo…" autocomplete="off" aria-label="Mensaje" enterkeyhint="send"><button type="submit" aria-label="Enviar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></form>
         </div>
       </section>
@@ -406,7 +414,7 @@
   </section>
   <section id="viewMine" class="hidden">
     <div class="mine-h"><h2>Mi música</h2><p>Lo que guardaste, tus listas y los canales que seguís.</p></div>
-    <div class="tabs wide" id="mineTabs"><button class="on" data-t="favoritos">Favoritos</button><button data-t="listas">Listas</button><button data-t="canales">Canales</button></div>
+    <div class="tabs wide" id="mineTabs"><button class="on" data-t="favoritos">Favoritos</button><button data-t="listas">Listas</button><button data-t="canales">Canales</button><button data-t="supervision" id="tabSup">Supervisión</button></div>
     <div id="mineBody"></div>
   </section>
   <audio id="player" preload="auto"></audio>
@@ -429,6 +437,8 @@
     <h3 id="mTitle">Bienvenido de vuelta</h3><p id="mSub">Qué bueno verte. Volvé a sintonizar.</p>
     <form id="authform" novalidate>
       <div class="field" id="apodoField" hidden><input id="ap" maxlength="24" placeholder="Apodo (cómo te van a ver)" autocomplete="nickname" spellcheck="false" autocapitalize="off" aria-label="Apodo"></div>
+      <div id="menorField" hidden><label class="chk"><input type="checkbox" id="esMenor"><span></span>Soy menor de 18</label>
+        <div class="field" id="codigoField" hidden><input id="codigoTutor" maxlength="6" placeholder="Código de tutor (6 letras)" autocomplete="off" spellcheck="false" autocapitalize="characters" aria-label="Código de tutor" style="text-transform:uppercase;letter-spacing:.2em"><small class="hint">Lo genera un adulto desde su cuenta, en <b>Vos → Cuentas supervisadas</b>. Tu chat queda separado del de adultos y tu tutor puede verlo.</small></div></div>
       <div class="field"><input id="em" type="email" required autocomplete="email" spellcheck="false" autocapitalize="off" inputmode="email" placeholder="Email" aria-label="Email"></div>
       <div class="field pw"><input id="pw" type="password" required minlength="6" autocomplete="current-password" placeholder="Contraseña" aria-label="Contraseña"><button type="button" class="eye" id="eye" aria-label="Mostrar contraseña"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
       <div class="row2"><label class="chk"><input type="checkbox" id="remember" checked><span></span>Recordarme</label><button type="button" class="link" id="forgot">¿Olvidaste la contraseña?</button></div>
@@ -451,6 +461,7 @@ const SUPABASE_ANON = 'sb_publishable_Kd-YOayUAjN7Wa1NJehyMw_Q_bQRTeo';
 // ====================
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 const STAR='<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7-6.2-3.7L5.8 21l1.6-7L2 9.3l7.1-.7z"/></svg>', CHECK='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M5 12l5 5L20 7"/></svg>';
+const ICON_SHIELD='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4" stroke-linecap="round"/></svg>';
 const ICON_CAM='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>', ICON_OUT='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4H5v16h5M14 8l4 4-4 4M18 12H9"/></svg>';
 const ICON_HEART='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>', ICON_PLUS='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>', ICON_TRASH='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>', ICON_X='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
 const ICON_PLAY='<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
@@ -472,11 +483,12 @@ const traducir = m => ({'Invalid login credentials':'Email o contraseña incorre
 
 // ---------- Auth ----------
 let mode='login';
-function setMode(m){ mode=m; $('pw').autocomplete=m==='signup'?'new-password':'current-password'; $('apodoField').hidden=m!=='signup'; $('authBtn').textContent=m==='login'?'Entrar':'Crear cuenta';
+function setMode(m){ mode=m; $('pw').autocomplete=m==='signup'?'new-password':'current-password'; $('apodoField').hidden=m!=='signup'; $('menorField').hidden=m!=='signup'; $('authBtn').textContent=m==='login'?'Entrar':'Crear cuenta';
   $('mTitle').textContent=m==='login'?'Bienvenido de vuelta':'Sumate a SYNC'; $('mSub').textContent=m==='login'?'Qué bueno verte. Volvé a sintonizar.':'Votá, chateá y guardá lo que te gusta.';
   $('swap').innerHTML=m==='login'?'¿Sos nuevo? <button type="button" class="link strong" id="swapBtn">Crear cuenta</button>':'¿Ya tenés cuenta? <button type="button" class="link strong" id="swapBtn">Entrar</button>';
   $('swapBtn').onclick=()=>setMode(m==='login'?'signup':'login'); $('forgot').parentElement.hidden=m!=='login'; }
 ['em','pw','ap'].forEach(id=>{ const el=$(id); el.addEventListener('blur',()=>{ if(el.required&&!el.value.trim()) $('authErr').textContent=id==='em'?'Falta tu email.':id==='pw'?'Falta la contraseña.':''; else if(id==='em'&&el.value&&!/^\S+@\S+\.\S+$/.test(el.value)) $('authErr').textContent='Ese email no parece válido.'; }); el.addEventListener('input',()=>{ $('authErr').textContent=''; }); });
+$('esMenor').onchange=()=>{ $('codigoField').hidden=!$('esMenor').checked; if($('esMenor').checked) $('codigoTutor').focus(); };
 $('eye').onclick=()=>{ const p=$('pw'); p.type=p.type==='password'?'text':'password'; $('eye').setAttribute('aria-label',p.type==='password'?'Mostrar contraseña':'Ocultar contraseña'); };
 $('forgot').onclick=async()=>{ const email=$('em').value.trim(); if(!email) return $('authErr').textContent='Escribí tu email y volvé a tocar.'; const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin}); $('authErr').textContent=error?traducir(error.message):''; if(!error) toast('Te mandamos un mail para cambiar la contraseña'); };
 document.querySelectorAll('.social [data-prov]').forEach(b=>b.onclick=async()=>{ const {error}=await sb.auth.signInWithOAuth({provider:b.dataset.prov,options:{redirectTo:location.origin}}); if(error) toast(b.dataset.prov==='google'?'Google todavía no está habilitado':'Apple todavía no está habilitado','err'); });
@@ -491,7 +503,9 @@ $('authform').onsubmit=async e=>{
   if(!email||!password){ $('authErr').textContent='Completá email y contraseña.'; $('authBtn').disabled=false; $('authBtn').textContent=lbl; return; }
   if(mode==='login') ({error}=await sb.auth.signInWithPassword({email,password}));
   else { const apodo=$('ap').value.trim(); if(apodo.length<2){ $('authErr').textContent='Elegí un apodo de al menos 2 letras'; $('authBtn').disabled=false; return; }
-    ({error}=await sb.auth.signUp({email,password,options:{data:{apodo}}})); if(!error) toast('Cuenta creada. Si pedimos confirmación, revisá tu mail.'); }
+    const codigo_tutor=$('esMenor').checked?$('codigoTutor').value.trim().toUpperCase():'';
+    if($('esMenor').checked&&codigo_tutor.length!==6){ $('authErr').textContent='Pedile a un adulto el código de tutor de 6 letras.'; $('authBtn').disabled=false; $('authBtn').textContent=lbl; return; }
+    ({error}=await sb.auth.signUp({email,password,options:{data:{apodo,codigo_tutor}}})); if(!error) toast('Cuenta creada. Si pedimos confirmación, revisá tu mail.'); }
   $('authBtn').disabled=false; $('authBtn').textContent=lbl; if(error){ $('authErr').textContent=traducir(error.message); $('em').focus(); } else closeModal();
 };
 function renderAuth(){
@@ -500,6 +514,7 @@ function renderAuth(){
     box.innerHTML=`<div class="menu" id="menu"><button class="btn glass sm" id="menuBtn" aria-label="Cuenta de ${esc(n)}" aria-haspopup="menu">${avatar(user.id,n,av)} <span>${esc(n)}</span></button>
       <div class="dd glass"><div class="who">${avatar(user.id,n,av)}<div><b>${esc(n)}</b><span>${esc(user.email||'')}</span></div></div>
       <label for="avatarFile">${ICON_CAM} Cambiar foto de perfil</label><input type="file" id="avatarFile" accept="image/*" hidden>
+      ${profile?.es_menor?`<div class="who sup"><b>Cuenta supervisada</b><span>Chat separado, visible para tu tutor.</span></div>`:`<a href="#/mi/supervision">${ICON_SHIELD} Cuentas supervisadas</a>`}
       <button id="logout">${ICON_OUT} Cerrar sesión</button></div></div>`;
     $('menuBtn').onclick=e=>{ e.stopPropagation(); $('menu').classList.toggle('open'); };
     $('avatarFile').onchange=e=>{ if(e.target.files[0]) uploadAvatar(e.target.files[0]); };
@@ -507,7 +522,7 @@ function renderAuth(){
   else { box.innerHTML=`<button class="btn glass sm" id="btnLogin">Entrar</button> <button class="btn sm" id="btnSignup"><span>Crear cuenta</span><b class="only-m">Crear cuenta</b></button>`; $('btnLogin').onclick=()=>openModal('login'); $('btnSignup').onclick=()=>openModal('signup'); }
 }
 document.addEventListener('click',e=>{ const m=$('menu'); if(m&&!m.contains(e.target)) m.classList.remove('open'); });
-sb.auth.onAuthStateChange(async(_e,session)=>{ user=session?.user??null; profile=null; if(user){ const {data}=await sb.from('profiles').select('apodo,rol,avatar').eq('id',user.id).single(); profile=data; } renderAuth(); if(channel) loadRound(); joinPresence(); loadMine(); });
+sb.auth.onAuthStateChange(async(_e,session)=>{ user=session?.user??null; profile=null; if(user){ const {data}=await sb.from('profiles').select('apodo,rol,avatar,es_menor,tutor_id,chat_habilitado').eq('id',user.id).single(); profile=data; } renderAuth(); if(channel){ loadRound(); loadChat(); } renderChatMode(); joinPresence(); loadMine(); });
 
 async function uploadAvatar(file){
   if(!user) return; $('menu')?.classList.add('busy'); toast('Subiendo foto…');
@@ -594,7 +609,7 @@ document.addEventListener('keydown',e=>{ if(e.key==='/'&&document.activeElement.
 async function route(){
   const m=location.hash.match(/^#\/c\/([a-z0-9-]+)/);
   if(!channels.length) await loadChannels();
-  if(location.hash.startsWith('#/mi')){ leaveChannel(); $('viewChannel').classList.add('hidden'); $('viewIndex').classList.add('hidden'); $('viewMine').classList.remove('hidden'); document.title='Mi música · SYNC'; await loadChannels(); renderMine(); window.scrollTo(0,0); return; }
+  if(location.hash.startsWith('#/mi')){ if(location.hash==='#/mi/supervision') mineTab='supervision'; leaveChannel(); $('viewChannel').classList.add('hidden'); $('viewIndex').classList.add('hidden'); $('viewMine').classList.remove('hidden'); document.title='Mi música · SYNC'; await loadChannels(); renderMine(); window.scrollTo(0,0); return; }
   $('viewMine').classList.add('hidden');
   if(m && bySlug(m[1])) await openChannel(bySlug(m[1]));
   else { leaveChannel(); $('viewChannel').classList.add('hidden'); $('viewIndex').classList.remove('hidden'); document.title='SYNC · la radio que arma la gente'; await loadChannels(); renderIndex($('q').value); showWelcome(); window.scrollTo(0,0); }
@@ -770,6 +785,26 @@ $('chFavBtn').onclick=()=>{ if(channel) toggleFavChannel(channel); };
 
 // ---------- Vista Mi música ----------
 let mineTab='favoritos';
+async function renderSupervision(box){
+  if(profile?.es_menor){
+    const t=await nameOf(profile.tutor_id);
+    box.innerHTML=`<div class="sup-card"><h3>${ICON_SHIELD} Cuenta supervisada</h3><p>Esta cuenta está vinculada a <b>${esc(t.apodo)}</b>. Tu chat es solo entre menores, no se pueden compartir links, teléfonos ni redes, y tu tutor puede leer lo que escribís. Cuando cumplas 18, tu tutor libera la cuenta desde la suya.</p></div>`; return; }
+  box.innerHTML=`<div class="sup-card"><h3>${ICON_SHIELD} Cuentas supervisadas</h3><p>Si un menor va a usar SYNC, generá un código y pasáselo: lo pone al crear su cuenta (o abajo si ya la tiene). Su chat queda separado del de adultos, filtrado, y vos podés leerlo, pausarlo o liberar la cuenta cuando cumpla 18.</p>
+      <div id="codeBox"></div><button class="btn sm" id="genCode">Generar código</button><small class="hint">Vale 7 días y se usa una sola vez.</small></div>
+    <div class="sup-card"><h3>Menores que supervisás</h3><div id="supList"><div class="empty small">Cargando…</div></div></div>
+    <div class="sup-card"><h3>¿Esta cuenta es de un menor?</h3><p>Si ya creaste la cuenta sin código, ingresalo acá. El cambio no se deshace desde esta cuenta.</p><form id="linkForm" class="newlist"><input id="linkCode" maxlength="6" placeholder="Código de tutor" style="text-transform:uppercase;letter-spacing:.2em" required><button class="btn glass sm" type="submit">Vincular</button></form></div>`;
+  $('genCode').onclick=async()=>{ $('genCode').disabled=true; const {data,error}=await sb.rpc('crear_codigo_tutor'); $('genCode').disabled=false; if(error) return toast(traducir(error.message),'err'); $('codeBox').innerHTML=`<div class="code" id="codeVal">${esc(data)}</div> <button class="btn glass sm" id="copyCode">Copiar</button>`; $('copyCode').onclick=()=>{ navigator.clipboard?.writeText(data); toast('Código copiado'); }; };
+  $('linkForm').onsubmit=async e=>{ e.preventDefault(); if(!confirm('Esta cuenta va a quedar como cuenta de menor, con chat separado y supervisado. ¿Seguir?')) return; const {error}=await sb.rpc('vincular_menor',{p_code:$('linkCode').value.trim().toUpperCase()}); if(error) return toast(traducir(error.message),'err'); toast('Cuenta vinculada'); const {data}=await sb.from('profiles').select('apodo,rol,avatar,es_menor,tutor_id,chat_habilitado').eq('id',user.id).single(); profile=data; renderAuth(); renderChatMode(); renderMine(); };
+  const {data:kids}=await sb.from('profiles').select('id,apodo,avatar,chat_habilitado').eq('tutor_id',user.id).order('apodo');
+  const list=$('supList'); if(!list) return;
+  if(!kids?.length){ list.innerHTML='<div class="empty small">Todavía no hay cuentas vinculadas.</div>'; return; }
+  list.innerHTML=kids.map(k=>`<div class="sup-row">${avatar(k.id,k.apodo,k.avatar)}<span class="ti"><b>${esc(k.apodo)}</b><small>${k.chat_habilitado?'Chat activo':'Chat pausado'}</small></span>
+    <span class="ta"><button class="btn glass sm" data-msgs="${k.id}">Ver chat</button><button class="btn glass sm" data-chat="${k.id}" data-on="${k.chat_habilitado?1:0}">${k.chat_habilitado?'Pausar chat':'Reanudar chat'}</button><button class="btn glass sm" data-free="${k.id}" data-n="${esc(k.apodo)}">Ya es mayor</button></span></div><div class="sup-msgs" id="msgs-${k.id}"></div>`).join('');
+  list.onclick=async e=>{ const b=e.target.closest('button'); if(!b) return;
+    if(b.dataset.chat){ const on=b.dataset.on==='1'; const {error}=await sb.from('profiles').update({chat_habilitado:!on}).eq('id',b.dataset.chat); if(error) return toast(traducir(error.message),'err'); toast(on?'Chat pausado':'Chat reanudado'); renderSupervision(box); }
+    if(b.dataset.free){ if(!confirm(`¿Liberar la cuenta de ${b.dataset.n}? Pasa a ser una cuenta de adulto y deja de estar supervisada.`)) return; const {error}=await sb.rpc('liberar_menor',{p_user:b.dataset.free}); if(error) return toast(traducir(error.message),'err'); toast('Cuenta liberada'); renderSupervision(box); }
+    if(b.dataset.msgs){ const el=$('msgs-'+b.dataset.msgs); if(el.classList.contains('open')){ el.classList.remove('open'); return; } const {data}=await sb.from('messages').select('texto,creado_en,channels(nombre)').eq('user_id',b.dataset.msgs).order('creado_en',{ascending:false}).limit(30); el.innerHTML=data?.length?data.map(m=>`<div>${esc(m.texto)}<time>${esc(m.channels?.nombre||'')} · ${new Date(m.creado_en).toLocaleString('es-AR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</time></div>`).join(''):'<div class="empty small">Todavía no escribió nada.</div>'; el.classList.add('open'); } };
+}
 function renderMine(){
   $('mineTabs').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.t===mineTab));
   const box=$('mineBody'); box.innerHTML='';
@@ -787,6 +822,7 @@ function renderMine(){
         <div class="tlist">${(l.playlist_tracks||[]).sort((a,b)=>a.orden-b.orden).map(x=>trackRow(x.tracks,`<button class="icbtn" title="Quitar de la lista" aria-label="Quitar ${esc(x.tracks.titulo)} de la lista" data-rm="${l.id}|${x.track_id}">${ICON_X}</button>`)).join('')||'<div class="empty small">Lista vacía. Agregá temas desde el canal o desde favoritos.</div>'}</div></details>`).join(''):'<div class="empty">Creá tu primera lista.</div>'}`;
     $('newListForm').onsubmit=async e=>{ e.preventDefault(); const n=$('newListName').value.trim(); if(n){ await createList(n); } };
   }
+  if(mineTab==='supervision'){ renderSupervision(box); return; }
   if(mineTab==='canales'){
     const list=[...mine.channels].map(id=>channels.find(c=>c.id===id)).filter(Boolean);
     if(!list.length){ box.innerHTML='<div class="empty">No seguís ningún canal. Tocá el corazón en un género.</div>'; return; }
@@ -844,9 +880,21 @@ async function loadChat(){
   $('chat').innerHTML=''; if(!data?.length){ $('chat').innerHTML=`<div class="empty">Nadie escribió en este canal todavía.<br>${user?'Rompé el hielo con un mensaje o una reacción.':'<button class="btn glass sm" id="chatLogin" style="margin-top:10px">Entrá para chatear</button>'}</div>`; if($('chatLogin')) $('chatLogin').onclick=()=>openModal('login'); return; }
   for(const m of data.reverse()) await addMsg(m,false); $('chat').scrollTop=$('chat').scrollHeight;
 }
-$('chatform').onsubmit=async e=>{ e.preventDefault(); if(!user) return openModal('login'); const texto=$('chatinput').value.trim(); if(!texto||!channel) return; $('chatinput').value='';
+function aptoMenores(t){ const s=t.toLowerCase();
+  if(/(https?:\/\/|www\.|\.com\b|\.ar\b|\.net\b|\.org\b)/.test(s)) return 'En el chat de menores no se pueden compartir links.';
+  if(/[0-9][0-9 .\-]{6,}[0-9]/.test(s)) return 'En el chat de menores no se pueden compartir números de teléfono.';
+  if(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/.test(s)) return 'En el chat de menores no se pueden compartir mails.';
+  if(/\b(insta(gram)?|whats?app|telegram|snap(chat)?|tiktok|discord|facebook|agregame|agregáme|seguime)\b|usuario:|pas[aá] tu|pasame tu/.test(s)) return 'En el chat de menores no se comparten redes ni formas de contacto.';
+  if(/\b(puta|puto|mierda|pelotud[oa]s?|bolud[oa]|forr[oa]s?|concha|carajo|culo|verga|pija|idiota|imbécil|estúpid[oa]|mogólic[oa]|retrasad[oa]|matate)\b|suicid/.test(s)) return 'Ese mensaje no va en el chat de menores. Decilo de otra forma.';
+  return null; }
+function renderChatMode(){ const menor=!!profile?.es_menor; $('chatTitle').textContent=menor?'Chat de menores':'Chat del canal';
+  const note=$('chatnote'); if(menor&&profile.chat_habilitado===false){ note.hidden=false; note.textContent='Tu tutor pausó el chat de esta cuenta. Podés seguir escuchando y votando.'; $('chatinput').disabled=true; $('chatinput').placeholder='Chat pausado'; }
+  else if(menor){ note.hidden=false; note.textContent='Chat solo entre menores. Sin links, teléfonos ni redes. Tu tutor puede leerlo.'; $('chatinput').disabled=false; $('chatinput').placeholder='Escribí algo…'; }
+  else { note.hidden=true; $('chatinput').disabled=false; $('chatinput').placeholder='Escribí algo…'; } }
+$('chatform').onsubmit=async e=>{ e.preventDefault(); if(!user) return openModal('login'); const texto=$('chatinput').value.trim(); if(!texto||!channel) return;
+  if(profile?.es_menor){ const m=aptoMenores(texto); if(m) return toast(m,'err'); } $('chatinput').value='';
   const {error}=await sb.from('messages').insert({channel_id:channel.id,user_id:user.id,texto}); if(error){ toast(traducir(error.message),'err'); $('chatinput').value=texto; } };
-$('quick').onclick=async e=>{ const b=e.target.closest('button[data-q]'); if(!b) return; if(!user) return openModal('login'); if(!channel) return;
+$('quick').onclick=async e=>{ const b=e.target.closest('button[data-q]'); if(!b) return; if(!user) return openModal('login'); if(!channel) return; if(profile?.es_menor&&profile.chat_habilitado===false) return toast('Tu tutor pausó el chat','err');
   const {error}=await sb.from('messages').insert({channel_id:channel.id,user_id:user.id,texto:b.dataset.q}); if(error) toast(traducir(error.message),'err'); };
 $('chatinput').addEventListener('focus',()=>{ if(!user){ $('chatinput').blur(); openModal('login'); } });
 
@@ -859,7 +907,7 @@ function joinPresence(){
       if(!$('viewIndex').classList.contains('hidden')&&channels.length){ const act={}; document.querySelectorAll('#genres .grow').forEach(r=>act[r.dataset.slug]=r.querySelector('.item.active')?.dataset.slug); renderIndex($('q').value); document.querySelectorAll('#genres .grow').forEach(r=>{ const want=act[r.dataset.slug]; if(want){ r.querySelectorAll('.item').forEach(x=>{ const on=x.dataset.slug===want; x.classList.toggle('active',on); x.setAttribute('aria-expanded',on); }); } }); }
       const here=all.filter(k=>st[k][0]?.viendo===channel?.id||st[k][0]?.canal===channel?.id);
       $('avstack').innerHTML=here.slice(0,6).map(k=>avatar(k,st[k][0]?.apodo??'anónimo',st[k][0]?.avatar)).join('')+(here.length>6?`<span style="margin-left:6px;font-size:12px">+${here.length-6}</span>`:''); })
-    .subscribe(async s=>{ if(s==='SUBSCRIBED') await presence.track({apodo:profile?.apodo??'anónimo', avatar:profile?.avatar||null, canal:play.channel?.id??null, viendo:channel?.id??null}); });
+    .subscribe(async s=>{ if(s==='SUBSCRIBED'&&presence) await presence.track({apodo:profile?.apodo??'anónimo', avatar:profile?.avatar||null, canal:play.channel?.id??null, viendo:channel?.id??null}); });
 }
 
 // ---------- Navbar con luz ----------

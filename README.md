@@ -12,6 +12,21 @@ Radio online con un canal por género y subgénero. En cada canal la audiencia r
 6. **Deploy**: subir la carpeta a GitHub y conectarla a Vercel (sitio estático, sin build).
 7. Registrarte y, en el SQL Editor: `update profiles set rol='moderador' where apodo='TU_APODO';`
 
+## Migraciones (proyectos ya creados)
+
+Ejecutar en el SQL Editor, en orden:
+- `supabase/migracion_plays.sql` — conteo de escuchas por canal (`plays_7d`).
+- `supabase/migracion_menores.sql` — cuentas de menores supervisadas y chat separado.
+
+## Menores y chat separado
+
+- Un adulto genera un **código de tutor** (Mi música → Supervisión). Vale 7 días, un solo uso.
+- El menor lo pone al crear su cuenta ("Soy menor de 18") o después, en Supervisión. Queda `es_menor = true`, `tutor_id` = el adulto. Esa cuenta no puede cambiarse a sí misma (RLS).
+- **Chat**: cada mensaje lleva `sala` (`adultos` | `menores`), la asigna un trigger según el perfil: no se puede falsear desde el cliente. La política de lectura muestra solo la sala propia, así un menor nunca ve ni es visto por adultos en el chat. El tutor además ve los mensajes de los menores que supervisa.
+- **Filtro** en la sala de menores (trigger `texto_apto_menores`, duplicado en el cliente para avisar antes de enviar): links, teléfonos, mails, redes/pedidos de contacto y lenguaje ofensivo.
+- El tutor puede **pausar/reanudar el chat** del menor, **ver sus mensajes** y **liberar la cuenta** cuando cumple 18 (`liberar_menor`).
+- Escuchar, votar, favoritos y listas funcionan igual para todos.
+
 ## Cómo funciona
 
 - `channels` es un árbol género → subgénero. Un tema pertenece a un subgénero; el canal del género reproduce los temas de todos sus subgéneros.

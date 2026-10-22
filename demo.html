@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0a0a">
+<meta name="color-scheme" content="dark">
 <title>Radio Comunitaria</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -40,11 +41,13 @@
   .logo { flex:none; animation:spin 12s linear infinite; filter:drop-shadow(0 0 14px rgba(255,255,255,.3)) }
   @keyframes spin { to { transform:rotate(360deg) } }
   .brand h1 { font-size:17px; font-weight:800; margin:0; letter-spacing:-.02em; white-space:nowrap }
+  @media (max-width:640px) { .brand h1 { font-size:15px } .brand small { font-size:11px } #mineLink > span, #auth .btn > span:not(.av) { display:none } #mineLink, #auth .btn.sm { padding:8px 10px } #auth .av { width:30px; height:30px; font-size:11px } .brand .logo { width:34px; height:34px } }
   .brand small { display:block; font-size:12px; color:var(--txt2); font-weight:500; white-space:nowrap }
   .brand small i { display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--acc); margin-right:6px; box-shadow:0 0 10px var(--acc); animation:pulse 1.6s infinite }
   @keyframes pulse { 50% { opacity:.35 } }
   .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 22px; border-radius:999px; font-weight:700; letter-spacing:-.01em; color:var(--acc-ink); background:linear-gradient(180deg,var(--acc2),var(--acc)); box-shadow:0 10px 30px var(--acc-glow), inset 0 1px 0 rgba(255,255,255,.5); transition:transform .15s, box-shadow .2s, opacity .2s }
   .btn svg { flex:none }
+  .only-m { display:none } @media (max-width:640px) { .only-m { display:inline } }
   .btn:hover { transform:translateY(-2px); box-shadow:0 14px 36px var(--acc-glow) } .btn:active { transform:scale(.97) }
   .btn.glass { background:var(--glass2); color:#fff; border:1px solid var(--edge); box-shadow:none; backdrop-filter:blur(12px) }
   .btn.sm { padding:9px 16px; font-size:13px }
@@ -64,6 +67,7 @@
   .search input { flex:1; background:none; border:0; outline:0; color:#fff; min-width:0; font-size:15px } .search input::placeholder { color:var(--txt3) }
   .search kbd { font-size:11px; color:var(--txt3); border:1px solid var(--edge); padding:3px 7px; border-radius:6px }
   .genres { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px,1fr)); gap:14px; margin-top:18px }
+  @media (max-width:640px) { .genres { grid-template-columns:1fr 1fr; gap:10px } .genre { padding:12px; aspect-ratio:4/5 } .genre h3 { font-size:17px } .genre .d { display:none } .np { font-size:11px; margin-top:8px; padding-top:6px } .tplay { width:38px; height:38px; right:10px; bottom:52px } .tplay svg { width:16px; height:16px } .genre .chfav { top:10px; left:10px; width:32px; height:32px } .genre .chfav svg { width:15px; height:15px } }
   .genre { position:relative; aspect-ratio:1; border-radius:var(--r); overflow:hidden; display:flex; flex-direction:column; justify-content:flex-end; padding:18px; isolation:isolate; transition:transform .2s, box-shadow .2s; border:1px solid var(--edge); background:var(--bg2) }
   .genre:hover { transform:translateY(-4px); box-shadow:0 30px 60px rgba(0,0,0,.6); border-color:var(--acc) }
   .genre .media { position:absolute; inset:0; z-index:-1; background:linear-gradient(135deg,#444,#111) center/cover; filter:grayscale(1) contrast(1.05); transition:filter .35s, transform .6s }
@@ -96,7 +100,7 @@
   .sec h2 { font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--txt3); margin:0 0 16px; display:flex; align-items:center; justify-content:space-between; gap:10px }
   .sec h2 span { text-transform:none; letter-spacing:0; font-weight:500; color:var(--txt2) }
   .hero { grid-column:1 / -1; padding:28px; display:grid; grid-template-columns:230px 1fr; gap:30px; align-items:center; position:relative; overflow:hidden }
-  @media (max-width:700px) { .hero { grid-template-columns:1fr; justify-items:center; text-align:center; padding:24px } }
+  @media (max-width:700px) { .hero { grid-template-columns:1fr; justify-items:center; text-align:center; padding:20px } .disc { width:160px; height:160px } .disc .art { font-size:24px } .title { font-size:26px } .artist { font-size:15px } .next { font-size:13px } }
   .disc { width:230px; height:230px; border-radius:50%; position:relative; flex:none; background:conic-gradient(from 180deg,#1c1c1c,#2e2e2e,#161616,#1c1c1c); box-shadow:0 30px 60px rgba(0,0,0,.6), 0 0 0 1px var(--edge), 0 0 80px rgba(255,255,255,.08) }
   .disc::before { content:""; position:absolute; inset:0; border-radius:50%; background:repeating-radial-gradient(circle, rgba(255,255,255,.06) 0 2px, transparent 2px 7px) }
   .disc .art { position:absolute; inset:22%; border-radius:50%; background:linear-gradient(135deg,#fff,#777) center/cover; display:grid; place-items:center; font-size:34px; font-weight:800; color:#000; letter-spacing:-.04em; box-shadow:inset 0 0 0 4px rgba(0,0,0,.4); filter:grayscale(1) }
@@ -144,6 +148,8 @@
   .msg .h { display:flex; gap:8px; align-items:baseline; font-size:12px; margin-bottom:3px } .msg .h b { font-weight:700 } .msg .h time { color:var(--txt3); font-size:11px }
   .msg.me .bub { background:linear-gradient(135deg,var(--acc2),var(--acc)); color:var(--acc-ink); border-color:transparent }
   .empty { color:var(--txt3); text-align:center; padding:40px 10px; font-size:14px }
+  .quick { display:flex; gap:6px; overflow-x:auto; padding:10px 0 2px; scrollbar-width:none } .quick::-webkit-scrollbar { display:none }
+  .quick button { flex:none; padding:6px 12px; border-radius:999px; background:var(--glass); border:1px solid var(--edge); font-size:13px; color:var(--txt2); transition:background .15s, color .15s } .quick button:hover { background:var(--acc); color:var(--acc-ink); border-color:var(--acc) }
   .composer { display:flex; gap:8px; margin-top:12px; padding:6px 6px 6px 16px; background:rgba(255,255,255,.07); border:1px solid var(--edge); border-radius:999px; align-items:center }
   .composer:focus-within { border-color:var(--acc); background:rgba(255,255,255,.1) }
   .composer input { flex:1; background:none; border:0; outline:0; color:#fff; min-width:0 } .composer input::placeholder { color:var(--txt3) }
@@ -152,11 +158,12 @@
 
   .mini { position:fixed; left:12px; right:12px; bottom:max(12px, env(safe-area-inset-bottom)); z-index:10; display:none; align-items:center; gap:12px; padding:10px 12px; border-radius:18px }
   .mini .d { width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,#fff,#777) center/cover; flex:none; display:grid; place-items:center; font-weight:800; font-size:13px; color:#000; filter:grayscale(1) } body.playing .mini .d { animation:spin 6s linear infinite }
-  .mini .open { flex:1; min-width:0; display:flex; align-items:center; gap:12px; text-align:left; padding:0; color:inherit }
+  .mini .open { flex:1; min-width:0; display:flex; align-items:center; gap:12px; text-align:left; padding:0; color:inherit; background:none; box-shadow:none; border-radius:0 }
   .mini .t { flex:1; min-width:0 } .mini .t b { display:block; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis } .mini .t span { font-size:12px; color:var(--txt2) }
   .mini .p { position:absolute; left:16px; right:16px; bottom:0; height:2px; background:rgba(255,255,255,.15) } .mini .p i { display:block; height:100%; width:0; background:var(--acc); transition:width .95s linear }
-  .mini button { width:42px; height:42px; border-radius:50%; background:var(--acc); color:var(--acc-ink); display:grid; place-items:center; flex:none; font-size:16px }
+  .mini #miniBtn { width:42px; height:42px; border-radius:50%; background:var(--acc); color:var(--acc-ink); display:grid; place-items:center; flex:none; font-size:16px }
   .mini.show { display:flex }
+  body.playing .app { padding-bottom:150px }
   .modal { position:fixed; inset:0; background:rgba(0,0,0,.6); backdrop-filter:blur(10px); display:none; place-items:center; z-index:60; padding:20px } .modal.open { display:grid }
   .sheet { width:100%; max-width:390px; padding:26px; animation:in .2s ease }
   .sheet h3 { margin:0 0 4px; font-size:26px; font-weight:800; letter-spacing:-.02em } .sheet p { margin:0 0 18px; color:var(--txt2); font-size:14px }
@@ -174,6 +181,11 @@
   .icbtn.on { color:var(--acc); border-color:var(--acc); background:var(--acc-soft) } .icbtn.on svg { fill:var(--acc) }
   .genre .chfav { position:absolute; top:14px; left:14px; width:36px; height:36px; background:rgba(0,0,0,.45); backdrop-filter:blur(6px) }
   .genre .chfav.on { background:var(--acc-soft) }
+  .welcome { padding:16px 18px; margin-top:18px; display:flex; flex-direction:column; gap:14px; border-color:rgba(255,106,61,.35) }
+  .w-steps { display:grid; grid-template-columns:repeat(3,1fr); gap:14px }
+  @media (max-width:700px) { .w-steps { grid-template-columns:1fr } }
+  .w-steps > div { display:flex; gap:10px; align-items:flex-start; font-size:13px; color:var(--txt2) } .w-steps b { width:22px; height:22px; border-radius:50%; background:var(--acc); color:var(--acc-ink); display:grid; place-items:center; font-size:12px; flex:none } .w-steps em { font-style:normal; color:#fff; font-weight:600 }
+  .w-actions { display:flex; gap:8px; flex-wrap:wrap }
   .rowh { font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--txt3); margin:22px 0 10px }
   .favrow { display:flex; gap:10px; overflow-x:auto; padding-bottom:6px; scrollbar-width:none } .favrow::-webkit-scrollbar { display:none }
   .favch { display:flex; align-items:center; gap:10px; padding:8px 14px 8px 8px; border-radius:999px; background:var(--glass); border:1px solid var(--edge); white-space:nowrap; flex:none; transition:border-color .15s }
@@ -197,6 +209,12 @@
   .plist summary b { font-size:17px; letter-spacing:-.02em } .plist summary span { color:var(--txt3); font-size:12px; flex:1 } .plist summary .icbtn { width:34px; height:34px }
   .plist .tlist { padding:4px 0 8px 14px }
   .empty.small { padding:16px }
+  :focus-visible { outline:2px solid var(--acc); outline-offset:2px }
+  .search:focus-within, .composer:focus-within { outline:2px solid var(--acc); outline-offset:2px }
+  .search input:focus-visible, .composer input:focus-visible { outline:none }
+  .field input:focus-visible, .listmenu .lm-new input:focus-visible, .newlist input:focus-visible { outline:2px solid var(--acc); outline-offset:1px }
+  @media (prefers-reduced-motion:reduce) { *, *::before, *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important } .blob { display:none } }
+  button, a, .cand, .genre { touch-action:manipulation }
   .hidden, [hidden] { display:none !important }
 </style>
 </head>
@@ -206,14 +224,22 @@
 <div class="app">
   <header>
     <a class="brand" href="#/"><svg class="logo" viewBox="0 0 40 40" width="40" height="40" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="#fff"/><circle cx="20" cy="20" r="11" fill="none" stroke="#0a0a0a" stroke-width="2"/><circle cx="20" cy="20" r="5" fill="none" stroke="#0a0a0a" stroke-width="2"/><circle cx="20" cy="20" r="2.4" fill="#ff6a3d"/><path d="M20 3v6M20 31v6" stroke="#0a0a0a" stroke-width="2" stroke-linecap="round"/></svg><div><h1>Radio Comunitaria</h1><small><i></i><span id="online">0</span> escuchando ahora</small></div></a>
-    <div style="display:flex;gap:8px;align-items:center"><a class="btn glass sm" id="mineLink" href="#/mi" hidden><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg> Mi música</a><div id="auth"></div></div>
+    <div style="display:flex;gap:8px;align-items:center"><a class="btn glass sm" id="mineLink" href="#/mi" hidden aria-label="Mi música"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg> <span>Mi música</span></a><div id="auth"></div></div>
   </header>
 
   <section id="viewIndex">
     <div class="hero-idx">
       <h2>Elegí tu canal.<br><span>La gente vota, todos escuchan.</span></h2>
       <p>Un canal por género y subgénero. En cada uno, la audiencia elige el próximo tema y charla mientras suena.</p>
-      <div class="search glass"><span style="color:var(--txt3);display:flex"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></span><input id="q" placeholder="Buscar género o subgénero…" autocomplete="off"><kbd>/</kbd></div>
+      <div class="search glass"><span style="color:var(--txt3);display:flex"><svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></span><input id="q" type="search" placeholder="Buscar género o subgénero…" autocomplete="off" spellcheck="false" aria-label="Buscar género o subgénero" enterkeyhint="search"><kbd>/</kbd></div>
+    </div>
+    <div class="welcome glass" id="welcome" hidden>
+      <div class="w-steps">
+        <div><b>1</b><span>Elegí un género y tocá <em>Escuchar</em>. Sin cuenta, sin anuncios.</span></div>
+        <div><b>2</b><span>Mientras suena, la audiencia vota el próximo tema.</span></div>
+        <div><b>3</b><span id="wStep3">Con una cuenta votás, chateás y guardás favoritos.</span></div>
+      </div>
+      <div class="w-actions"><button class="btn sm" id="wSignup">Crear cuenta</button><button class="btn glass sm" id="wClose">Ahora no</button></div>
     </div>
     <div id="favChannels" hidden></div>
     <div class="rowh">Todos los géneros</div>
@@ -234,9 +260,9 @@
           <div class="actions">
             <button class="btn" id="tune"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Sintonizar</button>
             <button class="btn glass" id="stopBtn" hidden>Parar</button>
-            <button class="icbtn" id="favBtn" title="Guardar en favoritos"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></button>
-            <button class="icbtn" id="listBtn" title="Agregar a una lista"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
-            <label class="vol" id="volwrap" hidden><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 0 1 0 6"/></svg><input type="range" id="vol" min="0" max="1" step=".02" value="1" aria-label="Volumen"></label>
+            <button class="icbtn" id="favBtn" title="Guardar en favoritos" aria-label="Guardar en favoritos" aria-pressed="false"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></button>
+            <button class="icbtn" id="listBtn" title="Agregar a una lista" aria-label="Agregar a una lista"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+            <label class="vol" id="volwrap" hidden aria-label="Volumen"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 0 1 0 6"/></svg><input type="range" id="vol" min="0" max="1" step=".02" value="1" aria-label="Volumen"></label>
           </div>
           <div class="next" id="next"></div>
         </div>
@@ -251,8 +277,9 @@
       <section class="glass sec" id="chatSec">
         <h2>Chat del canal <span class="avstack" id="avstack"></span></h2>
         <div class="chatwrap">
-          <div class="chat" id="chat"></div>
-          <form class="composer" id="chatform"><input id="chatinput" maxlength="300" placeholder="Escribí algo…" autocomplete="off" aria-label="Mensaje"><button type="submit" aria-label="Enviar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></form>
+          <div class="chat" id="chat" role="log" aria-live="polite" aria-label="Mensajes del canal"></div>
+          <div class="quick" id="quick"><button type="button" data-q="🔥 temazo">🔥 temazo</button><button type="button" data-q="👏👏👏">👏</button><button type="button" data-q="❤️">❤️</button><button type="button" data-q="¿quién lo pidió? 😂">😂</button><button type="button" data-q="subile!">subile!</button></div>
+          <form class="composer" id="chatform"><input id="chatinput" maxlength="300" placeholder="Escribí algo…" autocomplete="off" aria-label="Mensaje" enterkeyhint="send"><button type="submit" aria-label="Enviar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></form>
         </div>
       </section>
     </div>
@@ -265,24 +292,23 @@
   <audio id="player" preload="auto"></audio>
 </div>
 
-<div class="mini glass" id="mini"><button class="open" id="miniOpen" title="Abrir canal"><div class="d" id="miniCov"></div><div class="t"><b id="miniTitle">—</b><span id="miniArtist"></span></div></button><button id="miniBtn" aria-label="Parar" title="Parar"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></button><div class="p"><i id="miniProg"></i></div></div>
+<div class="mini glass" id="mini"><button class="open" id="miniOpen" title="Abrir canal" aria-label="Abrir el canal que está sonando"><div class="d" id="miniCov"></div><div class="t"><b id="miniTitle">—</b><span id="miniArtist"></span></div></button><button id="miniBtn" aria-label="Parar" title="Parar"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></button><div class="p"><i id="miniProg"></i></div></div>
 
 <div class="modal" id="modal" role="dialog" aria-modal="true">
   <div class="sheet glass">
     <h3 id="mTitle">Sumate a la radio</h3><p>Con una cuenta podés votar el próximo tema y chatear en cada canal.</p>
     <div class="tabs"><button id="tabLogin" class="on" type="button">Entrar</button><button id="tabSignup" type="button">Crear cuenta</button></div>
     <form id="authform">
-      <div class="field" id="apodoField" hidden><label>Apodo</label><input id="ap" maxlength="24" placeholder="cómo te van a ver"></div>
-      <div class="field"><label>Email</label><input id="em" type="email" required autocomplete="email"></div>
-      <div class="field"><label>Contraseña</label><input id="pw" type="password" required minlength="6" autocomplete="current-password"></div>
-      <div class="err" id="authErr"></div>
+      <div class="field" id="apodoField" hidden><label for="ap">Apodo</label><input id="ap" maxlength="24" placeholder="p. ej. maxi_pico" autocomplete="nickname" spellcheck="false" autocapitalize="off"></div>
+      <div class="field"><label for="em">Email</label><input id="em" type="email" required autocomplete="email" spellcheck="false" autocapitalize="off" inputmode="email" placeholder="vos@correo.com"></div>
+      <div class="field"><label for="pw">Contraseña</label><input id="pw" type="password" required minlength="6" autocomplete="current-password" placeholder="mínimo 6 caracteres"></div>
+      <div class="err" id="authErr" role="alert"></div>
       <button class="btn" id="authBtn" type="submit">Entrar</button>
       <button class="btn glass" type="button" id="authClose">Cancelar</button>
     </form>
   </div>
 </div>
-<div class="toasts" id="toasts"></div>
-<div style="position:fixed;left:12px;top:12px;z-index:80;font-size:11px;font-weight:700;letter-spacing:.14em;padding:5px 10px;border-radius:999px;background:#fff;color:#000;pointer-events:none">DEMO · DATOS SIMULADOS</div>
+<div class="toasts" id="toasts" role="status" aria-live="polite"></div>
 
 <script>
 // ===== Backend simulado (solo para demo.html) =====
@@ -556,30 +582,31 @@ const traducir = m => ({'Invalid login credentials':'Email o contraseña incorre
 
 // ---------- Auth ----------
 let mode='login';
-function setMode(m){ mode=m; $('tabLogin').classList.toggle('on',m==='login'); $('tabSignup').classList.toggle('on',m==='signup'); $('apodoField').hidden=m!=='signup'; $('authBtn').textContent=m==='login'?'Entrar':'Crear cuenta'; $('mTitle').textContent=m==='login'?'Bienvenido de vuelta':'Sumate a la radio'; }
+function setMode(m){ mode=m; $('pw').autocomplete=m==='signup'?'new-password':'current-password'; $('tabLogin').classList.toggle('on',m==='login'); $('tabSignup').classList.toggle('on',m==='signup'); $('apodoField').hidden=m!=='signup'; $('authBtn').textContent=m==='login'?'Entrar':'Crear cuenta'; $('mTitle').textContent=m==='login'?'Bienvenido de vuelta':'Sumate a la radio'; }
 function openModal(m='login'){ setMode(m); $('authErr').textContent=''; $('modal').classList.add('open'); setTimeout(()=>$('em').focus(),50); }
 const closeModal=()=>$('modal').classList.remove('open');
 $('tabLogin').onclick=()=>setMode('login'); $('tabSignup').onclick=()=>setMode('signup'); $('authClose').onclick=closeModal;
 $('modal').onclick=e=>{ if(e.target===$('modal')) closeModal(); };
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeModal(); document.querySelector('.listmenu')?.remove(); $('menu')?.classList.remove('open'); } });
 $('authform').onsubmit=async e=>{
-  e.preventDefault(); $('authErr').textContent=''; $('authBtn').disabled=true;
+  e.preventDefault(); $('authErr').textContent=''; $('authBtn').disabled=true; const lbl=$('authBtn').textContent; $('authBtn').textContent='Un momento…';
   const email=$('em').value.trim(), password=$('pw').value; let error;
   if(mode==='login') ({error}=await sb.auth.signInWithPassword({email,password}));
   else { const apodo=$('ap').value.trim(); if(apodo.length<2){ $('authErr').textContent='Elegí un apodo de al menos 2 letras'; $('authBtn').disabled=false; return; }
     ({error}=await sb.auth.signUp({email,password,options:{data:{apodo}}})); if(!error) toast('Cuenta creada. Si pedimos confirmación, revisá tu mail.'); }
-  $('authBtn').disabled=false; if(error) $('authErr').textContent=traducir(error.message); else closeModal();
+  $('authBtn').disabled=false; $('authBtn').textContent=lbl; if(error){ $('authErr').textContent=traducir(error.message); $('em').focus(); } else closeModal();
 };
 function renderAuth(){
   const box=$('auth');
   if(user){ const n=profile?.apodo??'…', av=profile?.avatar;
-    box.innerHTML=`<div class="menu" id="menu"><button class="btn glass sm" id="menuBtn">${avatar(user.id,n,av)} ${esc(n)}</button>
+    box.innerHTML=`<div class="menu" id="menu"><button class="btn glass sm" id="menuBtn" aria-label="Cuenta de ${esc(n)}" aria-haspopup="menu">${avatar(user.id,n,av)} <span>${esc(n)}</span></button>
       <div class="dd glass"><div class="who">${avatar(user.id,n,av)}<div><b>${esc(n)}</b><span>${esc(user.email||'')}</span></div></div>
       <label for="avatarFile">${ICON_CAM} Cambiar foto de perfil</label><input type="file" id="avatarFile" accept="image/*" hidden>
       <button id="logout">${ICON_OUT} Cerrar sesión</button></div></div>`;
     $('menuBtn').onclick=e=>{ e.stopPropagation(); $('menu').classList.toggle('open'); };
     $('avatarFile').onchange=e=>{ if(e.target.files[0]) uploadAvatar(e.target.files[0]); };
     $('logout').onclick=()=>{ sb.auth.signOut(); toast('Hasta la próxima'); }; }
-  else { box.innerHTML=`<button class="btn glass sm" id="btnLogin">Entrar</button> <button class="btn sm" id="btnSignup">Crear cuenta</button>`; $('btnLogin').onclick=()=>openModal('login'); $('btnSignup').onclick=()=>openModal('signup'); }
+  else { box.innerHTML=`<button class="btn glass sm" id="btnLogin">Entrar</button> <button class="btn sm" id="btnSignup"><span>Crear cuenta</span><b class="only-m">Registrarme</b></button>`; $('btnLogin').onclick=()=>openModal('login'); $('btnSignup').onclick=()=>openModal('signup'); }
 }
 document.addEventListener('click',e=>{ const m=$('menu'); if(m&&!m.contains(e.target)) m.classList.remove('open'); });
 sb.auth.onAuthStateChange(async(_e,session)=>{ user=session?.user??null; profile=null; if(user){ const {data}=await sb.from('profiles').select('apodo,rol,avatar').eq('id',user.id).single(); profile=data; } renderAuth(); if(channel) loadRound(); joinPresence(); loadMine(); });
@@ -629,6 +656,9 @@ function renderIndex(q=''){
   renderIndexState(); renderHearts(); renderFavChannels();
 }
 $('q').oninput=e=>renderIndex(e.target.value);
+function showWelcome(){ let seen=false; try{ seen=localStorage.getItem('bienvenida')==='1'; }catch{} $('welcome').hidden = seen; $('wSignup').hidden=!!user; if(user) $('wStep3').textContent='Votá, chateá y guardá favoritos con el corazón.'; }
+$('wClose').onclick=()=>{ try{ localStorage.setItem('bienvenida','1'); }catch{} $('welcome').hidden=true; };
+$('wSignup').onclick=()=>{ $('wClose').onclick(); openModal('signup'); };
 document.addEventListener('keydown',e=>{ if(e.key==='/'&&document.activeElement.tagName!=='INPUT'){ e.preventDefault(); location.hash='#/'; setTimeout(()=>$('q').focus(),0); } });
 
 // ---------- Router ----------
@@ -638,7 +668,7 @@ async function route(){
   if(location.hash.startsWith('#/mi')){ leaveChannel(); $('viewChannel').classList.add('hidden'); $('viewIndex').classList.add('hidden'); $('viewMine').classList.remove('hidden'); document.title='Mi música · Radio Comunitaria'; await loadChannels(); renderMine(); window.scrollTo(0,0); return; }
   $('viewMine').classList.add('hidden');
   if(m && bySlug(m[1])) await openChannel(bySlug(m[1]));
-  else { leaveChannel(); $('viewChannel').classList.add('hidden'); $('viewIndex').classList.remove('hidden'); document.title='Radio Comunitaria'; await loadChannels(); renderIndex($('q').value); window.scrollTo(0,0); }
+  else { leaveChannel(); $('viewChannel').classList.add('hidden'); $('viewIndex').classList.remove('hidden'); document.title='Radio Comunitaria'; await loadChannels(); renderIndex($('q').value); showWelcome(); window.scrollTo(0,0); }
 }
 window.addEventListener('hashchange',route);
 function leaveChannel(){
@@ -701,7 +731,7 @@ async function tuneChannel(ch){
   play.channel=ch; play.state=null; play.track=null; play.on=true;
   await loadPlayState();
   if(!play.track){ play.on=false; return toast('Este canal todavía no tiene nada sonando'); }
-  try{ await player.play(); }catch(e){ play.on=false; renderTuneBtn(); return toast('No se pudo reproducir: '+e.message,'err'); }
+  try{ await player.play(); }catch(e){ play.on=false; renderTuneBtn(); return toast('El navegador bloqueó el audio. Tocá Sintonizar otra vez.','err'); }
   resync(true); document.body.classList.add('playing'); $('mini').classList.add('show');
   play.sub=sb.channel('play-'+ch.id).on('postgres_changes',{event:'*',schema:'public',table:'radio_state',filter:`channel_id=eq.${ch.id}`},loadPlayState).subscribe();
   renderTuneBtn(); renderIndexState(); toast(`Sintonizando ${ch.nombre}`);
@@ -724,7 +754,7 @@ $('miniBtn').onclick=stopPlay;
 $('miniOpen').onclick=()=>{ if(play.channel) location.hash='#/c/'+play.channel.slug; };
 $('vol').oninput=e=>player.volume=+e.target.value;
 player.addEventListener('ended',()=>{ if(play.channel) sb.rpc('radio_tick',{ch:play.channel.id}); });
-player.addEventListener('error',()=>{ if(play.on&&player.src) toast('Error al cargar el audio','err'); });
+player.addEventListener('error',()=>{ if(play.on&&player.src) toast('No se pudo cargar el audio. Probá sintonizar de nuevo.','err'); });
 setInterval(()=>{
   if(track&&state&&channel){
     const o=Math.max(0,Math.min(offset(),track.duracion_seg)), rem=track.duracion_seg-o, w=(o/track.duracion_seg*100)+'%';
@@ -779,8 +809,8 @@ async function deleteList(listId){ await sb.from('playlists').delete().eq('id',l
 
 function renderHearts(){
   if(channel){ const on=mine.channels.has(channel.id); $('chFavTxt').textContent=on?'Siguiendo':'Seguir canal'; $('chFavBtn').classList.toggle('on',on); }
-  document.querySelectorAll('[data-fav-track]').forEach(b=>b.classList.toggle('on',mine.tracks.has(b.dataset.favTrack)));
-  document.querySelectorAll('[data-fav-ch]').forEach(b=>b.classList.toggle('on',mine.channels.has(+b.dataset.favCh)));
+  document.querySelectorAll('[data-fav-track]').forEach(b=>{ const on=mine.tracks.has(b.dataset.favTrack); b.classList.toggle('on',on); b.setAttribute('aria-pressed',on); });
+  document.querySelectorAll('[data-fav-ch]').forEach(b=>{ const on=mine.channels.has(+b.dataset.favCh); b.classList.toggle('on',on); b.setAttribute('aria-pressed',on); b.title=on?'Dejar de seguir':'Seguir canal'; });
   $('mineLink').hidden=!user;
 }
 function renderFavChannels(){
@@ -846,7 +876,7 @@ async function loadRound(){
   const box=$('cands'); box.innerHTML=''; if(!list.length){ box.innerHTML='<div class="empty">Sin candidatos todavía</div>'; return; }
   list.forEach((c,i)=>{
     const pct=total?Math.round(c.votos/total*100):0, lead=c.votos===max&&max>0;
-    const b=document.createElement('button'); b.type='button'; b.className='cand'+(c.track_id===myVote?' mine':'')+(lead?' lead':'');
+    const b=document.createElement('button'); b.type='button'; b.className='cand'+(c.track_id===myVote?' mine':'')+(lead?' lead':''); b.setAttribute('aria-pressed',c.track_id===myVote); b.setAttribute('aria-label',`Votar ${c.titulo} de ${c.artista}, ${pct}% de los votos`);
     b.innerHTML=`<div class="fill" style="width:${pct}%"></div><div class="ico">${lead?STAR:i+1}</div><div class="t"><b>${esc(c.titulo)}</b><span>${esc(c.artista)}</span></div>
       <div class="pct">${pct}%<small>${c.votos} ${c.votos===1?'voto':'votos'}</small></div><span class="tag">TU VOTO</span>`;
     b.onclick=()=>vote(c.track_id,c.titulo); box.appendChild(b);
@@ -875,11 +905,13 @@ async function addMsg(m,scroll=true){
 async function loadChat(){
   if(!channel) return;
   const {data}=await sb.from('messages').select('*').eq('channel_id',channel.id).order('creado_en',{ascending:false}).limit(50);
-  $('chat').innerHTML=''; if(!data?.length){ $('chat').innerHTML='<div class="empty">Nadie escribió en este canal todavía. Rompé el hielo.</div>'; return; }
+  $('chat').innerHTML=''; if(!data?.length){ $('chat').innerHTML=`<div class="empty">Nadie escribió en este canal todavía.<br>${user?'Rompé el hielo con un mensaje o una reacción.':'<button class="btn glass sm" id="chatLogin" style="margin-top:10px">Entrá para chatear</button>'}</div>`; if($('chatLogin')) $('chatLogin').onclick=()=>openModal('login'); return; }
   for(const m of data.reverse()) await addMsg(m,false); $('chat').scrollTop=$('chat').scrollHeight;
 }
 $('chatform').onsubmit=async e=>{ e.preventDefault(); if(!user) return openModal('login'); const texto=$('chatinput').value.trim(); if(!texto||!channel) return; $('chatinput').value='';
   const {error}=await sb.from('messages').insert({channel_id:channel.id,user_id:user.id,texto}); if(error){ toast(traducir(error.message),'err'); $('chatinput').value=texto; } };
+$('quick').onclick=async e=>{ const b=e.target.closest('button[data-q]'); if(!b) return; if(!user) return openModal('login'); if(!channel) return;
+  const {error}=await sb.from('messages').insert({channel_id:channel.id,user_id:user.id,texto:b.dataset.q}); if(error) toast(traducir(error.message),'err'); };
 $('chatinput').addEventListener('focus',()=>{ if(!user){ $('chatinput').blur(); openModal('login'); } });
 
 // ---------- Presencia ----------

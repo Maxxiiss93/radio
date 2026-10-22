@@ -689,7 +689,7 @@ window.DEMO_SB = (() => {
         on(_t, spec, cb) { if (spec.table) { const f = spec.filter ? (row => { const [k,v] = spec.filter.split('=eq.'); return String(row[k])===v; }) : null; const l = { table:spec.table, filter:f, cb }; listeners.push(l); subs.push(l); }
           if (spec.event==='sync') ch._sync = cb; return ch; },
         subscribe(cb) { cb && cb('SUBSCRIBED'); setTimeout(()=>ch._sync&&ch._sync(), 100); ch._iv = setInterval(()=>ch._sync&&ch._sync(), 4000); return ch; },
-        presenceState() { const st = {}; botIds.slice(0, 24 + Math.floor(Math.random()*6)).forEach((b,i) => st[b] = [{ apodo:profiles[b].apodo, avatar:profiles[b].avatar, canal: i < 7 ? activeChannel : ([1,5,3,1,4,1,5,2,9,1,1,5,3,14,3,1,20,5][i%18]), viendo: i < 7 ? activeChannel : null }]); if (session) st.me = [{ apodo:'vos', avatar:profiles.me.avatar, canal:activeChannel, viendo:activeChannel }]; return st; },
+        presenceState() { const st = {}; botIds.slice(0, 24 + Math.floor(Math.random()*6)).forEach((b,i) => st[b] = [{ apodo:profiles[b].apodo, avatar:profiles[b].avatar, canal: i < 7 ? activeChannel : ([1,5,3,1,4,1,5,2,9,1,1,5,3,14,3,1,20,5][i%18]), viendo: i < 7 ? activeChannel : null }]); st.kid = [{ apodo:'Juli (12)', avatar:null, canal:activeChannel, viendo:activeChannel, menor:true }]; if (session) st.me = [{ apodo:'vos', avatar:profiles.me.avatar, canal:activeChannel, viendo:activeChannel, menor:!!profiles.me.es_menor }]; return st; },
         track() { return Promise.resolve(); }, _subs: subs,
       }; return ch;
     },
@@ -890,7 +890,7 @@ async function openChannel(ch){
     .on('postgres_changes',{event:'*',schema:'public',table:'votes'},loadRound)
     .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:`channel_id=eq.${ch.id}`},p=>addMsg(p.new))
     .subscribe();
-  if(presence) presence.track({apodo:profile?.apodo??'anónimo', avatar:profile?.avatar||null, canal:play.channel?.id??null, viendo:ch.id});
+  if(presence) presence.track({apodo:profile?.apodo??'anónimo', avatar:profile?.avatar||null, menor:!!profile?.es_menor, canal:play.channel?.id??null, viendo:ch.id});
 }
 
 // ---------- Player ----------
@@ -928,14 +928,14 @@ async function tuneChannel(ch){
   resync(true); document.body.classList.add('playing'); $('mini').classList.add('show'); syncNav();
   play.sub=sb.channel('play-'+ch.id).on('postgres_changes',{event:'*',schema:'public',table:'radio_state',filter:`channel_id=eq.${ch.id}`},loadPlayState).subscribe();
   renderTuneBtn(); renderIndexState(); toast(`Sintonizando ${ch.nombre}`);
-  if(presence) presence.track({apodo:profile?.apodo??'anónimo', avatar:profile?.avatar||null, canal:ch.id, viendo:channel?.id??null});
+  if(presence) presence.track({apodo:profile?.apodo??'anónimo', avatar:profile?.avatar||null, menor:!!profile?.es_menor, canal:ch.id, viendo:channel?.id??null});
   sb.rpc('log_play',{ch:ch.id});
 }
 function stopPlay(){
   player.pause(); play.on=false; document.body.classList.remove('playing'); $('mini').classList.remove('show'); syncNav();
   if(play.sub){ sb.removeChannel(play.sub); play.sub=null; } play.channel=null; play.track=null; play.state=null;
   renderTuneBtn(); renderIndexState();
-  if(presence) presence.track({apodo:profile?.apodo??'anónimo', avatar:profile?.avatar||null, canal:null, viendo:channel?.id??null});
+  if(presence) presence.track({apodo:profile?.apodo??'anónimo', avatar:profile?.avatar||null, menor:!!profile?.es_menor, canal:null, viendo:channel?.id??null});
 }
 function renderTuneBtn(){
   const here = channel && play.channel?.id===channel.id && play.on; document.body.classList.toggle('here', !!here);
@@ -1151,9 +1151,9 @@ function joinPresence(){
     .on('presence',{event:'sync'},()=>{ const st=presence.presenceState(); const all=Object.keys(st); $('online').textContent=all.length; if($('heroOnline')) $('heroOnline').textContent=all.length;
       listeners.clear(); all.forEach(k=>{ const c=st[k][0]?.canal; if(c) listeners.set(c,(listeners.get(c)||0)+1); });
       if(!$('viewIndex').classList.contains('hidden')&&channels.length){ const act={}; document.querySelectorAll('#genres .grow').forEach(r=>act[r.dataset.slug]=r.querySelector('.item.active')?.dataset.slug); renderIndex($('q').value); document.querySelectorAll('#genres .grow').forEach(r=>{ const want=act[r.dataset.slug]; if(want){ r.querySelectorAll('.item').forEach(x=>{ const on=x.dataset.slug===want; x.classList.toggle('active',on); x.setAttribute('aria-expanded',on); }); } }); }
-      const here=all.filter(k=>st[k][0]?.viendo===channel?.id||st[k][0]?.canal===channel?.id);
+      const yo=!!profile?.es_menor; const here=all.filter(k=>(st[k][0]?.viendo===channel?.id||st[k][0]?.canal===channel?.id)&&!!st[k][0]?.menor===yo);
       $('avstack').innerHTML=here.slice(0,6).map(k=>avatar(k,st[k][0]?.apodo??'anónimo',st[k][0]?.avatar)).join('')+(here.length>6?`<span style="margin-left:6px;font-size:12px">+${here.length-6}</span>`:''); })
-    .subscribe(async s=>{ if(s==='SUBSCRIBED'&&presence) await presence.track({apodo:profile?.apodo??'anónimo', avatar:profile?.avatar||null, canal:play.channel?.id??null, viendo:channel?.id??null}); });
+    .subscribe(async s=>{ if(s==='SUBSCRIBED'&&presence) await presence.track({apodo:profile?.apodo??'anónimo', avatar:profile?.avatar||null, menor:!!profile?.es_menor, canal:play.channel?.id??null, viendo:channel?.id??null}); });
 }
 
 // ---------- Navbar con luz ----------

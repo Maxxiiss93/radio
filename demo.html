@@ -46,9 +46,13 @@
 
   .app { position:relative; z-index:1; max-width:1200px; margin:0 auto; padding:0 20px 130px }
   .glass { background:var(--bg1); border:1px solid var(--edge); border-radius:var(--r); box-shadow:inset 0 1px 0 rgba(255,255,255,.05) }
-  header { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:18px 0 10px; position:sticky; top:0; z-index:5; background:linear-gradient(var(--bg0) 70%, transparent); margin:0 -20px; padding-left:20px; padding-right:20px }
+  header { display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:14px; padding:12px 20px; position:sticky; top:0; z-index:5; background:rgba(14,13,16,.86); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border-bottom:1px solid var(--edge); margin:0 -20px; box-shadow:0 10px 30px rgba(0,0,0,.25) }
+  header .hact { display:flex; gap:8px; align-items:center; justify-self:end }
+  header .search { margin:0; justify-self:center; width:100%; max-width:460px; padding:4px 4px 4px 16px; background:var(--bg2); border:1px solid var(--edge) } header .search input { min-height:34px }
+  body:not(.onindex) header .search { visibility:hidden; pointer-events:none }
+  @media (max-width:900px) { header { grid-template-columns:auto auto; } header .search { grid-column:1 / -1; max-width:none; justify-self:stretch; display:none } body.onindex header .search { display:flex } header .hact { grid-column:2; grid-row:1 } }
   .brand { display:flex; align-items:center; gap:12px; min-width:0 }
-  .logo { flex:none; color:var(--ivory); overflow:visible }
+  .logo { flex:none; color:var(--ivory); overflow:visible } header .logo { width:48px; height:48px } header .wordmark svg { height:19px }
   .logo .bar { transform-box:fill-box; transform-origin:50% 100% }
   body.playing .logo .bar { animation:eqBar 1.1s ease-in-out infinite }
   body.playing .logo .bar:nth-child(2){ animation-delay:.22s } body.playing .logo .bar:nth-child(3){ animation-delay:.46s } body.playing .logo .bar:nth-child(4){ animation-delay:.12s } body.playing .logo .bar:nth-child(5){ animation-delay:.33s } body.playing .logo .bar:nth-child(6){ animation-delay:.05s } body.playing .logo .bar:nth-child(7){ animation-delay:.4s }
@@ -97,7 +101,15 @@
   .hero-idx h2 .w:nth-child(5){animation-delay:.34s} .hero-idx h2 .w:nth-child(6){animation-delay:.4s} .hero-idx h2 .w:nth-child(7){animation-delay:.46s} .hero-idx h2 .w:nth-child(8){animation-delay:.52s} .hero-idx h2 .w:nth-child(9){animation-delay:.58s}
   @keyframes fadeUp { from { opacity:0; translate:0 14px; filter:blur(6px) } to { opacity:1; translate:0 0; filter:blur(0) } }
   .hero-idx .lead { color:var(--txt2); margin:0; max-width:52ch; font-size:16px; animation:fadeUp .7s .7s ease both }
-  .hero-idx .search { animation:fadeUp .7s .85s ease both }
+  .hero-grid { display:grid; grid-template-columns:1.4fr 1fr; gap:14px; margin-top:22px; animation:fadeUp .7s .85s ease both } @media (max-width:760px) { .hero-grid { grid-template-columns:1fr } }
+  .heronow { position:relative; min-height:200px; border-radius:22px; overflow:hidden; background:var(--bg1) center/cover; border:1px solid var(--edge); display:flex; align-items:flex-end; padding:18px; isolation:isolate; cursor:pointer }
+  .heronow::before { content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(14,13,16,.1), rgba(14,13,16,.92) 75%); z-index:-1 }
+  .heronow .htag { position:absolute; top:14px; left:14px; font-size:11px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--acc-ink); background:var(--acc); padding:5px 10px; border-radius:999px } .heronow .htag i { display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--acc-ink); margin-right:6px; animation:pulse 1.6s infinite }
+  .heronow .in { min-width:0; width:100% } .heronow .ch { font-size:12px; color:var(--txt2); letter-spacing:.08em; text-transform:uppercase; margin-bottom:4px } .heronow b { display:block; font-size:clamp(20px,3vw,28px); letter-spacing:-.02em; line-height:1.1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis } .heronow span.ar { color:var(--txt2); font-size:14px }
+  .heronow .cta { display:flex; gap:8px; margin-top:12px } .heronow .cta .btn { padding:9px 16px }
+  .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:10px } @media (max-width:760px) { .stats { grid-template-columns:repeat(3,1fr) } }
+  .stat { background:var(--bg1); border:1px solid var(--edge); border-radius:18px; padding:14px 14px 12px; display:flex; flex-direction:column; justify-content:flex-end; min-height:92px } .stat b { font-size:clamp(24px,3.4vw,34px); font-weight:800; letter-spacing:-.03em; line-height:1 } .stat span { font-size:12px; color:var(--txt3); margin-top:6px }
+  .stat.live b { color:var(--acc) }
   .ticker { margin-top:14px; overflow:hidden; max-width:100%; contain:paint; mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); animation:fadeUp .7s 1s ease both }
   .ticker .track { display:flex; gap:10px; width:max-content; animation:tick 60s linear infinite }
   .ticker:hover .track { animation-play-state:paused }
@@ -316,10 +328,10 @@
   .icbtn:hover { background:rgba(255,255,255,.18); color:#fff; transform:translateY(-1px) }
   .icbtn.on { color:var(--acc); border-color:var(--acc); background:var(--acc-soft) } .icbtn.on svg { fill:var(--acc) }
   .icbtn.danger { width:auto; border-radius:999px; padding:0 12px; font-size:12px; font-weight:700; background:rgba(255,90,90,.18); border-color:#ff6b6b; color:#ffb3b3 }
-  .welcome { padding:16px 18px; margin-top:18px; display:flex; flex-direction:column; gap:14px; border-color:var(--edge2) }
+  .como { margin:34px 0 10px; padding:22px 20px; border:1px solid var(--edge); border-radius:22px; background:var(--bg1); display:flex; flex-direction:column; gap:16px; scroll-margin-top:90px }
   .w-steps { display:grid; grid-template-columns:repeat(3,1fr); gap:14px }
   @media (max-width:700px) { .w-steps { grid-template-columns:1fr } }
-  .w-steps > div { display:flex; gap:10px; align-items:flex-start; font-size:13px; color:var(--txt2) } .w-steps b { width:22px; height:22px; border-radius:50%; background:var(--acc); color:var(--acc-ink); display:grid; place-items:center; font-size:12px; flex:none } .w-steps em { font-style:normal; color:#fff; font-weight:600 }
+  .w-steps > div { display:flex; gap:12px; align-items:flex-start; font-size:14px; line-height:1.5; color:var(--txt2); background:var(--bg2); border:1px solid var(--edge); border-radius:14px; padding:14px } .w-steps b { width:22px; height:22px; border-radius:50%; background:var(--acc); color:var(--acc-ink); display:grid; place-items:center; font-size:12px; flex:none } .w-steps em { font-style:normal; color:#fff; font-weight:600 }
   .w-actions { display:flex; gap:8px; flex-wrap:wrap }
   .rowh { font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--txt3); margin:22px 0 10px }
   .favrow { display:flex; gap:10px; overflow-x:auto; padding-bottom:6px; scrollbar-width:none } .favrow::-webkit-scrollbar { display:none }
@@ -367,31 +379,32 @@
 <div class="app">
   <header>
     <a class="brand" href="#/" aria-label="SYNC, inicio"><svg class="logo" viewBox="0 0 256 256" width="44" height="44" aria-hidden="true"><path class="frame" d="M66 250H50A44 44 0 0 1 6 206V50A44 44 0 0 1 50 6H206A44 44 0 0 1 250 50V206A44 44 0 0 1 206 250H190" fill="none" stroke="var(--acc)" stroke-width="6" stroke-linecap="round"/><g class="bars"><rect class="bar" x="75.5" y="231" width="9" height="19" rx="3" fill="var(--acc)"/><rect class="bar" x="91.5" y="216" width="9" height="34" rx="3" fill="var(--acc)"/><rect class="bar" x="107.5" y="226" width="9" height="24" rx="3" fill="var(--acc)"/><rect class="bar" x="123.5" y="219" width="9" height="31" rx="3" fill="var(--acc)"/><rect class="bar" x="139.5" y="233" width="9" height="17" rx="3" fill="var(--acc)"/><rect class="bar" x="155.5" y="223" width="9" height="27" rx="3" fill="var(--acc)"/><rect class="bar" x="171.5" y="228" width="9" height="22" rx="3" fill="var(--acc)"/></g><g transform="translate(28.159999999999997,28.159999999999997) scale(.78)"><g transform="translate(24,24)"><path d="M15 13H85V29H31V42H85V87H15V71H69V58H15Z" fill="currentColor" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/></g><g transform="translate(132,24)"><path d="M11 13H33L50 31L67 13H89L58 58V87H42V58Z" fill="currentColor" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/><rect x="39" y="68" width="22" height="22" rx="3" fill="var(--acc)"/></g><g transform="translate(24,132)"><path d="M15 87V13H33L67 50V13H85V87H67L33 50V87Z" fill="currentColor" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/></g><g transform="translate(132,132)"><path d="M85 13V29H31V71H85V87H15V13Z" fill="currentColor" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/></g></g></svg><div><h1 class="wordmark"><svg viewBox="-6 4 438 92" height="16" aria-label="SYNC" role="img"><g transform="translate(0,0)"><path d="M15 13H85V29H31V42H85V87H15V71H69V58H15Z" fill="currentColor" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/></g><g transform="translate(108,0)"><path d="M11 13H33L50 31L67 13H89L58 58V87H42V58Z" fill="currentColor" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/><rect x="39" y="68" width="22" height="22" rx="3" fill="var(--acc)"/></g><g transform="translate(216,0)"><path d="M15 87V13H33L67 50V13H85V87H67L33 50V87Z" fill="currentColor" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/></g><g transform="translate(324,0)"><path d="M85 13V29H31V71H85V87H15V13Z" fill="currentColor" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/></g></svg></h1><small><i></i><span id="online">0</span> escuchando ahora</small></div></a>
-    <div style="display:flex;gap:8px;align-items:center"><a class="btn glass sm" id="mineLink" href="#/mi" hidden aria-label="Mi música"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg> <span>Mi música</span></a><div id="auth"></div></div>
+    <label for="q" class="sr">Buscar género o subgénero</label><div class="search glass"><span style="color:var(--txt3);display:flex"><svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></span><input id="q" type="search" placeholder="Buscar género o subgénero…" autocomplete="off" spellcheck="false" aria-label="Buscar género o subgénero" enterkeyhint="search"><kbd>/</kbd></div>
+    <div class="hact"><a class="btn glass sm" id="mineLink" href="#/mi" hidden aria-label="Mi música"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg> <span>Mi música</span></a><div id="auth"></div></div>
   </header>
 
   <section id="viewIndex">
     <div class="hero-idx">
-      <div class="eyebrow"><i></i>En vivo · <span id="heroOnline">0</span> personas escuchando</div>
+      <div class="eyebrow"><i></i>En vivo · la radio que arma la gente</div>
       <h2 id="heroTitle" aria-label="Elegí tu canal. La gente vota, todos escuchan."><span class="w">Elegí</span> <span class="w">tu</span> <span class="w">canal.</span><br><span class="w dim">La</span> <span class="w dim">gente</span> <span class="w dim">vota,</span> <span class="w dim">todos</span> <span class="w dim">escuchan.</span></h2>
-      <p class="lead">Un canal por género y subgénero. La audiencia elige el próximo tema y charla mientras suena.</p>
-      <label for="q" class="sr">Buscar género o subgénero</label><div class="search glass"><span style="color:var(--txt3);display:flex"><svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></span><input id="q" type="search" placeholder="Buscar género o subgénero…" autocomplete="off" spellcheck="false" aria-label="Buscar género o subgénero" enterkeyhint="search"><kbd>/</kbd></div>
+      <p class="lead">Un canal por género y subgénero. La audiencia elige el próximo tema y charla mientras suena. <a href="#como" class="link strong" id="howLink">¿Cómo funciona?</a></p>
+      <div class="hero-grid"><div id="heroNow" class="heronow"></div><div class="stats" id="heroStats"></div></div>
       <div class="ticker" id="ticker" aria-label="Sonando ahora en los canales"><div class="track" id="tickerTrack"></div></div>
-    </div>
-    <div class="welcome glass" id="welcome" hidden>
-      <div class="w-steps">
-        <div><b>1</b><span>Elegí un género y tocá <em>Escuchar</em>. Sin cuenta, sin anuncios.</span></div>
-        <div><b>2</b><span>Mientras suena, la audiencia vota el próximo tema.</span></div>
-        <div><b>3</b><span id="wStep3">Con una cuenta votás, chateás y guardás favoritos.</span></div>
-      </div>
-      <div class="w-actions"><button class="btn sm" id="wSignup">Crear cuenta</button><button class="btn glass sm" id="wClose">Cerrar guía</button></div>
     </div>
     <div id="trackResults" class="glass sec" hidden></div>
     <div id="favChannels" hidden></div>
     <div class="rowh">Todos los géneros</div>
     <div class="genres" id="genres"><div class="skeleton" style="height:300px;border-radius:30px"></div><div class="skeleton" style="height:300px;border-radius:30px"></div></div>
     <div class="genres-hint"><span>Géneros ordenados por oyentes ahora mismo. A la derecha de cada uno, sus subgéneros: tocá uno para abrirlo, tocalo de nuevo para entrar.</span></div>
-  </section>
+      <section class="como" id="como"><div class="sec-h"><h3>Cómo funciona SYNC</h3><span>tres pasos</span></div>
+      <div class="w-steps">
+        <div><b>1</b><span>Elegí un género y tocá <em>Escuchar</em>. Sin cuenta, sin anuncios, todos escuchan lo mismo al mismo tiempo.</span></div>
+        <div><b>2</b><span>Mientras suena, la audiencia vota el próximo tema entre cinco candidatos. Gana el más votado.</span></div>
+        <div><b>3</b><span id="wStep3">Con una cuenta votás, chateás, pedís temas y guardás favoritos y listas.</span></div>
+      </div>
+      <div class="w-actions"><button class="btn sm" id="wSignup">Crear cuenta</button><button class="btn glass sm" id="wClose" hidden>Cerrar guía</button></div>
+    </section>
+</section>
 
   <section id="viewChannel" class="hidden">
     <div class="crumb" style="justify-content:space-between;flex-wrap:wrap;min-width:0"><span><a href="#/">Canales</a> <span>›</span> <span id="crumbParent"></span><b id="crumbName"></b></span><span style="display:flex;gap:8px;flex:none"><button class="btn glass sm" id="chFavBtn"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg> <span id="chFavTxt">Seguir canal</span></button><button class="btn glass sm" id="shareBtn" aria-label="Compartir canal"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg> <span>Compartir</span></button></span></div>
@@ -866,8 +879,17 @@ function renderTicker(){
   const html=live.map(c=>`<a href="#/c/${c.slug}"><span class="cv" style="${c.sonando_portada?`background-image:url(${esc(c.sonando_portada)})`:''}"></span><i><s></s><s></s><s></s></i><em>${esc(c.nombre)}</em><b>${esc(c.sonando_titulo)}</b><em>· ${esc(c.sonando_artista)}</em></a>`).join('');
   t.innerHTML=html+html; t.style.animationDuration=Math.max(30, live.length*6)+'s';
 }
+function renderHeroNow(){ const box=$('heroNow'); if(!box) return;
+  const leaves=channels.filter(c=>c.parent_id&&c.sonando_titulo); const pick=leaves.sort((a,b)=>((listeners.get(b.id)||0)-(listeners.get(a.id)||0))||((b.plays_7d||0)-(a.plays_7d||0)))[0];
+  if(!pick){ box.innerHTML='<div class="in"><div class="ch">Sonando ahora</div><b>Preparando los canales…</b></div>'; return; }
+  const parent=channels.find(c=>c.id===pick.parent_id); const on=play.on&&play.channel?.id===pick.id;
+  box.style.backgroundImage=pick.sonando_portada?`url(${pick.sonando_portada})`:''; box.dataset.slug=pick.slug;
+  box.innerHTML=`<span class="htag"><i></i>Sonando ahora</span><div class="in"><div class="ch">${esc(parent?.nombre||'')} › ${esc(pick.nombre)}</div><b>${esc(pick.sonando_titulo)}</b><span class="ar">${esc(pick.sonando_artista||'')}</span><div class="cta"><button class="btn sm" data-hplay="${pick.slug}">${on?'Parar':'Escuchar'}</button><button class="btn glass sm" data-hgo="${pick.slug}">Entrar al canal</button></div></div>`;
+  const temas=channels.filter(c=>!c.parent_id).reduce((a,g)=>a+(g.temas||0),0), canales=channels.filter(c=>c.parent_id).length;
+  $('heroStats').innerHTML=`<div class="stat live"><b id="heroOnline">${$('online').textContent}</b><span>escuchando ahora</span></div><div class="stat"><b>${canales}</b><span>canales</span></div><div class="stat"><b>${temas}</b><span>temas</span></div>`; }
+$('heroNow').onclick=e=>{ const b=e.target.closest('button'); const slug=b?.dataset.hplay||b?.dataset.hgo||$('heroNow').dataset.slug; const c=channels.find(x=>x.slug===slug); if(!c) return; if(b?.dataset.hplay){ if(play.on&&play.channel?.id===c.id) stopPlay(); else tuneChannel(c); renderHeroNow(); } else location.hash='#/c/'+c.slug; };
 function renderIndex(q=''){
-  renderTicker(); $('heroOnline').textContent=$('online').textContent;
+  renderTicker(); renderHeroNow();
   const box=$('genres'); box.innerHTML=''; q=q.trim().toLowerCase();
   const roots=channels.filter(c=>!c.parent_id).sort((a,b)=>score(b)-score(a));
   let rank=0;
@@ -889,21 +911,22 @@ function renderIndex(q=''){
 }
 $('q').oninput=e=>{ renderIndex(e.target.value); clearTimeout(searchT); searchT=setTimeout(()=>searchTracks(e.target.value),250); };
 $('shareBtn').onclick=async()=>{ if(!channel) return; const url=location.origin+location.pathname+'#/c/'+channel.slug; const text=track?`Estoy escuchando ${track.titulo} de ${track.artista} en ${channel.nombre} · SYNC`:`Escuchá ${channel.nombre} en SYNC`; if(navigator.share){ try{ await navigator.share({title:'SYNC · '+channel.nombre,text,url}); }catch(e){} } else { await navigator.clipboard?.writeText(url); toast('Link copiado'); } };
-function showWelcome(){ let seen=false; try{ seen=localStorage.getItem('bienvenida')==='1'; }catch{} $('welcome').hidden = seen; $('wSignup').hidden=!!user; if(user) $('wStep3').textContent='Votá, chateá y guardá favoritos con el corazón.'; }
-$('wClose').onclick=()=>{ try{ localStorage.setItem('bienvenida','1'); }catch{} $('welcome').hidden=true; };
-$('wSignup').onclick=()=>{ $('wClose').onclick(); openModal('signup'); };
+function showWelcome(){ $('wSignup').hidden=!!user; if(user) $('wStep3').textContent='Votá, chateá y guardá favoritos con el corazón.'; }
+$('wClose').onclick=()=>{};
+$('wSignup').onclick=()=>openModal('signup');
+$('howLink').onclick=e=>{ e.preventDefault(); $('como').scrollIntoView({behavior:'smooth',block:'start'}); };
 document.addEventListener('keydown',e=>{ if(e.key==='/'&&document.activeElement.tagName!=='INPUT'){ e.preventDefault(); location.hash='#/'; setTimeout(()=>$('q').focus(),0); } });
 
 // ---------- Router ----------
 async function route(){
-  const m=location.hash.match(/^#\/c\/([a-z0-9-]+)/);
+  const m=location.hash.match(/^#\/c\/([a-z0-9-]+)/); document.body.classList.toggle('onindex', !m && !location.hash.startsWith('#/mi') && location.hash!=='#/cargar');
   if(!channels.length) await loadChannels();
   if(location.hash.startsWith('#/mi')){ if(location.hash==='#/mi/supervision') mineTab='supervision'; leaveChannel(); $('viewChannel').classList.add('hidden'); $('viewIndex').classList.add('hidden'); $('viewMine').classList.remove('hidden'); document.title='Mi música · SYNC'; await loadChannels(); renderMine(); window.scrollTo(0,0); return; }
   $('viewMine').classList.add('hidden');
   if(location.hash==='#/cargar'){ leaveChannel(); $('viewChannel').classList.add('hidden'); $('viewIndex').classList.add('hidden'); $('viewLoad').classList.remove('hidden'); document.title='Cargar temas · SYNC'; await loadChannels(); renderLoad(); window.scrollTo(0,0); return; }
   $('viewLoad').classList.add('hidden');
   if(m && bySlug(m[1])) await openChannel(bySlug(m[1]));
-  else { leaveChannel(); $('viewChannel').classList.add('hidden'); $('viewIndex').classList.remove('hidden'); document.title='SYNC · la radio que arma la gente'; await loadChannels(); renderIndex($('q').value); showWelcome(); window.scrollTo(0,0); }
+  else { document.body.classList.add('onindex'); leaveChannel(); $('viewChannel').classList.add('hidden'); $('viewIndex').classList.remove('hidden'); document.title='SYNC · la radio que arma la gente'; await loadChannels(); renderIndex($('q').value); showWelcome(); window.scrollTo(0,0); }
 }
 window.addEventListener('hashchange',route);
 function leaveChannel(){ document.body.classList.remove('here');
@@ -1327,7 +1350,7 @@ function setNav(id){ navBtns.forEach(b=>{ b.classList.toggle('on',b.dataset.nav=
 function syncNav(){ const h=location.hash; setNav(h.startsWith('#/mi')?'library':h.startsWith('#/c/')?'radio':'home'); navBtns.find(b=>b.dataset.nav==='radio').classList.toggle('playing',play.on); }
 navBtns.forEach(b=>b.onclick=()=>{ const id=b.dataset.nav;
   if(id==='home'){ location.hash='#/'; }
-  else if(id==='search'){ if(location.hash!=='#/'&&location.hash!=='') location.hash='#/'; setNav('search'); setTimeout(()=>{ $('q').focus(); $('q').scrollIntoView({behavior:'smooth',block:'center'}); },80); }
+  else if(id==='search'){ if(location.hash!=='#/'&&location.hash!=='') location.hash='#/'; setNav('search'); setTimeout(()=>{ window.scrollTo({top:0,behavior:'smooth'}); $('q').focus(); },80); }
   else if(id==='radio'){ if(play.channel) location.hash='#/c/'+play.channel.slug; else if(channel) {} else { const top=channels.filter(c=>!c.parent_id&&c.sonando_titulo).sort((a,b)=>score(b)-score(a))[0]; if(top) location.hash='#/c/'+top.slug; else toast('Todavía no hay nada sonando'); } setNav('radio'); }
   else if(id==='library'){ if(!user) return openModal('login'); location.hash='#/mi'; }
   else if(id==='you'){ if(!user) openModal('login'); else { $('menu')?.classList.toggle('open'); } setNav('you'); setTimeout(syncNav,1200); }

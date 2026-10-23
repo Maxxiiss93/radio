@@ -286,6 +286,9 @@
   @keyframes float { 50% { translate:-50% -6px } }
   .sheet.auth .field input { text-align:left; padding:14px 16px; border-radius:14px; background:rgba(255,255,255,.06) }
   .sheet.auth .field { margin-bottom:10px; position:relative }
+  #menorField { margin:2px 2px 12px; text-align:left } #menorField .chk { font-size:14px; min-height:40px } #codigoField { margin-top:8px } #codigoField .hint { text-align:left; margin:6px 4px 0 }
+  #codigoTutor::placeholder, #linkCode::placeholder { text-transform:none; letter-spacing:0 }
+  .sheet.auth .err:empty { display:none } .sheet.auth .err { margin:0 0 8px }
   .field.pw input { padding-right:46px } .eye { position:absolute; right:8px; top:50%; translate:0 -50%; width:34px; height:34px; border-radius:50%; display:grid; place-items:center; color:var(--txt3) } .eye:hover { color:#fff }
   .row2 { display:flex; justify-content:space-between; align-items:center; font-size:13px; color:var(--txt2); margin:4px 2px 14px }
   .chk { display:flex; align-items:center; gap:8px; cursor:pointer } .chk input { position:absolute; opacity:0; width:0; height:0 } .chk span { width:18px; height:18px; border-radius:6px; border:1px solid var(--edge2); display:grid; place-items:center; background:rgba(255,255,255,.05) } .chk input:checked + span { background:var(--acc); border-color:var(--acc) } .chk input:checked + span::after { content:""; width:5px; height:9px; border:solid var(--acc-ink); border-width:0 2px 2px 0; rotate:45deg; margin-top:-2px } .chk input:focus-visible + span { outline:2px solid var(--acc); outline-offset:2px }
@@ -320,13 +323,14 @@
   .listmenu .lm-new { display:flex; gap:6px; padding:8px 6px 2px; border-top:1px solid var(--edge); margin-top:6px } .listmenu .lm-new input { flex:1; min-width:0; background:rgba(255,255,255,.07); border:1px solid var(--edge); border-radius:8px; padding:8px 10px; color:#fff; outline:0 } .listmenu .lm-new button { padding:8px 12px; border-radius:8px; background:var(--acc); color:var(--acc-ink); font-weight:700 }
   .actions { position:relative }
   .mine-h { padding:36px 0 16px } .mine-h h2 { font-size:clamp(30px,5vw,48px); font-weight:800; letter-spacing:-.04em; margin:0 0 6px } .mine-h p { color:var(--txt2); margin:0 }
-  .tabs.wide { max-width:420px; margin:18px 0 }
+  .tabs.wide { max-width:480px; margin:18px 0; overflow-x:auto; scrollbar-width:none } .tabs.wide::-webkit-scrollbar { display:none } .tabs.wide button { flex:none; padding:9px 14px; white-space:nowrap }
+  @media (max-width:640px) { .tabs.wide { max-width:none; margin-left:-20px; margin-right:-20px; padding-left:24px; padding-right:24px; border-radius:0; background:none } .tabs.wide button { background:rgba(255,255,255,.06) } .tabs.wide button.on { background:var(--acc) } }
   .tlist { display:flex; flex-direction:column; gap:8px }
   .trow { display:grid; grid-template-columns:48px minmax(0,1fr) auto; gap:12px; align-items:center; padding:10px 12px; border-radius:var(--r2); background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08) }
   .trow .cv { width:48px; height:48px; border-radius:10px; background:linear-gradient(135deg,#3a3540,#141317) center/cover; display:grid; place-items:center; font-weight:800; font-size:13px; color:#000; filter:grayscale(1) } .trow:hover .cv { filter:none }
   .trow .ti { min-width:0 } .trow .ti b { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; line-height:1.25 } .trow .ti small { color:var(--txt3); font-size:12px } .trow .ti a { display:inline-block; padding:12px 0; margin:-12px 0; text-decoration:underline; text-decoration-color:var(--txt4); text-underline-offset:3px } .trow .ti a:hover { color:var(--acc2) }
   .trow .ta { display:flex; gap:6px } @media (max-width:480px) { .trow { grid-template-columns:48px minmax(0,1fr); } .trow .ta { grid-column:1 / -1; justify-content:flex-end } }
-  .load-form { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; margin-bottom:10px } .load-form label { display:flex; flex-direction:column; gap:4px; font-size:12px; color:var(--txt3); min-width:0 } .load-form label.wide { grid-column:1 / -1 }
+  .load-form { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; margin-bottom:10px } .load-form label { display:flex; flex-direction:column; gap:4px; font-size:12px; color:var(--txt3); min-width:0 } .load-form .wide { grid-column:1 / -1 }
   .load-form input, .load-form select { width:100%; min-width:0; background:rgba(255,255,255,.07); border:1px solid var(--edge); border-radius:12px; padding:11px 14px; color:var(--ivory); font:inherit; font-size:14px } .load-form select { appearance:auto } .load-form input:focus, .load-form select:focus { outline:2px solid var(--acc); outline-offset:1px; border-color:transparent }
   .load-form .st { font-size:12px; color:var(--txt3); min-height:1.4em } .load-form .st.ok { color:var(--acc) } .load-form .st.err { color:#f3a0a0 }
   .tlist .trow.off { opacity:.45 } .trow .cv.mini-cv { width:40px; height:40px; font-size:12px }

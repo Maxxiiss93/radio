@@ -100,6 +100,16 @@ insert into tracks (titulo, artista, url, duracion_seg, channel_id) values
 ('Tema 7', 'Artista G', 'https://cgvdvkuxjqzcnnsagyvw.supabase.co/storage/v1/object/public/tracks/07.mp3', 220, (select id from channels where slug='house')),
 ('Tema 8', 'Artista H', 'https://cgvdvkuxjqzcnnsagyvw.supabase.co/storage/v1/object/public/tracks/08.mp3', 185, (select id from channels where slug='local-rock'));
 
+-- Sets & Mixes: sesiones largas (más de 20 min) van acá, no en los canales por género
+insert into channels (slug, nombre, parent_id, emoji, descripcion, orden) values ('sets', 'Sets & Mixes', null, '🎚️', 'Sesiones largas, DJ sets y mixes en vivo', 21) on conflict (slug) do nothing;
+insert into channels (slug, nombre, parent_id, emoji, descripcion, orden) values
+('sets-house-techno', 'House & Techno', (select id from channels where slug='sets'), null, 'Sets de club y festival', 1),
+('sets-urbano', 'Urbano & Latin', (select id from channels where slug='sets'), null, 'Reggaetón, trap y dembow mezclados', 2),
+('sets-clasicos', 'Clásicos & Retro', (select id from channels where slug='sets'), null, 'Disco, 80s, 90s, Ibiza classics', 3),
+('sets-chill', 'Chill & Sunset', (select id from channels where slug='sets'), null, 'Sesiones tranquilas para acompañar', 4),
+('sets-live', 'Shows en vivo', (select id from channels where slug='sets'), null, 'Recitales y sesiones completas', 5)
+on conflict (slug) do nothing;
+
 -- Arrancar todos los canales que tengan temas:
 select radio_tick_all();
 

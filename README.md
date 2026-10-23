@@ -51,6 +51,10 @@ Ejecutar en el SQL Editor, en orden:
 - Overlay para OBS si querés retransmitir también por YouTube.
 - Licencias SADAIC + AADI-CAPIF antes de pasar música comercial.
 
+## Portadas de canales
+
+`covers/<slug>.svg`: una portada por género y subgénero, generadas con `brand/gen-covers.js` (motivo geométrico por género en la paleta SYNC; los subgéneros varían espejo/colores). Son obra propia, sin fotos de artistas: no hay derechos de imagen que gestionar. `channels.portada` apunta a cada una; para regenerar: `node brand/gen-covers.js brand/canales.json covers`.
+
 ## Marca
 
 Logotipo propio (lettering monolínea, sin tipografía de terceros). Archivos en `brand/`: `sync-wordmark*.svg` (marfil, ciruela, una tinta), `sync-mark*.svg` (la Y sola), `sync-stacked.svg`, `icon.svg` / `icon-192/512/180.png` (app), `favicon.svg`, `og.png` (compartir). Paleta: Deep Plum #542C5F · Electric Lime #C7E84B · Soft Ivory #F5F1E8.

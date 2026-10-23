@@ -278,13 +278,12 @@
   .field input { width:100%; background:rgba(255,255,255,.07); border:1px solid var(--edge); border-radius:12px; padding:12px 14px; color:#fff; outline:0 } .field input:focus { border-color:var(--acc); background:rgba(255,255,255,.1) }
   .err { color:#ffb3b3; font-size:13px; min-height:18px; margin-top:6px }
   .sheet .btn { width:100%; margin-top:8px }
-  .sheet.auth { position:relative; max-width:400px; padding:34px 26px 24px; text-align:center; border-radius:26px; margin-top:40px; overflow:visible; box-shadow:0 20px 60px rgba(0,0,0,.5) }
+  .sheet.auth { position:relative; max-width:400px; padding:52px 26px 24px; text-align:center; border-radius:26px; margin-top:40px; overflow:visible; box-shadow:0 20px 60px rgba(0,0,0,.5) }
   .sheet.auth h3 { font-size:30px; margin-bottom:6px; background:linear-gradient(90deg,var(--ivory),var(--acc)); -webkit-background-clip:text; background-clip:text; color:transparent } .sheet.auth p { margin-bottom:22px }
-  .orb-wrap { position:absolute; left:50%; top:-46px; translate:-50% 0; width:92px; height:92px; filter:url(#goo) drop-shadow(0 10px 30px rgba(199,232,75,.45)) }
-  .orb2 { position:relative; width:100%; height:100%; animation:float 5s ease-in-out infinite }
-  .orb2 i { position:absolute; border-radius:50%; background:radial-gradient(circle at 35% 30%, #f3ffc2, var(--acc) 55%, #8fb21e); }
-  .orb2 i:first-child { width:64px; height:64px; left:14px; top:14px } .orb2 i:last-child { width:34px; height:34px; left:46px; top:8px; animation:orbit 4s ease-in-out infinite }
-  @keyframes float { 50% { translate:0 -6px } } @keyframes orbit { 50% { left:6px; top:40px } }
+  .auth-mark { position:absolute; left:50%; top:-44px; translate:-50% 0; width:84px; height:84px; display:grid; place-items:center; border-radius:24px; background:var(--bg1); border:1px solid var(--edge); box-shadow:0 10px 30px rgba(199,232,75,.25), inset 0 1px 0 rgba(255,255,255,.06); color:var(--ivory); animation:float 5s ease-in-out infinite }
+  .amark .bar { animation:eqBar 1.1s ease-in-out infinite } .amark .bar:nth-child(2){ animation-delay:.22s } .amark .bar:nth-child(3){ animation-delay:.46s } .amark .bar:nth-child(4){ animation-delay:.12s } .amark .bar:nth-child(5){ animation-delay:.33s } .amark .bar:nth-child(6){ animation-delay:.05s } .amark .bar:nth-child(7){ animation-delay:.4s }
+  @media (prefers-reduced-motion:reduce){ .amark .bar, .auth-mark { animation:none !important } }
+  @keyframes float { 50% { translate:-50% -6px } }
   .sheet.auth .field input { text-align:left; padding:14px 16px; border-radius:14px; background:rgba(255,255,255,.06) }
   .sheet.auth .field { margin-bottom:10px; position:relative }
   .field.pw input { padding-right:46px } .eye { position:absolute; right:8px; top:50%; translate:0 -50%; width:34px; height:34px; border-radius:50%; display:grid; place-items:center; color:var(--txt3) } .eye:hover { color:#fff }
@@ -446,7 +445,7 @@
 
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
   <div class="sheet glass auth">
-    <div class="orb-wrap" aria-hidden="true"><div class="orb2"><i></i><i></i></div></div>
+    <div class="auth-mark" aria-hidden="true"><svg class="logo amark" viewBox="0 0 256 256" width="72" height="72"><path class="frame" d="M66 250H50A44 44 0 0 1 6 206V50A44 44 0 0 1 50 6H206A44 44 0 0 1 250 50V206A44 44 0 0 1 206 250H190" fill="none" stroke="var(--acc)" stroke-width="6" stroke-linecap="round"/><g class="bars"><rect class="bar" x="75.5" y="231" width="9" height="19" rx="3" fill="var(--acc)"/><rect class="bar" x="91.5" y="216" width="9" height="34" rx="3" fill="var(--acc)"/><rect class="bar" x="107.5" y="226" width="9" height="24" rx="3" fill="var(--acc)"/><rect class="bar" x="123.5" y="219" width="9" height="31" rx="3" fill="var(--acc)"/><rect class="bar" x="139.5" y="233" width="9" height="17" rx="3" fill="var(--acc)"/><rect class="bar" x="155.5" y="223" width="9" height="27" rx="3" fill="var(--acc)"/><rect class="bar" x="171.5" y="228" width="9" height="22" rx="3" fill="var(--acc)"/></g><g transform="translate(28.159999999999997,28.159999999999997) scale(.78)"><g transform="translate(24,24)"><path d="M15 13H85V29H31V42H85V87H15V71H69V58H15Z" fill="currentColor" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/></g><g transform="translate(132,24)"><path d="M11 13H33L50 31L67 13H89L58 58V87H42V58Z" fill="currentColor" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/><rect x="39" y="68" width="22" height="22" rx="3" fill="var(--acc)"/></g><g transform="translate(24,132)"><path d="M15 87V13H33L67 50V13H85V87H67L33 50V87Z" fill="currentColor" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/></g><g transform="translate(132,132)"><path d="M85 13V29H31V71H85V87H15V13Z" fill="currentColor" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/></g></g></svg></div>
     <h3 id="mTitle">Bienvenido de vuelta</h3><p id="mSub">Qué bueno verte. Volvé a sintonizar.</p>
     <form id="authform" novalidate>
       <div class="field" id="apodoField" hidden><input id="ap" maxlength="24" placeholder="Apodo (cómo te van a ver)" autocomplete="nickname" spellcheck="false" autocapitalize="off" aria-label="Apodo"></div>

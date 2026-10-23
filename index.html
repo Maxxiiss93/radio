@@ -107,7 +107,10 @@
   .heronow .htag { position:absolute; top:14px; left:14px; font-size:11px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--acc-ink); background:var(--acc); padding:5px 10px; border-radius:999px } .heronow .htag i { display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--acc-ink); margin-right:6px; animation:pulse 1.6s infinite }
   .heronow .in { min-width:0; width:100% } .heronow .ch { font-size:12px; color:var(--txt2); letter-spacing:.08em; text-transform:uppercase; margin-bottom:4px } .heronow b { display:block; font-size:clamp(20px,3vw,28px); letter-spacing:-.02em; line-height:1.1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis } .heronow span.ar { color:var(--txt2); font-size:14px }
   .heronow .cta { display:flex; gap:8px; margin-top:12px } .heronow .cta .btn { padding:9px 16px }
-  .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:10px } @media (max-width:760px) { .stats { grid-template-columns:repeat(3,1fr) } }
+  .herovote { background:var(--bg1); border:1px solid var(--edge); border-radius:22px; padding:14px 14px 12px; display:flex; flex-direction:column; gap:8px; min-width:0 }
+  .herovote .hv-h { display:flex; justify-content:space-between; align-items:baseline; gap:8px; margin-bottom:2px } .herovote .hv-h b { font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--txt2) } .herovote .hv-h span { font-size:12px; color:var(--txt3); white-space:nowrap }
+  .herovote .cand { padding:9px 12px; min-height:46px; grid-template-columns:28px 1fr auto; gap:10px } .herovote .cand .ico { width:28px; height:28px; font-size:12px } .herovote .cand .t b { font-size:14px } .herovote .cand .t span { font-size:12px } .herovote .cand .pct { font-size:15px } .herovote .cand .pct small { display:none }
+  .herovote .hint { margin:4px 2px 0; font-size:12px }
   .stat { background:var(--bg1); border:1px solid var(--edge); border-radius:18px; padding:14px 14px 12px; display:flex; flex-direction:column; justify-content:flex-end; min-height:92px } .stat b { font-size:clamp(24px,3.4vw,34px); font-weight:800; letter-spacing:-.03em; line-height:1 } .stat span { font-size:12px; color:var(--txt3); margin-top:6px }
   .stat.live b { color:var(--acc) }
   .ticker { margin-top:14px; overflow:hidden; max-width:100%; contain:paint; mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); animation:fadeUp .7s 1s ease both }
@@ -385,10 +388,10 @@
 
   <section id="viewIndex">
     <div class="hero-idx">
-      <div class="eyebrow"><i></i>En vivo · la radio que arma la gente</div>
+      <div class="eyebrow"><i></i>En vivo · <span id="heroOnline">0</span> escuchando · <span id="heroCh">0</span> canales · <span id="heroTr">0</span> temas</div>
       <h2 id="heroTitle" aria-label="Elegí tu canal. La gente vota, todos escuchan."><span class="w">Elegí</span> <span class="w">tu</span> <span class="w">canal.</span><br><span class="w dim">La</span> <span class="w dim">gente</span> <span class="w dim">vota,</span> <span class="w dim">todos</span> <span class="w dim">escuchan.</span></h2>
       <p class="lead">Un canal por género y subgénero. La audiencia elige el próximo tema y charla mientras suena. <a href="#como" class="link strong" id="howLink">¿Cómo funciona?</a></p>
-      <div class="hero-grid"><div id="heroNow" class="heronow"></div><div class="stats" id="heroStats"></div></div>
+      <div class="hero-grid"><div id="heroNow" class="heronow"></div><div class="herovote" id="heroVote"></div></div>
       <div class="ticker" id="ticker" aria-label="Sonando ahora en los canales"><div class="track" id="tickerTrack"></div></div>
     </div>
     <div id="trackResults" class="glass sec" hidden></div>
@@ -633,7 +636,20 @@ function renderHeroNow(){ const box=$('heroNow'); if(!box) return;
   box.style.backgroundImage=pick.sonando_portada?`url(${pick.sonando_portada})`:''; box.dataset.slug=pick.slug;
   box.innerHTML=`<span class="htag"><i></i>Sonando ahora</span><div class="in"><div class="ch">${esc(parent?.nombre||'')} › ${esc(pick.nombre)}</div><b>${esc(pick.sonando_titulo)}</b><span class="ar">${esc(pick.sonando_artista||'')}</span><div class="cta"><button class="btn sm" data-hplay="${pick.slug}">${on?'Parar':'Escuchar'}</button><button class="btn glass sm" data-hgo="${pick.slug}">Entrar al canal</button></div></div>`;
   const temas=channels.filter(c=>!c.parent_id).reduce((a,g)=>a+(g.temas||0),0), canales=channels.filter(c=>c.parent_id).length;
-  $('heroStats').innerHTML=`<div class="stat live"><b id="heroOnline">${$('online').textContent}</b><span>escuchando ahora</span></div><div class="stat"><b>${canales}</b><span>canales</span></div><div class="stat"><b>${temas}</b><span>temas</span></div>`; }
+  $('heroOnline').textContent=$('online').textContent; $('heroCh').textContent=canales; $('heroTr').textContent=temas;
+  renderHeroVote(pick); }
+let heroVoteCh=null, heroRound=null, heroSub=null;
+async function renderHeroVote(pick){ const box=$('heroVote'); if(!box||!pick) return;
+  const {data:rs}=await sb.from('radio_state').select('round_id').eq('channel_id',pick.id).maybeSingle(); heroRound=rs?.round_id; heroVoteCh=pick;
+  if(!heroRound){ box.innerHTML=`<div class="hv-h"><b>Votación</b></div><div class="empty small">Todavía no hay votación en ${esc(pick.nombre)}.</div>`; return; }
+  const {data}=await sb.from('candidate_votes').select('*').eq('round_id',heroRound).order('votos',{ascending:false}).limit(3);
+  let mine=null; if(user){ const {data:v}=await sb.from('votes').select('track_id').eq('round_id',heroRound).eq('user_id',user.id).maybeSingle(); mine=v?.track_id??null; }
+  const list=data||[], total=list.reduce((a,c)=>a+c.votos,0), max=list[0]?.votos||0;
+  box.innerHTML=`<div class="hv-h"><b>Votá el próximo</b><span>en ${esc(pick.nombre)}</span></div>`+(list.length?list.map((c,i)=>{ const pct=total?Math.round(c.votos/total*100):0, lead=c.votos===max&&max>0; return `<button type="button" class="cand${c.track_id===mine?' mine':''}${lead?' lead':''}" data-hv="${c.track_id}" data-t="${esc(c.titulo)}" aria-pressed="${c.track_id===mine}" aria-label="Votar ${esc(c.titulo)} de ${esc(c.artista)}, ${pct}%"><div class="fill" style="width:${pct}%"></div><div class="ico">${lead?STAR:i+1}</div><div class="t"><b>${esc(c.titulo)}</b><span>${esc(c.artista)}</span></div><div class="pct">${pct}%</div><span class="tag">TU VOTO</span></button>`; }).join(''):'<div class="empty small">Sin candidatos todavía.</div>')+`<div class="hint">${user?(mine?'Podés cambiar tu voto hasta que termine el tema.':'Tocá un tema para votarlo.'):'Entrá para votar. Sin cuenta podés escuchar igual.'} <a href="#/c/${pick.slug}">Ver los 5 →</a></div>`;
+  if(heroSub){ sb.removeChannel(heroSub); heroSub=null; }
+  heroSub=sb.channel('hero-votes-'+heroRound).on('postgres_changes',{event:'*',schema:'public',table:'votes',filter:`round_id=eq.${heroRound}`},()=>renderHeroVote(pick)).subscribe(); }
+$('heroVote').onclick=async e=>{ const b=e.target.closest('button[data-hv]'); if(!b) return; if(!user) return openModal('login'); if(!heroRound) return;
+  const {error}=await sb.from('votes').upsert({round_id:heroRound,track_id:b.dataset.hv,user_id:user.id},{onConflict:'round_id,user_id'}); if(error) return toast(traducir(error.message),'err'); toast(`Votaste: ${b.dataset.t}`); renderHeroVote(heroVoteCh); };
 $('heroNow').onclick=e=>{ const b=e.target.closest('button'); const slug=b?.dataset.hplay||b?.dataset.hgo||$('heroNow').dataset.slug; const c=channels.find(x=>x.slug===slug); if(!c) return; if(b?.dataset.hplay){ if(play.on&&play.channel?.id===c.id) stopPlay(); else tuneChannel(c); renderHeroNow(); } else location.hash='#/c/'+c.slug; };
 function renderIndex(q=''){
   renderTicker(); renderHeroNow();
@@ -676,7 +692,7 @@ async function route(){
   else { document.body.classList.add('onindex'); leaveChannel(); $('viewChannel').classList.add('hidden'); $('viewIndex').classList.remove('hidden'); document.title='SYNC · la radio que arma la gente'; await loadChannels(); renderIndex($('q').value); showWelcome(); window.scrollTo(0,0); }
 }
 window.addEventListener('hashchange',route);
-function leaveChannel(){ document.body.classList.remove('here');
+function leaveChannel(){ document.body.classList.remove('here'); if(heroSub&&!document.body.classList.contains('onindex')){ sb.removeChannel(heroSub); heroSub=null; }
   if(dbChan){ sb.removeChannel(dbChan); dbChan=null; }
   channel=null; state=null; track=null; lastTrackId=null;
 }

@@ -233,6 +233,10 @@
   .req { margin-top:14px; border-top:1px solid var(--edge); padding-top:10px } .req summary { cursor:pointer; font-size:13px; color:var(--txt2); list-style:none; display:flex; align-items:center; gap:6px; min-height:40px } .req summary::before { content:'+'; font-weight:700; color:var(--acc) } .req[open] summary::before { content:'–' }
   .req form { display:grid; gap:8px; margin-top:8px } .req input { background:rgba(255,255,255,.07); border:1px solid var(--edge); border-radius:12px; padding:11px 14px; color:var(--ivory); font:inherit; font-size:14px; min-width:0 } .req input:focus { outline:2px solid var(--acc); outline-offset:1px; border-color:transparent }
   @media (min-width:640px) { .req form { grid-template-columns:1fr 1fr auto } }
+  .sec-h { display:flex; align-items:baseline; justify-content:space-between; margin:0 0 10px } .sec-h h3 { margin:0; font-size:16px } .sec-h span { font-size:12px; color:var(--txt3) }
+  .trow .when { font-size:12px; color:var(--txt3); align-self:center; margin-left:4px }
+  #trackResults { margin-bottom:18px } #trackResults .trow { padding:8px 0 }
+  @media (max-width:640px) { #shareBtn > span { display:none } #shareBtn { padding:8px 10px } }
   .modq { display:flex; flex-direction:column; gap:8px } .modq .it { border:1px solid var(--edge); border-radius:12px; background:var(--bg2); padding:10px 12px; display:grid; gap:6px } .modq .it b { font-size:14px } .modq .it small { color:var(--txt3); font-size:12px } .modq .it .ta { display:flex; gap:6px; flex-wrap:wrap } .modq .it .q { font-size:13.5px; padding:6px 10px; border-left:3px solid var(--plum); background:var(--bg1); border-radius:0 8px 8px 0 }
   @keyframes in { from { opacity:0; transform:translateY(8px) } }
   .bub { background:var(--bg2); border:1px solid var(--edge); border-radius:4px 16px 16px 16px; padding:8px 12px; display:inline-block; max-width:100%; word-break:break-word }
@@ -382,6 +386,7 @@
       </div>
       <div class="w-actions"><button class="btn sm" id="wSignup">Crear cuenta</button><button class="btn glass sm" id="wClose">Cerrar guía</button></div>
     </div>
+    <div id="trackResults" class="glass sec" hidden></div>
     <div id="favChannels" hidden></div>
     <div class="rowh">Todos los géneros</div>
     <div class="genres" id="genres"><div class="skeleton" style="height:300px;border-radius:30px"></div><div class="skeleton" style="height:300px;border-radius:30px"></div></div>
@@ -389,7 +394,7 @@
   </section>
 
   <section id="viewChannel" class="hidden">
-    <div class="crumb" style="justify-content:space-between;flex-wrap:wrap;min-width:0"><span><a href="#/">Canales</a> <span>›</span> <span id="crumbParent"></span><b id="crumbName"></b></span><button class="btn glass sm" id="chFavBtn"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg> <span id="chFavTxt">Seguir canal</span></button></div>
+    <div class="crumb" style="justify-content:space-between;flex-wrap:wrap;min-width:0"><span><a href="#/">Canales</a> <span>›</span> <span id="crumbParent"></span><b id="crumbName"></b></span><span style="display:flex;gap:8px;flex:none"><button class="btn glass sm" id="chFavBtn"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg> <span id="chFavTxt">Seguir canal</span></button><button class="btn glass sm" id="shareBtn" aria-label="Compartir canal"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg> <span>Compartir</span></button></span></div>
     <div class="subnav" id="subnav"></div>
     <div class="grid">
       <div class="glass hero player" id="hero">
@@ -422,6 +427,7 @@
           <form id="reqForm" novalidate><input id="reqUrl" type="url" placeholder="Link de YouTube o del audio" inputmode="url" autocomplete="off" aria-label="Link del tema"><input id="reqNota" maxlength="200" placeholder="Título / artista (opcional)" aria-label="Nota"><button class="btn sm" type="submit">Enviar pedido</button></form>
           <small class="hint" style="margin:6px 0 0">Lo revisa un moderador antes de entrar al canal. Hasta 5 pedidos pendientes por persona.</small></details>
       </section>
+      <section class="glass sec" id="histSec"><div class="sec-h"><h3>Últimos temas</h3><span>lo que ya sonó acá</span></div><div id="history"><div class="skeleton"></div></div></section>
       <section class="glass sec" id="chatSec">
         <h2><span id="chatTitle">Chat del canal</span> <span class="avstack" id="avstack"></span></h2>
         <div class="chatwrap">
@@ -628,7 +634,8 @@ function renderIndex(q=''){
   if(!box.children.length) box.innerHTML='<div class="empty">No encontramos ese género</div>';
   renderIndexState(); renderHearts(); renderFavChannels();
 }
-$('q').oninput=e=>renderIndex(e.target.value);
+$('q').oninput=e=>{ renderIndex(e.target.value); clearTimeout(searchT); searchT=setTimeout(()=>searchTracks(e.target.value),250); };
+$('shareBtn').onclick=async()=>{ if(!channel) return; const url=location.origin+location.pathname+'#/c/'+channel.slug; const text=track?`Estoy escuchando ${track.titulo} de ${track.artista} en ${channel.nombre} · SYNC`:`Escuchá ${channel.nombre} en SYNC`; if(navigator.share){ try{ await navigator.share({title:'SYNC · '+channel.nombre,text,url}); }catch(e){} } else { await navigator.clipboard?.writeText(url); toast('Link copiado'); } };
 function showWelcome(){ let seen=false; try{ seen=localStorage.getItem('bienvenida')==='1'; }catch{} $('welcome').hidden = seen; $('wSignup').hidden=!!user; if(user) $('wStep3').textContent='Votá, chateá y guardá favoritos con el corazón.'; }
 $('wClose').onclick=()=>{ try{ localStorage.setItem('bienvenida','1'); }catch{} $('welcome').hidden=true; };
 $('wSignup').onclick=()=>{ $('wClose').onclick(); openModal('signup'); };
@@ -658,7 +665,7 @@ async function openChannel(ch){
   $('crumbParent').innerHTML=parent?`<a href="#/c/${parent.slug}">${esc(parent.nombre)}</a><span> › </span>`:'';
   $('crumbName').textContent=ch.nombre;
   document.title=`${ch.nombre} · SYNC`;
-  $('chFavBtn').dataset.favCh=ch.id; renderHearts();
+  $('chFavBtn').dataset.favCh=ch.id; renderHearts(); loadHistory();
   const root = parent||ch; const siblings=[root, ...kids(root.id).sort((a,b)=>((listeners.get(b.id)||0)-(listeners.get(a.id)||0))||((b.plays_7d||0)-(a.plays_7d||0))||(b.temas-a.temas))];
   $('subnav').innerHTML=siblings.map(s=>{ const on=s.id===ch.id; const name=(s.parent_id?'':'Todo ')+s.nombre;
     return `<a class="sub ${on?'on':''} ${s.temas?'':'off'}" href="#/c/${s.slug}" aria-current="${on?'page':'false'}" title="${esc(name)}">
@@ -684,7 +691,7 @@ async function loadState(){
   if(!channel) return;
   const {data}=await sb.from('radio_state').select('track_id, inicio_at, round_id, tracks(*)').eq('channel_id',channel.id).maybeSingle();
   if(!data?.tracks){ $('title').textContent='Preparando el canal…'; $('artist').textContent=''; return; }
-  state=data; track=data.tracks; lastTrackId=track.id;
+  const cambio=lastTrackId&&lastTrackId!==data.tracks.id; state=data; track=data.tracks; lastTrackId=track.id; if(cambio) setTimeout(loadHistory,800);
   $('title').textContent=track.titulo; $('artist').textContent=track.artista;
   if(track.portada){ $('art').style.backgroundImage=`url(${track.portada})`; $('artEmoji').textContent=''; } else { $('art').style.backgroundImage=''; $('artEmoji').textContent=initials(track.artista); }
   $('favBtn').dataset.favTrack=track.id; renderHearts(); renderTuneBtn(); loadRound();
@@ -926,11 +933,31 @@ async function renderLoad(){
     if(b.dataset.del){ if(!confirm(`¿Eliminar "${b.dataset.n}" del catálogo? Si está sonando ahora, termina y no vuelve a entrar.`)) return; const {error}=await sb.from('tracks').delete().eq('id',b.dataset.del); if(error) return toast(traducir(error.message),'err'); toast('Tema eliminado'); listar(); } };
   listar();
 }
+const trackRowG=(t,extra='')=>`<div class="trow"><span class="cv" style="${t.portada?`background-image:url(${esc(t.portada)})`:''}">${t.portada?'':esc(initials(t.artista))}</span>
+      <span class="ti"><b>${esc(t.titulo)}</b><small>${esc(t.artista)} · <a href="#/c/${t.channels?.slug||''}">${esc(t.channels?.nombre||'')}</a></small></span>
+      <span class="ta">${t.channels?`<button class="icbtn" title="Escuchar el canal" aria-label="Escuchar ${esc(t.channels.nombre)}" data-ch="${esc(t.channels.slug)}">${ICON_PLAY}</button>`:''}<button class="icbtn ${mine.tracks.has(t.id)?'on':''}" title="${mine.tracks.has(t.id)?'Quitar de favoritos':'Guardar en favoritos'}" aria-label="Favorito ${esc(t.titulo)}" data-fav='${esc(JSON.stringify({id:t.id,titulo:t.titulo}))}'>${ICON_HEART}</button><button class="icbtn" title="Agregar a lista" aria-label="Agregar ${esc(t.titulo)} a una lista" data-list='${esc(JSON.stringify({id:t.id,titulo:t.titulo}))}'>${ICON_PLUS}</button>${extra}</span></div>`;
+function wireRows(box){
+  box.querySelectorAll('[data-ch]').forEach(b=>b.onclick=()=>{ const c=channels.find(x=>x.slug===b.dataset.ch); if(c) tuneChannel(c); });
+  box.querySelectorAll('[data-fav]').forEach(b=>b.onclick=async()=>{ if(!user) return openModal('login'); await toggleFavTrack(JSON.parse(b.dataset.fav)); b.classList.toggle('on',mine.tracks.has(JSON.parse(b.dataset.fav).id)); });
+  box.querySelectorAll('[data-list]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); if(!user) return openModal('login'); openListMenu(b,JSON.parse(b.dataset.list)); });
+}
+// ---------- Últimos temas del canal ----------
+async function loadHistory(){ if(!channel) return; const box=$('history'); if(!box) return;
+  const {data}=await sb.from('play_log').select('inicio_at, tracks(id,titulo,artista,portada,channel_id,channels(nombre,slug))').eq('channel_id',channel.id).order('inicio_at',{ascending:false}).limit(9);
+  const rows=(data||[]).filter(r=>r.tracks).slice(1,9); // el primero es el que suena ahora
+  if(!rows.length){ box.innerHTML='<div class="empty small">Acá van a quedar los temas que ya sonaron.</div>'; return; }
+  box.innerHTML=`<div class="tlist">${rows.map(r=>trackRowG(r.tracks,`<time class="when">${new Date(r.inicio_at).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})}</time>`)).join('')}</div>`; wireRows(box); }
+// ---------- Búsqueda de temas en el inicio ----------
+let searchT=null;
+async function searchTracks(q){ const box=$('trackResults'); if(!box) return; q=q.trim(); if(q.length<2){ box.hidden=true; box.innerHTML=''; return; }
+  const like=`%${q.replace(/[%_]/g,'')}%`;
+  const {data}=await sb.from('tracks').select('id,titulo,artista,portada,channel_id,channels(nombre,slug)').eq('activo',true).or(`titulo.ilike.${like},artista.ilike.${like}`).limit(12);
+  box.hidden=false; box.innerHTML=data?.length?`<div class="sec-h"><h3>Temas</h3><span>${data.length===12?'12+':data.length} resultado${data.length!==1?'s':''}</span></div><div class="tlist">${data.map(t=>trackRowG(t)).join('')}</div>`:`<div class="empty small">Ningún tema con "${esc(q)}". Probá con el artista o pedilo en el canal que corresponda.</div>`; wireRows(box); }
 function renderMine(){
   $('mineTabs').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.t===mineTab));
   const box=$('mineBody'); box.innerHTML='';
   if(!user){ box.innerHTML='<div class="empty">Entrá para ver tus favoritos y listas.</div>'; return; }
-  const trackRow=(t,extra='')=>`<div class="trow"><span class="cv" style="${t.portada?`background-image:url(${esc(t.portada)})`:''}">${t.portada?'':esc(initials(t.artista))}</span>
+  const trackRow=(t,extra='')=>trackRowG(t,extra); const _old=(t,extra='')=>`<div class="trow"><span class="cv" style="${t.portada?`background-image:url(${esc(t.portada)})`:''}">${t.portada?'':esc(initials(t.artista))}</span>
       <span class="ti"><b>${esc(t.titulo)}</b><small>${esc(t.artista)} · <a href="#/c/${t.channels?.slug||''}">${esc(t.channels?.nombre||'')}</a></small></span>
       <span class="ta">${t.channels?`<button class="icbtn" title="Escuchar el canal" aria-label="Escuchar ${esc(t.channels.nombre)}" data-ch="${esc(t.channels.slug)}">${ICON_PLAY}</button>`:''}<button class="icbtn" title="Agregar a lista" aria-label="Agregar ${esc(t.titulo)} a una lista" data-list='${esc(JSON.stringify({id:t.id,titulo:t.titulo}))}'>${ICON_PLUS}</button>${extra}</span></div>`;
   if(mineTab==='favoritos'){
@@ -951,11 +978,11 @@ function renderMine(){
       <span class="ta"><button class="icbtn" title="Escuchar" aria-label="Escuchar ${esc(c.nombre)}" data-ch="${c.slug}">${ICON_PLAY}</button><button class="icbtn on" title="Dejar de seguir" aria-label="Dejar de seguir ${esc(c.nombre)}" data-unch="${c.id}">${ICON_HEART}</button></span></div>`).join('')}</div>`;
   }
   box.querySelectorAll('[data-ch]').forEach(b=>b.onclick=()=>{ const c=bySlug(b.dataset.ch); if(c) tuneChannel(c); });
+  wireRows(box);
   box.querySelectorAll('[data-unfav]').forEach(b=>b.onclick=()=>toggleFavTrack({id:b.dataset.unfav,titulo:''}));
   box.querySelectorAll('[data-unch]').forEach(b=>b.onclick=()=>toggleFavChannel(channels.find(c=>c.id===+b.dataset.unch)));
   box.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{ const [l,t]=b.dataset.rm.split('|'); removeFromList(l,t); });
   box.querySelectorAll('[data-dellist]').forEach(b=>b.onclick=e=>{ e.preventDefault(); if(b.dataset.confirm){ deleteList(b.dataset.dellist); } else { b.dataset.confirm='1'; b.textContent='Eliminar "'+(mine.lists.find(l=>l.id===b.dataset.dellist)?.nombre||'lista')+'"'; b.classList.add('danger'); setTimeout(()=>{ delete b.dataset.confirm; b.innerHTML=ICON_TRASH; },3000); } });
-  box.querySelectorAll('[data-list]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); openListMenu(b,JSON.parse(b.dataset.list)); });
 }
 $('mineTabs').onclick=e=>{ const b=e.target.closest('button'); if(b){ mineTab=b.dataset.t; renderMine(); } };
 

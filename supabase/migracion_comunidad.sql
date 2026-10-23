@@ -85,3 +85,23 @@ select r.id, r.message_id, r.motivo, r.creado_en, m.texto, m.channel_id, m.user_
 from message_reports r join messages m on m.id = r.message_id join profiles p on p.id = m.user_id
 where not r.resuelto;
 alter view reportes_pendientes set (security_invoker = true);
+
+-- ---------- Historial de reproducción (para "Últimos temas") ----------
+create table if not exists play_log (
+  id bigint generated always as identity primary key,
+  channel_id int not null references channels(id) on delete cascade,
+  track_id uuid references tracks(id) on delete set null,
+  inicio_at timestamptz not null default now()
+);
+create index if not exists play_log_ch on play_log(channel_id, inicio_at desc);
+alter table play_log enable row level security;
+create policy "leer" on play_log for select using (true);
+create or replace function radio_state_log() returns trigger language plpgsql security definer set search_path=public as $$
+begin
+  if new.track_id is not null and (tg_op='INSERT' or new.track_id is distinct from old.track_id) then
+    insert into play_log (channel_id, track_id, inicio_at) values (new.channel_id, new.track_id, coalesce(new.inicio_at, now()));
+  end if;
+  return new;
+end $$;
+drop trigger if exists radio_state_log on radio_state;
+create trigger radio_state_log after insert or update on radio_state for each row execute function radio_state_log();

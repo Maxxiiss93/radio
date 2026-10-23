@@ -141,7 +141,11 @@
   .item.active { flex-basis:420px; opacity:1; border-color:var(--edge2); cursor:default }
   .item.on { border-color:var(--acc) }
   @media (max-width:640px) { .acc { height:250px; gap:8px } .item { flex-basis:40px; border-radius:22px } .item.active { flex-basis:calc(100vw - 40px - 40px*2 - 24px) } .item .vlabel { font-size:12px } }
-  .item .media { position:absolute; z-index:0; inset:0; background:linear-gradient(135deg,#2a2630,#141317) center/cover; filter:grayscale(.6) } .item .media.chcover { filter:saturate(.75) brightness(.85) } .item.active .media.chcover { filter:none }
+  .item .media { position:absolute; z-index:0; inset:0; background:linear-gradient(135deg,#2a2630,#141317) center/cover; filter:grayscale(.6) }
+  .mosaic { display:grid; gap:2px; background-size:cover } .mosaic i { display:block; background:center/cover; min-height:0; position:relative } .mosaic i::after { content:""; position:absolute; inset:0; background:linear-gradient(160deg, rgba(84,44,95,.35), rgba(14,13,16,.25)); mix-blend-mode:multiply }
+  .mosaic.n1 { grid-template-columns:1fr } .mosaic.n2 { grid-template-rows:1fr 1fr } .mosaic.n3 { grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr } .mosaic.n3 i:first-child { grid-row:1 / 3 } .mosaic.n4 { grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr }
+  .item .media.mosaic { filter:saturate(.6) brightness(.8) } .item.active .media.mosaic { filter:none }
+  .sub .media.mosaic { grid-template-columns:1fr; grid-template-rows:1fr } .sub .media.mosaic i:not(:first-child) { display:none } .item .media.chcover { filter:saturate(.75) brightness(.85) } .item.active .media.chcover { filter:none }
   .item.active .media { filter:grayscale(0); animation:kenburns 18s ease-in-out infinite alternate }
   @keyframes kenburns { from { scale:1 } to { scale:1.08 } }
   .item .media video { width:100%; height:100%; object-fit:cover; display:block }
@@ -700,7 +704,7 @@ window.DEMO_SB = (() => {
     profiles: () => Object.entries(profiles).map(([id,p]) => ({ id, ...p })),
     messages: () => { const menor = !!profiles.me.es_menor; return Object.values(messages).flat().filter(m => (m.sala||'adultos') === (menor?'menores':'adultos') || (profiles[m.user_id]?.tutor_id==='me')).map(m => ({ ...m, channels: (() => { const c = channels.find(x=>x.id===m.channel_id); return c ? { nombre:c.nombre } : null; })() })); },
     votes: () => Object.entries(votes).flatMap(([rid, m]) => Object.entries(m).map(([user_id, track_id]) => ({ round_id:+rid, user_id, track_id }))),
-    tracks: () => tracks.map(withChannel), channels: () => channels,
+    tracks: () => tracks.map(withChannel), channels: () => channels.map(c => ({ ...c, portadas: tracksOf(c.id).filter(t=>t.portada).slice(0,4).map(t=>t.portada) })),
     play_log: () => Object.entries(radio_state).flatMap(([ch,st]) => { const prev = tracksOf(+ch).slice(0,6); return prev.map((t,i)=>({ channel_id:+ch, inicio_at:new Date(now()-i*200000).toISOString(), tracks: withChannel(t) })); }),
     favorite_tracks: () => fav_tracks.map(r => ({ ...r, tracks: withChannel(tracks.find(t=>t.id===r.track_id)) })),
     favorite_channels: () => fav_channels,
@@ -869,9 +873,12 @@ const kidsIds=id=>[id,...kids(id).map(k=>k.id)];
 const listenersOf=g=>kidsIds(g.id).reduce((a,id)=>a+(listeners.get(id)||0),0);
 const score=g=>listenersOf(g)*1e6 + (g.plays_7d||0)*1e3 + (g.temas||0);
 const coverOf=c=>c.portada||(c.slug?`/covers/${c.slug}.svg`:'');
+// Portada del canal: mosaico con los artistas que suenan (miniaturas de sus videos) con tratamiento SYNC; si no hay, la ilustración del género
+const thumbs=c=>(c.portadas||[]).filter(Boolean).slice(0,4);
 function mediaOf(c){
-  return coverOf(c) ? `<div class="media chcover" style="background-image:url(${esc(coverOf(c))})"></div>`
-       : `<div class="media empty">${esc(c.nombre.slice(0,2).toUpperCase())}</div>`;
+  const th=thumbs(c);
+  if(th.length) return `<div class="media mosaic n${th.length}" style="background-image:url(${esc(coverOf(c))})">${th.map(u=>`<i style="background-image:url(${esc(u)})"></i>`).join('')}</div>`;
+  return coverOf(c) ? `<div class="media chcover" style="background-image:url(${esc(coverOf(c))})"></div>` : `<div class="media empty">${esc(c.nombre.slice(0,2).toUpperCase())}</div>`;
 }
 function itemEl(c, label, isGenre){
   const oy=isGenre?listenersOf(c):(listeners.get(c.id)||0);
@@ -974,7 +981,7 @@ async function openChannel(ch){
   const root = parent||ch; const siblings=[root, ...kids(root.id).sort((a,b)=>((listeners.get(b.id)||0)-(listeners.get(a.id)||0))||((b.plays_7d||0)-(a.plays_7d||0))||(b.temas-a.temas))];
   $('subnav').innerHTML=siblings.map(s=>{ const on=s.id===ch.id; const name=(s.parent_id?'':'Todo ')+s.nombre;
     return `<a class="sub ${on?'on':''} ${s.temas?'':'off'}" href="#/c/${s.slug}" aria-current="${on?'page':'false'}" title="${esc(name)}">
-      <div class="media" style="background-image:url(${esc(coverOf(s))})"></div><span class="vlabel">${esc(name)}</span>${on?'<span class="tag2">ESTÁS ACÁ</span>':''}
+      ${mediaOf(s).replace('class="media','class="media sm')}<span class="vlabel">${esc(name)}</span>${on?'<span class="tag2">ESTÁS ACÁ</span>':''}
       <div class="content"><h4>${esc(name)}</h4><div class="m">${s.sonando_titulo?esc(s.sonando_titulo)+' · '+esc(s.sonando_artista):(s.temas?s.temas+' temas':'sin temas')}</div></div></a>`; }).join('');
   setTimeout(()=>$('subnav').querySelector('.sub.on')?.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'}),50);
   const hasTracks = ch.temas>0;
@@ -1131,7 +1138,7 @@ function renderHearts(){
 function renderFavChannels(){
   const box=$('favChannels'); const list=[...mine.channels].map(id=>channels.find(c=>c.id===id)).filter(Boolean);
   box.hidden=!list.length; if(!list.length) return;
-  box.innerHTML=`<div class="rowh">Tus canales</div><div class="favrow">${list.map(c=>`<a class="favch ${play.on&&play.channel?.id===c.id?'on':''}" href="#/c/${c.slug}"><span class="cv" style="background-image:url(${esc(coverOf(c))})"></span><span><b>${esc(c.nombre)}</b><small>${c.sonando_titulo?esc(c.sonando_titulo):'sin temas'}</small></span></a>`).join('')}</div>`;
+  box.innerHTML=`<div class="rowh">Tus canales</div><div class="favrow">${list.map(c=>`<a class="favch ${play.on&&play.channel?.id===c.id?'on':''}" href="#/c/${c.slug}"><span class="cv" style="background-image:url(${esc(thumbs(c)[0]||coverOf(c))})"></span><span><b>${esc(c.nombre)}</b><small>${c.sonando_titulo?esc(c.sonando_titulo):'sin temas'}</small></span></a>`).join('')}</div>`;
 }
 // popover "agregar a lista"
 function openListMenu(anchor,t){

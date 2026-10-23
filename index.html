@@ -227,7 +227,13 @@
   .chatwrap { display:flex; flex-direction:column; height:540px } @media (max-width:900px) { .chatwrap { height:460px } }
   .chat { flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:12px; padding-right:6px; scroll-behavior:smooth; overscroll-behavior:contain; mask-image:linear-gradient(transparent, #000 24px) }
   .chat::-webkit-scrollbar { width:5px } .chat::-webkit-scrollbar-thumb { background:rgba(255,255,255,.2); border-radius:3px }
-  .msg { display:grid; grid-template-columns:34px 1fr; gap:10px; animation:in .25s ease }
+  .msg { display:grid; grid-template-columns:34px 1fr; gap:10px; animation:in .25s ease; position:relative }
+  .msg .acts { display:none; gap:2px; margin-left:6px; vertical-align:middle } .msg:hover .acts, .msg:focus-within .acts { display:inline-flex } @media (hover:none) { .msg .acts { display:inline-flex } }
+  .msg .acts button { width:26px; height:26px; min-height:0; border-radius:8px; background:none; color:var(--txt3); padding:0; display:grid; place-items:center } .msg .acts button:hover { background:var(--bg2); color:var(--ivory) } .msg .acts svg { width:14px; height:14px }
+  .req { margin-top:14px; border-top:1px solid var(--edge); padding-top:10px } .req summary { cursor:pointer; font-size:13px; color:var(--txt2); list-style:none; display:flex; align-items:center; gap:6px; min-height:40px } .req summary::before { content:'+'; font-weight:700; color:var(--acc) } .req[open] summary::before { content:'–' }
+  .req form { display:grid; gap:8px; margin-top:8px } .req input { background:rgba(255,255,255,.07); border:1px solid var(--edge); border-radius:12px; padding:11px 14px; color:var(--ivory); font:inherit; font-size:14px; min-width:0 } .req input:focus { outline:2px solid var(--acc); outline-offset:1px; border-color:transparent }
+  @media (min-width:640px) { .req form { grid-template-columns:1fr 1fr auto } }
+  .modq { display:flex; flex-direction:column; gap:8px } .modq .it { border:1px solid var(--edge); border-radius:12px; background:var(--bg2); padding:10px 12px; display:grid; gap:6px } .modq .it b { font-size:14px } .modq .it small { color:var(--txt3); font-size:12px } .modq .it .ta { display:flex; gap:6px; flex-wrap:wrap } .modq .it .q { font-size:13.5px; padding:6px 10px; border-left:3px solid var(--plum); background:var(--bg1); border-radius:0 8px 8px 0 }
   @keyframes in { from { opacity:0; transform:translateY(8px) } }
   .bub { background:var(--bg2); border:1px solid var(--edge); border-radius:4px 16px 16px 16px; padding:8px 12px; display:inline-block; max-width:100%; word-break:break-word }
   .msg .h { display:flex; gap:8px; align-items:baseline; font-size:12px; margin-bottom:3px } .msg .h b { font-weight:700 } .msg .h time { color:var(--txt3); font-size:11px }
@@ -412,6 +418,9 @@
         <h2>Elegí lo que sigue <span class="count" id="countdown">—</span></h2>
         <div class="cands" id="cands"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
         <div class="hint" id="votehint"></div>
+        <details class="req" id="req"><summary>¿Falta un tema? Pedilo</summary>
+          <form id="reqForm" novalidate><input id="reqUrl" type="url" placeholder="Link de YouTube o del audio" inputmode="url" autocomplete="off" aria-label="Link del tema"><input id="reqNota" maxlength="200" placeholder="Título / artista (opcional)" aria-label="Nota"><button class="btn sm" type="submit">Enviar pedido</button></form>
+          <small class="hint" style="margin:6px 0 0">Lo revisa un moderador antes de entrar al canal. Hasta 5 pedidos pendientes por persona.</small></details>
       </section>
       <section class="glass sec" id="chatSec">
         <h2><span id="chatTitle">Chat del canal</span> <span class="avstack" id="avstack"></span></h2>
@@ -478,6 +487,7 @@ const SUPABASE_ANON = 'sb_publishable_Kd-YOayUAjN7Wa1NJehyMw_Q_bQRTeo';
 // ====================
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 const STAR='<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7-6.2-3.7L5.8 21l1.6-7L2 9.3l7.1-.7z"/></svg>', CHECK='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M5 12l5 5L20 7"/></svg>';
+const ICON_FLAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M5 21V4h11l-1.5 4L16 12H5"/></svg>';
 const ICON_SHIELD='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4" stroke-linecap="round"/></svg>';
 const ICON_CAM='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>', ICON_OUT='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4H5v16h5M14 8l4 4-4 4M18 12H9"/></svg>';
 const ICON_HEART='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>', ICON_PLUS='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>', ICON_TRASH='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>', ICON_X='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
@@ -862,6 +872,8 @@ async function renderLoad(){
       <label>Link de video corto (opcional)<input id="lVid" type="url" placeholder="https://…/clip.mp4"></label>
       <div class="wide" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button class="btn" type="submit" id="lBtn">Agregar tema</button><button class="btn glass sm" type="button" id="lTest">Probar audio</button><span class="hint" style="margin:0">Si el link no se puede reproducir acá, tampoco va a sonar en la radio.</span></div>
     </form>
+    <div class="sup-card"><h3>Pedidos de la audiencia <span id="qCount" style="color:var(--txt3);font-weight:400"></span></h3><div class="modq" id="qList"><div class="empty small">Cargando…</div></div></div>
+    <div class="sup-card"><h3>Reportes del chat <span id="rCount" style="color:var(--txt3);font-weight:400"></span></h3><div class="modq" id="rList"><div class="empty small">Cargando…</div></div></div>
     <div class="sup-card"><h3>Temas cargados <span id="lCount" style="color:var(--txt3);font-weight:400"></span></h3><div class="newlist"><input id="lFilter" placeholder="Filtrar por título, artista o canal…"></div><div class="tlist" id="lList"><div class="empty small">Cargando…</div></div></div>`;
   const probe=document.createElement('audio'); probe.preload='metadata';
   let detectado=null;
@@ -894,6 +906,21 @@ async function renderLoad(){
       <span class="ti"><b>${esc(t.titulo)}</b><small>${esc(t.artista)} · ${esc(t.ch?.nombre||'?')} · ${fmt(t.duracion_seg)}${t.activo?'':' · pausado'}</small></span>
       <span class="ta"><button class="icbtn" title="${t.activo?'Pausar (no entra en las votaciones)':'Activar'}" aria-label="${t.activo?'Pausar':'Activar'} ${esc(t.titulo)}" data-tog="${t.id}" data-on="${t.activo?1:0}">${t.activo?ICON_PAUSE:ICON_PLAY}</button><button class="icbtn" title="Eliminar" aria-label="Eliminar ${esc(t.titulo)}" data-del="${t.id}" data-n="${esc(t.titulo)}">${ICON_TRASH}</button></span></div>`).join(''):'<div class="empty small">Todavía no hay temas cargados.</div>'; }
   $('lFilter').oninput=listar;
+  async function pedidos(){ const {data}=await sb.from('track_requests').select('id,url,nota,creado_en,channel_id,user_id').eq('estado','pendiente').order('creado_en').limit(50); const box=$('qList'); if(!box) return; $('qCount').textContent=`· ${data?.length||0}`;
+    if(!data?.length){ box.innerHTML='<div class="empty small">No hay pedidos pendientes.</div>'; return; }
+    const rows=await Promise.all(data.map(async r=>{ const p=await nameOf(r.user_id); const ch=channels.find(c=>c.id===r.channel_id); return `<div class="it"><b>${esc(r.nota||r.url)}</b><small>${esc(p.apodo)} · ${esc(ch?.nombre||'')} · ${new Date(r.creado_en).toLocaleString('es-AR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</small><small><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.url)}</a></small><span class="ta"><button class="btn sm" data-ok="${r.id}" data-url="${esc(r.url)}" data-ch="${r.channel_id}">Cargar este</button><button class="btn glass sm" data-no="${r.id}">Rechazar</button></span></div>`; }));
+    box.innerHTML=rows.join('');
+    box.onclick=async e=>{ const b=e.target.closest('button'); if(!b) return;
+      if(b.dataset.ok){ $('lUrl').value=b.dataset.url; $('lCh').value=b.dataset.ch; $('lTit').value=''; $('lArt').value=''; $('lCov').value=''; $('lDur').value=''; window.scrollTo({top:0,behavior:'smooth'}); detectar(); await sb.from('track_requests').update({estado:'aprobado',resuelto_en:new Date().toISOString()}).eq('id',b.dataset.ok); toast('Datos cargados en el formulario: revisá y tocá Agregar tema'); pedidos(); }
+      if(b.dataset.no){ await sb.from('track_requests').update({estado:'rechazado',resuelto_en:new Date().toISOString()}).eq('id',b.dataset.no); pedidos(); } }; }
+  async function reportes(){ const {data}=await sb.from('reportes_pendientes').select('*').order('creado_en',{ascending:false}).limit(50); const box=$('rList'); if(!box) return; $('rCount').textContent=`· ${data?.length||0}`;
+    if(!data?.length){ box.innerHTML='<div class="empty small">No hay reportes pendientes.</div>'; return; }
+    box.innerHTML=data.map(r=>{ const ch=channels.find(c=>c.id===r.channel_id); const sil=r.silenciado_hasta&&new Date(r.silenciado_hasta)>new Date(); return `<div class="it"><div class="q">${esc(r.texto)}</div><small><b>${esc(r.autor)}</b>${sil?' · silenciado':''} · ${esc(ch?.nombre||'')} · motivo: ${esc(r.motivo)} · ${r.veces} reporte${r.veces>1?'s':''}</small><span class="ta"><button class="btn glass sm" data-delm="${r.message_id}" data-rid="${r.id}">Borrar mensaje</button><button class="btn glass sm" data-sil="${r.autor_id}" data-rid="${r.id}" data-n="${esc(r.autor)}">Silenciar 24 h</button><button class="btn glass sm" data-desc="${r.id}">Descartar</button></span></div>`; }).join('');
+    box.onclick=async e=>{ const b=e.target.closest('button'); if(!b) return;
+      if(b.dataset.delm){ const {error}=await sb.from('messages').delete().eq('id',b.dataset.delm); if(error) return toast(traducir(error.message),'err'); toast('Mensaje borrado'); reportes(); return; }
+      if(b.dataset.sil){ if(!confirm(`¿Silenciar a ${b.dataset.n} por 24 horas? No va a poder chatear ni pedir temas.`)) return; const {error}=await sb.rpc('silenciar',{p_user:b.dataset.sil,p_horas:24}); if(error) return toast(traducir(error.message),'err'); await sb.from('message_reports').update({resuelto:true}).eq('id',b.dataset.rid); toast('Silenciado 24 h'); reportes(); return; }
+      if(b.dataset.desc){ await sb.from('message_reports').update({resuelto:true}).eq('id',b.dataset.desc); reportes(); } }; }
+  pedidos(); reportes();
   $('lList').onclick=async e=>{ const b=e.target.closest('button'); if(!b) return;
     if(b.dataset.tog){ const {error}=await sb.from('tracks').update({activo:b.dataset.on!=='1'}).eq('id',b.dataset.tog); if(error) return toast(traducir(error.message),'err'); listar(); }
     if(b.dataset.del){ if(!confirm(`¿Eliminar "${b.dataset.n}" del catálogo? Si está sonando ahora, termina y no vuelve a entrar.`)) return; const {error}=await sb.from('tracks').delete().eq('id',b.dataset.del); if(error) return toast(traducir(error.message),'err'); toast('Tema eliminado'); listar(); } };
@@ -964,7 +991,10 @@ async function addMsg(m,scroll=true){
   if(!channel||m.channel_id!==channel.id) return;
   const p=await nameOf(m.user_id), name=p.apodo; const chat=$('chat'); const atBottom=chat.scrollHeight-chat.scrollTop-chat.clientHeight<80;
   const d=document.createElement('div'); d.className='msg'+(user&&m.user_id===user.id?' me':'');
-  d.innerHTML=`${avatar(m.user_id,name,p.avatar)}<div><div class="h"><b>${esc(name)}</b><time>${new Date(m.creado_en).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})}</time></div><div class="bub">${esc(m.texto)}</div></div>`;
+  const mine=user&&m.user_id===user.id, mod=profile?.rol==='moderador';
+  const acts = user ? `<span class="acts">${!mine?`<button type="button" title="Reportar mensaje" aria-label="Reportar este mensaje de ${esc(name)}" data-report="${m.id}">${ICON_FLAG}</button>`:''}${(mine||mod)?`<button type="button" title="Borrar mensaje" aria-label="Borrar este mensaje" data-delmsg="${m.id}">${ICON_TRASH}</button>`:''}</span>` : '';
+  d.dataset.id=m.id;
+  d.innerHTML=`${avatar(m.user_id,name,p.avatar)}<div><div class="h"><b>${esc(name)}</b><time>${new Date(m.creado_en).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})}</time>${acts}</div><div class="bub">${esc(m.texto)}</div></div>`;
   chat.querySelector('.empty')?.remove(); chat.appendChild(d);
   if(scroll&&(atBottom||(user&&m.user_id===user.id))) chat.scrollTop=chat.scrollHeight;
 }
@@ -991,6 +1021,11 @@ $('chatform').onsubmit=async e=>{ e.preventDefault(); if(!user) return openModal
 $('quick').onclick=async e=>{ const b=e.target.closest('button[data-q]'); if(!b) return; if(!user) return openModal('login'); if(!channel) return; if(profile?.es_menor&&profile.chat_habilitado===false) return toast('Tu tutor pausó el chat','err');
   const {error}=await sb.from('messages').insert({channel_id:channel.id,user_id:user.id,texto:b.dataset.q}); if(error) toast(traducir(error.message),'err'); };
 $('chatinput').addEventListener('focus',()=>{ if(!user){ $('chatinput').blur(); openModal('login'); } });
+$('chat').addEventListener('click',async e=>{ const b=e.target.closest('button[data-report],button[data-delmsg]'); if(!b||!user) return;
+  if(b.dataset.delmsg){ if(!confirm('¿Borrar este mensaje del chat?')) return; const {error}=await sb.from('messages').delete().eq('id',b.dataset.delmsg); if(error) return toast(traducir(error.message),'err'); b.closest('.msg')?.remove(); toast('Mensaje borrado'); }
+  if(b.dataset.report){ const motivo=prompt('¿Por qué lo reportás? Escribí: ofensivo, spam, contacto u otro','ofensivo'); if(!motivo) return; const m=motivo.trim().toLowerCase(); if(!['ofensivo','spam','contacto','otro'].includes(m)) return toast('Motivo inválido','err'); const {error}=await sb.from('message_reports').insert({message_id:isNaN(+b.dataset.report)?b.dataset.report:+b.dataset.report,user_id:user.id,motivo:m}); if(error) return toast(error.message.includes('duplicate')?'Ya reportaste ese mensaje':traducir(error.message),'err'); toast('Gracias, un moderador lo va a revisar'); } });
+$('reqForm').onsubmit=async e=>{ e.preventDefault(); if(!user) return openModal('login'); if(!channel) return; const url=$('reqUrl').value.trim(), nota=$('reqNota').value.trim()||null; if(!/^https?:\/\//.test(url)) return toast('Pegá un link que empiece con http(s)://','err');
+  const {error}=await sb.from('track_requests').insert({channel_id:channel.id,user_id:user.id,url,nota}); if(error) return toast(error.message.includes('policy')?'Ya tenés 5 pedidos pendientes o tu cuenta está silenciada':traducir(error.message),'err'); $('reqUrl').value=''; $('reqNota').value=''; $('req').open=false; toast('Pedido enviado. Un moderador lo revisa.'); };
 
 // ---------- Presencia ----------
 function joinPresence(){

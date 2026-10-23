@@ -17,6 +17,7 @@ Radio online con un canal por género y subgénero. En cada canal la audiencia r
 Ejecutar en el SQL Editor, en orden:
 - `supabase/migracion_plays.sql` — conteo de escuchas por canal (`plays_7d`).
 - `supabase/migracion_menores.sql` — cuentas de menores supervisadas y chat separado.
+- `supabase/migracion_comunidad.sql` — pedidos de temas, reportes del chat y silencios.
 
 ## Menores y chat separado
 
@@ -26,6 +27,12 @@ Ejecutar en el SQL Editor, en orden:
 - **Filtro** en la sala de menores (trigger `texto_apto_menores`, duplicado en el cliente para avisar antes de enviar): links, teléfonos, mails, redes/pedidos de contacto y lenguaje ofensivo.
 - El tutor puede **pausar/reanudar el chat** del menor, **ver sus mensajes** y **liberar la cuenta** cuando cumple 18 (`liberar_menor`).
 - Escuchar, votar, favoritos y listas funcionan igual para todos.
+
+## Comunidad y moderación
+
+- **Pedir un tema**: en cada canal, "¿Falta un tema? Pedilo" (link + nota). Máximo 5 pendientes por persona. Los moderadores los ven en Cargar temas → "Pedidos de la audiencia": *Cargar este* precarga el formulario, *Rechazar* lo descarta.
+- **Reportar un mensaje**: banderita al lado de cada mensaje ajeno (motivo: ofensivo / spam / contacto / otro). Cada uno puede borrar sus propios mensajes; los moderadores, cualquiera.
+- **Reportes**: en Cargar temas → "Reportes del chat": borrar el mensaje, silenciar al autor 24 h (no chatea ni pide temas) o descartar. `silenciar(user, horas)` con 0 quita el silencio.
 
 ## Cómo funciona
 

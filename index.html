@@ -84,7 +84,8 @@
   .btn[disabled] { opacity:.7; transform:none; cursor:default }
   .av { width:34px; height:34px; border-radius:50%; display:grid; place-items:center; font-weight:800; font-size:12px; color:var(--plum); flex:none; border:2px solid rgba(245,241,232,.35); background:var(--ivory) center/cover; overflow:hidden }
   .menu { position:relative } .menu .dd { position:absolute; right:0; top:46px; min-width:200px; padding:6px; display:none; z-index:20 } .menu.open .dd { display:block }
-  .dd button, .dd label { display:flex; align-items:center; gap:10px; width:100%; text-align:left; padding:10px 12px; border-radius:10px; font-size:14px; cursor:pointer } .dd button:hover, .dd label:hover { background:rgba(255,255,255,.08) }
+  .dd button, .dd label, .dd a { display:flex; align-items:center; gap:10px; width:100%; text-align:left; padding:10px 12px; border-radius:10px; font-size:14px; cursor:pointer; color:var(--ivory); text-decoration:none; min-height:40px; white-space:nowrap; background:none; border:0; font:inherit } .dd button:hover, .dd label:hover, .dd a:hover { background:rgba(255,255,255,.08) } .dd svg { flex:none; width:18px; height:18px }
+  .menu .dd { min-width:230px }
   .dd .av { width:40px; height:40px } .dd .who { padding:8px 12px 10px; border-bottom:1px solid var(--edge); margin-bottom:6px; display:flex; align-items:center; gap:10px } .dd .who b { display:block } .dd .who span { font-size:12px; color:var(--txt3) }
   .busy { opacity:.6; pointer-events:none }
 
@@ -261,6 +262,14 @@
   .chatnote { font-size:12.5px; color:var(--txt3); padding:8px 12px; border:1px solid var(--edge); border-radius:10px; background:var(--bg2); margin-bottom:8px }
   .hint { display:block; font-size:12px; color:var(--txt3); margin:6px 2px 0; line-height:1.4 }
   .dd .who.sup { display:block } .dd .who.sup b { color:var(--acc) }
+  .you-h { display:grid; grid-template-columns:auto 1fr; gap:18px; align-items:center; padding:26px 0 18px } .you-h .big { width:96px; height:96px; border-radius:30px; font-size:32px; position:relative; cursor:pointer; box-shadow:0 10px 30px rgba(0,0,0,.35) } .you-h .big::after { content:""; position:absolute; inset:0; border-radius:30px; border:1px solid rgba(255,255,255,.12) }
+  .you-h .big .cam { position:absolute; right:-6px; bottom:-6px; width:32px; height:32px; border-radius:50%; background:var(--acc); color:var(--acc-ink); display:grid; place-items:center; border:3px solid var(--bg0) } .you-h .big .cam svg { width:15px; height:15px }
+  .you-h .nm { min-width:0 } .you-h .nm b { display:block; font-size:clamp(26px,5vw,38px); font-weight:800; letter-spacing:-.03em; line-height:1.05 } .you-h .nm span { color:var(--txt3); font-size:13px; display:block; margin-top:4px; overflow:hidden; text-overflow:ellipsis }
+  .you-h .nm .ybadge, .ybadge { display:inline-flex; width:auto; color:var(--ivory) } .you-h .nm .ybadge.mod { color:var(--acc-ink) }
+  .ybadge { display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; padding:4px 10px; border-radius:999px; background:var(--plum); color:var(--ivory); margin-top:8px } .ybadge.mod { background:var(--acc); color:var(--acc-ink) }
+  .you-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:6px 0 16px } .you-stats a { display:flex; flex-direction:column; justify-content:flex-end; min-height:84px; padding:14px; border-radius:18px; background:var(--bg1); border:1px solid var(--edge); color:inherit; text-decoration:none } .you-stats a:hover { border-color:var(--edge2) } .you-stats b { font-size:30px; font-weight:800; letter-spacing:-.03em; line-height:1 } .you-stats span { font-size:12px; color:var(--txt3); margin-top:6px }
+  .you-list { display:flex; flex-direction:column; border:1px solid var(--edge); border-radius:18px; background:var(--bg1); overflow:hidden; margin-bottom:14px } .you-list > * { display:flex; align-items:center; gap:12px; padding:14px 16px; min-height:52px; color:inherit; text-decoration:none; border-top:1px solid var(--edge); font-size:15px; background:none; border-left:0; border-right:0; border-bottom:0; font:inherit; width:100%; text-align:left; cursor:pointer } .you-list > *:first-child { border-top:0 } .you-list > *:hover { background:var(--bg2) } .you-list svg { width:20px; height:20px; flex:none; color:var(--txt2) } .you-list .r { margin-left:auto; color:var(--txt3); font-size:13px } .you-list .danger { color:#ffb3b3 }
+  .you-edit { display:flex; gap:8px; align-items:center; margin-top:6px } .you-edit input { flex:1; min-width:0; max-width:260px; background:rgba(255,255,255,.07); border:1px solid var(--edge); border-radius:12px; padding:9px 12px; color:var(--ivory); font:inherit; font-size:15px } .you-edit input:focus { outline:2px solid var(--acc); outline-offset:1px; border-color:transparent }
   .sup-card { border:1px solid var(--edge); border-radius:var(--r); background:var(--bg1); padding:16px; margin-bottom:12px } .sup-card h3 { margin:0 0 6px; font-size:16px } .sup-card p { margin:0 0 12px; color:var(--txt3); font-size:13.5px; line-height:1.5 }
   .code { font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:28px; letter-spacing:.3em; color:var(--acc); background:var(--bg2); border:1px dashed rgba(199,232,75,.4); border-radius:10px; padding:12px 16px; display:inline-block; margin:4px 0 10px }
   .sup-row { display:flex; align-items:center; gap:12px; padding:12px 0; border-top:1px solid var(--edge); flex-wrap:wrap } .sup-row .ta { flex-basis:100%; justify-content:flex-start } .sup-row .ti { flex:1; min-width:0 } .sup-row .ti b { display:block } .sup-row .ti small { color:var(--txt3) } .sup-row .ta { display:flex; gap:6px; flex-wrap:wrap }
@@ -460,6 +469,7 @@
     <div class="tabs wide" id="mineTabs"><button class="on" data-t="favoritos">Favoritos</button><button data-t="listas">Listas</button><button data-t="canales">Canales</button><button data-t="supervision" id="tabSup">Supervisión</button></div>
     <div id="mineBody"></div>
   </section>
+  <section id="viewYou" class="hidden"><div id="youBody"></div></section>
   <section id="viewLoad" class="hidden">
     <div class="mine-h"><h2>Cargar temas</h2><p>Pegá el link del audio, completá los datos y elegí el subgénero. La duración se detecta sola.</p></div>
     <div id="loadBody"></div>
@@ -510,6 +520,7 @@ const SUPABASE_ANON = 'sb_publishable_Kd-YOayUAjN7Wa1NJehyMw_Q_bQRTeo';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 const STAR='<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7-6.2-3.7L5.8 21l1.6-7L2 9.3l7.1-.7z"/></svg>', CHECK='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M5 12l5 5L20 7"/></svg>';
 const ICON_FLAG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M5 21V4h11l-1.5 4L16 12H5"/></svg>';
+const ICON_USER='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>';
 const ICON_SHIELD='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4" stroke-linecap="round"/></svg>';
 const ICON_CAM='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>', ICON_OUT='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4H5v16h5M14 8l4 4-4 4M18 12H9"/></svg>';
 const ICON_HEART='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>', ICON_PLUS='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>', ICON_TRASH='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>', ICON_X='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
@@ -564,7 +575,7 @@ function renderAuth(){
     box.innerHTML=`<div class="menu" id="menu"><button class="btn glass sm" id="menuBtn" aria-label="Cuenta de ${esc(n)}" aria-haspopup="menu">${avatar(user.id,n,av)} <span>${esc(n)}</span></button>
       <div class="dd glass"><div class="who">${avatar(user.id,n,av)}<div><b>${esc(n)}</b><span>${esc(user.email||'')}</span></div></div>
       <label for="avatarFile">${ICON_CAM} Cambiar foto de perfil</label><input type="file" id="avatarFile" accept="image/*" hidden>
-      ${profile?.es_menor?`<div class="who sup"><b>Cuenta supervisada</b><span>Chat separado, visible para tu tutor.</span></div>`:`<a href="#/mi/supervision">${ICON_SHIELD} Cuentas supervisadas</a>`}
+      <a href="#/vos">${ICON_USER} Ver mi perfil</a><a href="#/mi">${ICON_HEART} Mi música</a>
       ${profile?.rol==='moderador'?`<a href="#/cargar">${ICON_PLUS} Cargar temas</a>`:''}
       <button id="logout">${ICON_OUT} Cerrar sesión</button></div></div>`;
     $('menuBtn').onclick=e=>{ e.stopPropagation(); $('menu').classList.toggle('open'); };
@@ -573,7 +584,7 @@ function renderAuth(){
   else { box.innerHTML=`<button class="btn glass sm" id="btnLogin">Entrar</button> <button class="btn sm" id="btnSignup"><span>Crear cuenta</span><b class="only-m">Crear cuenta</b></button>`; $('btnLogin').onclick=()=>openModal('login'); $('btnSignup').onclick=()=>openModal('signup'); }
 }
 document.addEventListener('click',e=>{ const m=$('menu'); if(m&&!m.contains(e.target)) m.classList.remove('open'); });
-sb.auth.onAuthStateChange(async(_e,session)=>{ user=session?.user??null; profile=null; if(user){ const {data}=await sb.from('profiles').select('apodo,rol,avatar,es_menor,tutor_id,chat_habilitado').eq('id',user.id).single(); profile=data; } renderAuth(); if(channel){ loadRound(); loadChat(); } renderChatMode(); joinPresence(); loadMine(); if(!$('viewLoad').classList.contains('hidden')) renderLoad(); });
+sb.auth.onAuthStateChange(async(_e,session)=>{ user=session?.user??null; profile=null; if(user){ const {data}=await sb.from('profiles').select('apodo,rol,avatar,es_menor,tutor_id,chat_habilitado').eq('id',user.id).single(); profile=data; } renderAuth(); if(channel){ loadRound(); loadChat(); } renderChatMode(); joinPresence(); loadMine(); if(!$('viewLoad').classList.contains('hidden')) renderLoad(); if(!$('viewYou').classList.contains('hidden')) renderYou(); });
 
 async function uploadAvatar(file){
   if(!user) return; $('menu')?.classList.add('busy'); toast('Subiendo foto…');
@@ -682,10 +693,12 @@ document.addEventListener('keydown',e=>{ if(e.key==='/'&&document.activeElement.
 
 // ---------- Router ----------
 async function route(){
-  const m=location.hash.match(/^#\/c\/([a-z0-9-]+)/); document.body.classList.toggle('onindex', !m && !location.hash.startsWith('#/mi') && location.hash!=='#/cargar');
+  const m=location.hash.match(/^#\/c\/([a-z0-9-]+)/); document.body.classList.toggle('onindex', !m && !location.hash.startsWith('#/mi') && location.hash!=='#/cargar' && location.hash!=='#/vos');
   if(!channels.length) await loadChannels();
   if(location.hash.startsWith('#/mi')){ if(location.hash==='#/mi/supervision') mineTab='supervision'; leaveChannel(); $('viewChannel').classList.add('hidden'); $('viewIndex').classList.add('hidden'); $('viewMine').classList.remove('hidden'); document.title='Mi música · SYNC'; await loadChannels(); renderMine(); window.scrollTo(0,0); return; }
   $('viewMine').classList.add('hidden');
+  if(location.hash==='#/vos'){ leaveChannel(); $('viewChannel').classList.add('hidden'); $('viewIndex').classList.add('hidden'); $('viewLoad').classList.add('hidden'); $('viewYou').classList.remove('hidden'); document.title='Tu perfil · SYNC'; renderYou(); window.scrollTo(0,0); return; }
+  $('viewYou').classList.add('hidden');
   if(location.hash==='#/cargar'){ leaveChannel(); $('viewChannel').classList.add('hidden'); $('viewIndex').classList.add('hidden'); $('viewLoad').classList.remove('hidden'); document.title='Cargar temas · SYNC'; await loadChannels(); renderLoad(); window.scrollTo(0,0); return; }
   $('viewLoad').classList.add('hidden');
   if(m && bySlug(m[1])) await openChannel(bySlug(m[1]));
@@ -992,6 +1005,26 @@ async function searchTracks(q){ const box=$('trackResults'); if(!box) return; q=
   const like=`%${q.replace(/[%_]/g,'')}%`;
   const {data}=await sb.from('tracks').select('id,titulo,artista,portada,channel_id,channels(nombre,slug)').eq('activo',true).or(`titulo.ilike.${like},artista.ilike.${like}`).limit(12);
   box.hidden=false; box.innerHTML=data?.length?`<div class="sec-h"><h3>Temas</h3><span>${data.length===12?'12+':data.length} resultado${data.length!==1?'s':''}</span></div><div class="tlist">${data.map(t=>trackRowG(t)).join('')}</div>`:`<div class="empty small">Ningún tema con "${esc(q)}". Probá con el artista o pedilo en el canal que corresponda.</div>`; wireRows(box); }
+async function renderYou(){ const box=$('youBody'); if(!box) return;
+  if(!user){ box.innerHTML='<div class="mine-h"><h2>Tu perfil</h2><p>Entrá para ver tu cuenta, tus favoritos y tus listas.</p></div><div class="empty"><button class="btn" id="youLogin">Entrar</button></div>'; $('youLogin').onclick=()=>openModal('login'); return; }
+  if(!profile){ box.innerHTML='<div class="empty">Cargando…</div>'; return; }
+  const n=profile.apodo, av=profile.avatar; const sup=profile.es_menor?await nameOf(profile.tutor_id):null;
+  const kids=profile.es_menor?[]:(await sb.from('profiles').select('id').eq('tutor_id',user.id)).data||[];
+  box.innerHTML=`<div class="you-h"><label class="av big" for="youAvatar" style="${av?`background-image:url(${esc(av)})`:`background:${colorOf(user.id)}`}" title="Cambiar foto">${av?'':esc(n.slice(0,2).toUpperCase())}<span class="cam">${ICON_CAM}</span></label><input type="file" id="youAvatar" accept="image/*" hidden>
+      <div class="nm"><b id="youName">${esc(n)}</b><span>${esc(user.email||'')}</span>${profile.rol==='moderador'?'<span class="ybadge mod">Moderador</span>':''}${profile.es_menor?`<span class="ybadge">Cuenta supervisada · tutor: ${esc(sup?.apodo||'')}</span>`:''}
+      <div class="you-edit"><input id="youApodo" value="${esc(n)}" maxlength="24" aria-label="Apodo"><button class="btn glass sm" id="youSave">Guardar apodo</button></div></div></div>
+    <div class="you-stats"><a href="#/mi"><b>${mine.tracks.size}</b><span>favoritos</span></a><a href="#/mi" data-tab="listas"><b>${mine.lists.length}</b><span>listas</span></a><a href="#/mi" data-tab="canales"><b>${mine.channels.size}</b><span>canales seguidos</span></a></div>
+    <div class="you-list">
+      <a href="#/mi">${ICON_HEART}<span>Mi música</span><span class="r">favoritos, listas, canales</span></a>
+      ${profile.es_menor?`<a href="#/mi/supervision">${ICON_SHIELD}<span>Cuenta supervisada</span><span class="r">chat separado</span></a>`:`<a href="#/mi/supervision">${ICON_SHIELD}<span>Cuentas supervisadas</span><span class="r">${kids.length?kids.length+(kids.length===1?' menor':' menores'):'ninguna'}</span></a>`}
+      ${profile.rol==='moderador'?`<a href="#/cargar">${ICON_PLUS}<span>Cargar temas</span><span class="r">pedidos y reportes</span></a>`:''}
+    </div>
+    <div class="you-list"><button type="button" id="youLogout" class="danger">${ICON_OUT}<span>Cerrar sesión</span></button></div>`;
+  $('youAvatar').onchange=e=>{ if(e.target.files[0]) uploadAvatar(e.target.files[0]).then(()=>renderYou()); };
+  $('youLogout').onclick=()=>{ sb.auth.signOut(); toast('Hasta la próxima'); location.hash='#/'; };
+  box.querySelectorAll('.you-stats a[data-tab]').forEach(a=>a.onclick=()=>{ mineTab=a.dataset.tab; });
+  $('youSave').onclick=async()=>{ const ap=$('youApodo').value.trim(); if(ap.length<2) return toast('El apodo tiene que tener al menos 2 letras','err'); if(ap===profile.apodo) return; const {error}=await sb.from('profiles').update({apodo:ap}).eq('id',user.id); if(error) return toast(error.message.includes('duplicate')||error.message.includes('unique')?'Ese apodo ya está en uso':traducir(error.message),'err'); profile.apodo=ap; names.set(user.id,{apodo:ap,avatar:profile.avatar}); $('youName').textContent=ap; renderAuth(); joinPresence(); toast('Apodo actualizado'); };
+}
 function renderMine(){
   $('mineTabs').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.t===mineTab));
   const box=$('mineBody'); box.innerHTML='';
@@ -1109,13 +1142,13 @@ function joinPresence(){
 const NAV=$('navbar'), navBtns=[...NAV.querySelectorAll('[data-nav]')]; let navCur='home';
 navBtns.forEach(b=>{ b.insertAdjacentHTML('beforeend','<i class="dot"></i>'); });
 function setNav(id){ navBtns.forEach(b=>{ b.classList.toggle('on',b.dataset.nav===id); b.setAttribute('aria-selected',b.dataset.nav===id); }); navCur=id; }
-function syncNav(){ const h=location.hash; setNav(h.startsWith('#/mi')?'library':h.startsWith('#/c/')?'radio':'home'); navBtns.find(b=>b.dataset.nav==='radio').classList.toggle('playing',play.on); }
+function syncNav(){ const h=location.hash; setNav(h.startsWith('#/mi')?'library':h.startsWith('#/c/')?'radio':h==='#/vos'?'you':'home'); navBtns.find(b=>b.dataset.nav==='radio').classList.toggle('playing',play.on); }
 navBtns.forEach(b=>b.onclick=()=>{ const id=b.dataset.nav;
   if(id==='home'){ location.hash='#/'; }
   else if(id==='search'){ if(location.hash!=='#/'&&location.hash!=='') location.hash='#/'; setNav('search'); setTimeout(()=>{ window.scrollTo({top:0,behavior:'smooth'}); $('q').focus(); },80); }
   else if(id==='radio'){ if(play.channel) location.hash='#/c/'+play.channel.slug; else if(channel) {} else { const top=channels.filter(c=>!c.parent_id&&c.sonando_titulo).sort((a,b)=>score(b)-score(a))[0]; if(top) location.hash='#/c/'+top.slug; else toast('Todavía no hay nada sonando'); } setNav('radio'); }
   else if(id==='library'){ if(!user) return openModal('login'); location.hash='#/mi'; }
-  else if(id==='you'){ if(!user) openModal('login'); else { $('menu')?.classList.toggle('open'); } setNav('you'); setTimeout(syncNav,1200); }
+  else if(id==='you'){ if(!user){ openModal('login'); setNav('you'); setTimeout(syncNav,1200); } else location.hash='#/vos'; }
 });
 window.addEventListener('hashchange',syncNav);
 
